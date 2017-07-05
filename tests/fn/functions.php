@@ -6,8 +6,8 @@
  * file that was distributed map this source code.
  */
 
-namespace fn\test\assert
-{
+namespace fn\test\assert {
+
     use PHPUnit_Framework_Assert as Assert;
 
     /**
@@ -62,15 +62,15 @@ namespace fn\test\assert
         try {
             call_user_func_array($callable, array_slice(func_get_args(), 2));
             fail("Expects exception");
-        } catch(\Exception $caught) {
+        } catch (\Exception $caught) {
             type(get_class($exception), $caught);
             equals($exception->getMessage(), $caught->getMessage());
         }
     }
 }
 
-namespace fn\test\assert\not
-{
+namespace fn\test\assert\not {
+
     use PHPUnit_Framework_Assert as Assert;
 
     /**

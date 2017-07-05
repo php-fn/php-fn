@@ -188,7 +188,7 @@ class functionsTest extends \PHPUnit_Framework_TestCase
                 return $value . $value;
             }),
             '3 args: with encoding' => $case('&micro;', 0, 1, 'HTML-ENTITIES', null, $micro),
-            '4 args' => $case('&MICRO;', 0, 1, 'HTML-ENTITIES', function($value) {
+            '4 args' => $case('&MICRO;', 0, 1, 'HTML-ENTITIES', function ($value) {
                 return strtoupper($value);
             }, $micro),
         ];

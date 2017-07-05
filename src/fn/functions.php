@@ -15,6 +15,7 @@ namespace fn\to {
      * @param bool $strict
      * @param bool|callable $onError
      * @return array|iterable|\Traversable|false
+     * @throws \InvalidArgumentException
      */
     function iterable($candidate, $strict = true, $onError = true)
     {
@@ -169,9 +170,9 @@ namespace fn {
         }
 
         if ($encoding) {
-            $subStr = mb_substr((string) $candidate, $start, $length, $encoding);
+            $subStr = mb_substr((string)$candidate, $start, $length, $encoding);
         } else {
-            $subStr = mb_substr((string) $candidate, $start, $length);
+            $subStr = mb_substr((string)$candidate, $start, $length);
         }
 
         return $callable ? $callable($subStr) : $subStr;
