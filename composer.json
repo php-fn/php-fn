@@ -20,7 +20,7 @@
       "fn\\": ["src/fn"]
     },
     "files": [
-      "src/fn/functions.php"
+      "src/fn/autoload-files.php"
     ]
   },
   "autoload-dev": {
@@ -28,7 +28,7 @@
       "fn\\": ["tests/fn"]
     },
     "files": [
-      "tests/fn/functions.php"
+      "tests/fn/autoload-files.php"
     ]
   }
 }
