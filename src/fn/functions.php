@@ -92,9 +92,11 @@ namespace fn {
         $map = [];
         foreach (to\map($candidate, $strict === null || $strict) as $key => $sourceValue) {
             $value = call_user_func_array($strictOrCallable, [$sourceValue, &$key]);
+
             if (null === $value) {
                 continue;
             }
+
             if (!$value instanceof Map\Value) {
                 $map[$key] = $value;
                 continue;
@@ -112,7 +114,6 @@ namespace fn {
             if (isset($value->key)) {
                 $key = $value->key;
             }
-
 
             if (isset($value->value)) {
                 $sourceValue = $value->value;
