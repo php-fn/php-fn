@@ -27,6 +27,22 @@ namespace fn\test\assert {
     }
 
     /**
+     * @see Assert::assertTrue
+     */
+    function true()
+    {
+        Assert::assertTrue(...func_get_args());
+    }
+
+    /**
+     * @see Assert::assertFalse
+     */
+    function false()
+    {
+        Assert::assertFalse(...func_get_args());
+    }
+
+    /**
      * @see Assert::assertInstanceOf
      * @param string $type
      */
@@ -87,5 +103,21 @@ namespace fn\test\assert\not {
     function same()
     {
         Assert::assertNotSame(...func_get_args());
+    }
+
+    /**
+     * @see Assert::assertNotTrue
+     */
+    function true()
+    {
+        Assert::assertNotTrue(...func_get_args());
+    }
+
+    /**
+     * @see Assert::assertNotFalse
+     */
+    function false()
+    {
+        Assert::assertNotFalse(...func_get_args());
     }
 }

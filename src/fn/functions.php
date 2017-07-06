@@ -90,15 +90,35 @@ namespace fn {
         $null = map\null();
         $stop = map\stop();
         $map = [];
-        foreach (to\map($candidate, $strict === null || $strict) as $key => $value) {
-            $value = call_user_func_array($strictOrCallable, [$value, &$key]);
+        foreach (to\map($candidate, $strict === null || $strict) as $key => $sourceValue) {
+            $value = call_user_func_array($strictOrCallable, [$sourceValue, &$key]);
             if (null === $value) {
                 continue;
             }
+            if (!$value instanceof Map\Value) {
+                $map[$key] = $value;
+                continue;
+            }
+
+            if ($null === $value) {
+                $map[$key] = null;
+                continue;
+            }
+
             if ($stop === $value) {
                 break;
             }
-            $map[$key] = $null === $value ? null : $value;
+
+            if (isset($value->key)) {
+                $key = $value->key;
+            }
+
+
+            if (isset($value->value)) {
+                $sourceValue = $value->value;
+            }
+
+            $map[$key] = $sourceValue;
         }
         return $map;
     }
@@ -157,17 +177,39 @@ namespace fn {
 
 namespace fn\map {
 
+    use fn;
+
+    /**
+     * @param mixed [$value]
+     * @param mixed [$key]
+     * @param mixed [$children]
+     * @return fn\Map\Value
+     */
+    function value()
+    {
+        return new fn\Map\Value(...func_get_args());
+    }
+
+    /**
+     * @param mixed $key
+     * @return fn\Map\Value
+     */
+    function key($key)
+    {
+        return value()->andKey($key);
+    }
+
     /**
      * Returned object is used to mark the value as NULL in the @see \fn\map() function,
      * since NULL itself is used to filter/skip values
      *
-     * @return \stdClass
+     * @return fn\Map\Value
      */
     function null()
     {
         static $null;
         if (!$null) {
-            $null = new \stdClass();
+            $null = value();
         }
         return $null;
     }
@@ -175,14 +217,23 @@ namespace fn\map {
     /**
      * Returned object is used to stop the iteration in the @see \fn\map() function
      *
-     * @return \stdClass
+     * @return fn\Map\Value
      */
     function stop()
     {
         static $stop;
         if (!$stop) {
-            $stop = new \stdClass();
+            $stop = value();
         }
         return $stop;
+    }
+
+    /**
+     * @param iterable|callable $children
+     * @return fn\Map\Value
+     */
+    function children($children)
+    {
+        return value()->andChildren($children);
     }
 }

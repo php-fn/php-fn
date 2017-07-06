@@ -11,69 +11,10 @@ namespace fn;
 use fn\test\assert;
 
 /**
- * @covers \fn
+ * @covers sub()
  */
-class functionsTest extends \PHPUnit_Framework_TestCase
+class functionsSubTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @covers \fn\map\null()
-     * @covers \fn\map\stop()
-     */
-    public function testMapNullAndStop()
-    {
-        assert\same(map\null(), map\null());
-        assert\same(map\stop(), map\stop());
-        assert\not\same(map\null(), map\stop());
-        assert\equals(map\null(), map\stop());
-    }
-
-    /**
-     * @covers \fn\map()
-     */
-    public function testMap()
-    {
-        $emptyCallable = function () {
-        };
-        $message = 'Argument $candidate must be iterable';
-
-        assert\same(['key' => 'value'], map(['key' => 'value']));
-        assert\same(['key' => 'value'], map(new \ArrayObject(['key' => 'value'])));
-        assert\same([], map(null, false));
-        assert\same([], map(null, $emptyCallable, false));
-
-        assert\exception($message, function () {
-            map(null);
-        });
-        assert\exception($message, function () {
-            map(null, true);
-        });
-        assert\exception($message, function ($emptyCallable) {
-            map(null, $emptyCallable);
-        }, $emptyCallable);
-        assert\exception($message, function ($emptyCallable) {
-            map(null, $emptyCallable, true);
-        }, $emptyCallable);
-
-        assert\same(['v1' => 'k1', 'v2' => 'k2'], map(['k1' => 'v1', 'k2' => 'v2'], function ($value, &$key) {
-            $tmp = $key;
-            $key = $value;
-            return $tmp;
-        }));
-
-        assert\same([1 => null, 3 => 'd'], map(['a', 'b', 'c', 'd', 'e', 'f'], function ($value) {
-            if ($value == 'e') {
-                return map\stop();
-            }
-            if (in_array($value, ['a', 'c'])) {
-                return null;
-            }
-            return $value == 'b' ? map\null() : $value;
-        }));
-
-        assert\same([1], map('value', 'count', false));
-        assert\same(['VALUE'], map('value', $this, false));
-    }
-
     /**
      * for iterable:
      *  sub($iterable, $start)
@@ -120,7 +61,7 @@ class functionsTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider providerSubWithIterable
      *
-     * @covers       \fn\sub()
+     * @covers       sub()
      *
      * @param array $expected
      * @param array $candidate
@@ -198,7 +139,7 @@ class functionsTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider providerSubWithString
      *
-     * @covers       \fn\sub()
+     * @covers       sub()
      *
      * @param array $expected
      * @param array $candidate
@@ -216,16 +157,5 @@ class functionsTest extends \PHPUnit_Framework_TestCase
         $callableOrNull
     ) {
         assert\same($expected, sub($candidate, $start, $lengthOrCallable, $encodingOrCallable, $callableOrNull));
-    }
-
-    /**
-     * @param mixed $value
-     * @param mixed $key
-     * @return string
-     */
-    public function __invoke($value, &$key)
-    {
-        $key = strtolower($key);
-        return strtoupper($value);
     }
 }
