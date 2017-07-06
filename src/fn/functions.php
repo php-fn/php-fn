@@ -87,44 +87,20 @@ namespace fn {
             return to\map($candidate, $strictOrCallable === null || $strictOrCallable);
         }
 
-        $skip = skip();
-        $stop = skip(true);
+        $null = map\null();
+        $stop = map\stop();
         $map = [];
         foreach (to\map($candidate, $strict === null || $strict) as $key => $value) {
             $value = call_user_func_array($strictOrCallable, [$value, &$key]);
-            if ($skip === $value) {
+            if (null === $value) {
                 continue;
             }
             if ($stop === $value) {
                 break;
             }
-            $map[$key] = $value;
+            $map[$key] = $null === $value ? null : $value;
         }
         return $map;
-    }
-
-    /**
-     * Return an object to control the iteration process
-     *
-     * @param bool $all FALSE => continue loop, TRUE => break loop
-     *
-     * @return \stdClass
-     */
-    function skip($all = false)
-    {
-        static $skipSingleton, $stopSingleton;
-
-        if ($all) {
-            if (!$stopSingleton) {
-                $stopSingleton = new \stdClass();
-            }
-            return $stopSingleton;
-        }
-
-        if (!$skipSingleton) {
-            $skipSingleton = new \stdClass();
-        }
-        return $skipSingleton;
     }
 
     /**
@@ -176,5 +152,37 @@ namespace fn {
         }
 
         return $callable ? $callable($subStr) : $subStr;
+    }
+}
+
+namespace fn\map {
+
+    /**
+     * Returned object is used to mark the value as NULL in the @see \fn\map() function,
+     * since NULL itself is used to filter/skip values
+     *
+     * @return \stdClass
+     */
+    function null()
+    {
+        static $null;
+        if (!$null) {
+            $null = new \stdClass();
+        }
+        return $null;
+    }
+
+    /**
+     * Returned object is used to stop the iteration in the @see \fn\map() function
+     *
+     * @return \stdClass
+     */
+    function stop()
+    {
+        static $stop;
+        if (!$stop) {
+            $stop = new \stdClass();
+        }
+        return $stop;
     }
 }

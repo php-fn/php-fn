@@ -16,14 +16,15 @@ use fn\test\assert;
 class functionsTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers \fn\skip()
+     * @covers \fn\map\null()
+     * @covers \fn\map\stop()
      */
-    public function testSkip()
+    public function testMapNullAndStop()
     {
-        assert\same(skip(), skip());
-        assert\same(skip(), skip(false));
-        assert\not\same(skip(true), skip());
-        assert\same(skip(true), skip(true));
+        assert\same(map\null(), map\null());
+        assert\same(map\stop(), map\stop());
+        assert\not\same(map\null(), map\stop());
+        assert\equals(map\null(), map\stop());
     }
 
     /**
@@ -59,14 +60,14 @@ class functionsTest extends \PHPUnit_Framework_TestCase
             return $tmp;
         }));
 
-        assert\same([1 => 'b', 3 => 'd'], map(['a', 'b', 'c', 'd', 'e', 'f'], function ($value) {
+        assert\same([1 => null, 3 => 'd'], map(['a', 'b', 'c', 'd', 'e', 'f'], function ($value) {
             if ($value == 'e') {
-                return skip(true);
+                return map\stop();
             }
             if (in_array($value, ['a', 'c'])) {
-                return skip();
+                return null;
             }
-            return $value;
+            return $value == 'b' ? map\null() : $value;
         }));
 
         assert\same([1], map('value', 'count', false));
