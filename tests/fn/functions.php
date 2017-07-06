@@ -121,3 +121,49 @@ namespace fn\test\assert\not {
         Assert::assertNotFalse(...func_get_args());
     }
 }
+
+namespace fn\test\assert\equals {
+
+    use fn\test\assert;
+    use fn;
+
+    /**
+     * @see \PHPUnit_Framework_Assert::assertEquals
+     *
+     * @param mixed|\Exception $expected
+     * @param callable $callable
+     * @param mixed ... $args
+     */
+    function trial($expected, callable $callable)
+    {
+        $args = fn\sub(func_get_args(), 2);
+        if ($expected instanceof \Exception) {
+            assert\exception($expected, $callable, ...$args);
+        } else {
+            assert\equals($expected, $callable(...$args));
+        }
+    }
+}
+
+namespace fn\test\assert\same {
+
+    use fn\test\assert;
+    use fn;
+
+    /**
+     * @see \PHPUnit_Framework_Assert::assertSame
+     *
+     * @param mixed|\Exception $expected
+     * @param callable $callable
+     * @param mixed ... $args
+     */
+    function trial($expected, callable $callable)
+    {
+        $args = fn\sub(func_get_args(), 2);
+        if ($expected instanceof \Exception) {
+            assert\exception($expected, $callable, ...$args);
+        } else {
+            assert\same($expected, $callable(...$args));
+        }
+    }
+}
