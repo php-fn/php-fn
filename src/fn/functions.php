@@ -6,72 +6,21 @@
  * file that was distributed map this source code.
  */
 
-namespace fn\to {
-
-    /**
-     * Convert the given candidate to an iterable entity
-     *
-     * @param mixed $candidate
-     * @param bool $strict
-     * @param bool|callable $onError
-     * @return array|iterable|\Traversable|false
-     * @throws \InvalidArgumentException
-     */
-    function iterable($candidate, $strict = true, $onError = true)
-    {
-        if (is_array($candidate) || $candidate instanceof \Traversable) {
-            return $candidate;
-        }
-        if (!$strict) {
-            return (array)$candidate;
-        }
-        if ($onError) {
-            $exception = new \InvalidArgumentException('Argument $candidate must be iterable');
-            if (is_callable($onError)) {
-                return call_user_func($onError, $candidate, $exception);
-            }
-            throw $exception;
-        }
-        return false;
-    }
-
-    /**
-     * Convert the given candidate to an associative array
-     *
-     * @param mixed $candidate
-     * @param bool $strict
-     * @return array
-     */
-    function map($candidate, $strict = true)
-    {
-        if (is_array($candidate = iterable($candidate, $strict))) {
-            return $candidate;
-        }
-        return iterator_to_array($candidate, true);
-    }
-
-    /**
-     * Convert the given candidate to an array
-     *
-     * @param mixed $candidate
-     * @param bool $strict
-     * @return array
-     */
-    function values($candidate, $strict = true)
-    {
-        if (is_array($candidate = iterable($candidate, $strict))) {
-            return array_values($candidate);
-        }
-        return iterator_to_array($candidate, false);
-    }
-}
-
 namespace fn {
 
     /**
-     * Convert the given candidate to an associative array and map/filter it if a callback is passed
+     * Convert the given candidate to an associative array and map/filter its values and keys if a callback is passed
      *
-     * @see array_map
+     * supports:
+     *
+     * - value mapping
+     *  - directly (by return)
+     *  - with Value object @see map\value()
+     *
+     * - key mapping
+     *  - directly (by reference)
+     *  - with Value object @see map\key()
+     *
      * @see array_walk
      * @see array_filter
      * @see iterator_apply
@@ -236,5 +185,65 @@ namespace fn\map {
     function children($children)
     {
         return value()->andChildren($children);
+    }
+}
+
+namespace fn\to {
+
+    /**
+     * Convert the given candidate to an iterable entity
+     *
+     * @param mixed $candidate
+     * @param bool $strict
+     * @param bool|callable $onError
+     * @return array|iterable|\Traversable|false
+     * @throws \InvalidArgumentException
+     */
+    function iterable($candidate, $strict = true, $onError = true)
+    {
+        if (is_array($candidate) || $candidate instanceof \Traversable) {
+            return $candidate;
+        }
+        if (!$strict) {
+            return (array)$candidate;
+        }
+        if ($onError) {
+            $exception = new \InvalidArgumentException('Argument $candidate must be iterable');
+            if (is_callable($onError)) {
+                return call_user_func($onError, $candidate, $exception);
+            }
+            throw $exception;
+        }
+        return false;
+    }
+
+    /**
+     * Convert the given candidate to an associative array
+     *
+     * @param mixed $candidate
+     * @param bool $strict
+     * @return array
+     */
+    function map($candidate, $strict = true)
+    {
+        if (is_array($candidate = iterable($candidate, $strict))) {
+            return $candidate;
+        }
+        return iterator_to_array($candidate, true);
+    }
+
+    /**
+     * Convert the given candidate to an array
+     *
+     * @param mixed $candidate
+     * @param bool $strict
+     * @return array
+     */
+    function values($candidate, $strict = true)
+    {
+        if (is_array($candidate = iterable($candidate, $strict))) {
+            return array_values($candidate);
+        }
+        return iterator_to_array($candidate, false);
     }
 }
