@@ -31,7 +31,7 @@ class functionsToTest extends \PHPUnit_Framework_TestCase
         assert\exception('Argument $candidate must be iterable', function () {
             to\iterable('string');
         });
-        assert\same(false, to\iterable('string', true, false));
+        assert\same(null, to\iterable('string', true, false));
 
         $result = to\iterable('string', true, function ($candidate, \InvalidArgumentException $e) {
             assert\same('string', $candidate);

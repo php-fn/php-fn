@@ -197,7 +197,7 @@ namespace fn\to {
      * @param mixed $candidate
      * @param bool $strict
      * @param bool|callable $onError
-     * @return array|iterable|\Traversable|false
+     * @return array|iterable|\Traversable|null
      * @throws \InvalidArgumentException
      */
     function iterable($candidate, $strict = true, $onError = true)
@@ -208,14 +208,11 @@ namespace fn\to {
         if (!$strict) {
             return (array)$candidate;
         }
-        if ($onError) {
-            $exception = new \InvalidArgumentException('Argument $candidate must be iterable');
-            if (is_callable($onError)) {
-                return $onError($candidate, $exception);
-            }
+        $exception = new \InvalidArgumentException('Argument $candidate must be iterable');
+        if ($onError === true) {
             throw $exception;
         }
-        return false;
+        return is_callable($onError) ? $onError($candidate, $exception) : null;
     }
 
     /**
