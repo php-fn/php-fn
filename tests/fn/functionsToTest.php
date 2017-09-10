@@ -26,14 +26,14 @@ class functionsToTest extends \PHPUnit_Framework_TestCase
         assert\same($it, to\iterable($it));
         assert\equals($it, to\iterable(new \ArrayObject($ar)));
         assert\not\same($it, to\iterable(new \ArrayObject($ar)));
-        assert\same(['string'], to\iterable('string', false));
-        assert\same([], to\iterable(null, false));
+        assert\same(['string'], to\iterable('string', true));
+        assert\same([], to\iterable(null, true));
         assert\exception('Argument $candidate must be iterable', function () {
             to\iterable('string');
         });
-        assert\same(null, to\iterable('string', true, false));
+        assert\same(null, to\iterable('string', false, false));
 
-        $result = to\iterable('string', true, function ($candidate, \InvalidArgumentException $e) {
+        $result = to\iterable('string', false, function ($candidate, \InvalidArgumentException $e) {
             assert\same('string', $candidate);
             return $e;
         });
@@ -48,7 +48,7 @@ class functionsToTest extends \PHPUnit_Framework_TestCase
     {
         assert\equals(['key' => 'value'], to\map(['key' => 'value']));
         assert\equals(['key' => 'value'], to\map(new \ArrayObject(['key' => 'value'])));
-        assert\equals([], to\map(null, false));
+        assert\equals([], to\map(null, true));
         assert\exception('Argument $candidate must be iterable', function () {
             to\map(null);
         });
@@ -61,7 +61,7 @@ class functionsToTest extends \PHPUnit_Framework_TestCase
     {
         assert\equals(['value'], to\values(['key' => 'value']));
         assert\equals(['value'], to\values(new \ArrayObject(['key' => 'value'])));
-        assert\equals([], to\values(null, false));
+        assert\equals([], to\values(null, true));
         assert\exception('Argument $candidate must be iterable', function () {
             to\values(null);
         });

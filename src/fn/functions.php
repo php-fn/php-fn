@@ -26,22 +26,22 @@ namespace fn {
      * @see iterator_apply
      *
      * @param mixed $candidate
-     * @param bool|callable $strictOrCallable
-     * @param bool $strict
+     * @param bool|callable $castOrCallable
+     * @param bool $cast
      * @return array
      */
-    function map($candidate, $strictOrCallable = null, $strict = null)
+    function map($candidate, $castOrCallable = null, $cast = null)
     {
-        if (!is_callable($strictOrCallable)) {
-            return to\map($candidate, $strictOrCallable === null || $strictOrCallable);
+        if (!is_callable($castOrCallable)) {
+            return to\map($candidate, $castOrCallable);
         }
 
         $null = map\null();
         $stop = map\stop();
         $map = [];
-        $iterable = to\iterable($candidate, $strict === null || $strict);
+        $iterable = to\iterable($candidate, $cast);
         foreach ($iterable as $key => $sourceValue) {
-            $value = $strictOrCallable($sourceValue, $key);
+            $value = $castOrCallable($sourceValue, $key);
 
             if (null === $value) {
                 continue;
@@ -112,7 +112,7 @@ namespace fn {
             }
         }
 
-        if ($iterable = to\iterable($candidate, true, false)) {
+        if ($iterable = to\iterable($candidate, false, false)) {
             return map(array_slice(map($iterable), $start, $length, true), $callable);
         }
 
@@ -195,17 +195,17 @@ namespace fn\to {
      * Convert the given candidate to an iterable entity
      *
      * @param mixed $candidate
-     * @param bool $strict
+     * @param bool $cast
      * @param bool|callable $onError
      * @return array|iterable|\Traversable|null
      * @throws \InvalidArgumentException
      */
-    function iterable($candidate, $strict = true, $onError = true)
+    function iterable($candidate, $cast = false, $onError = true)
     {
         if (is_array($candidate) || $candidate instanceof \Traversable) {
             return $candidate;
         }
-        if (!$strict) {
+        if ($cast) {
             return (array)$candidate;
         }
         $exception = new \InvalidArgumentException('Argument $candidate must be iterable');
@@ -219,12 +219,12 @@ namespace fn\to {
      * Convert the given candidate to an associative array
      *
      * @param mixed $candidate
-     * @param bool $strict
+     * @param bool $cast
      * @return array
      */
-    function map($candidate, $strict = true)
+    function map($candidate, $cast = false)
     {
-        if (is_array($candidate = iterable($candidate, $strict))) {
+        if (is_array($candidate = iterable($candidate, $cast))) {
             return $candidate;
         }
         return iterator_to_array($candidate, true);
@@ -234,12 +234,12 @@ namespace fn\to {
      * Convert the given candidate to an array
      *
      * @param mixed $candidate
-     * @param bool $strict
+     * @param bool $cast
      * @return array
      */
-    function values($candidate, $strict = true)
+    function values($candidate, $cast = false)
     {
-        if (is_array($candidate = iterable($candidate, $strict))) {
+        if (is_array($candidate = iterable($candidate, $cast))) {
             return array_values($candidate);
         }
         return iterator_to_array($candidate, false);

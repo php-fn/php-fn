@@ -26,20 +26,20 @@ class functionsMapTest extends \PHPUnit_Framework_TestCase
 
         assert\same(['key' => 'value'], map(['key' => 'value']));
         assert\same(['key' => 'value'], map(new \ArrayObject(['key' => 'value'])));
-        assert\same([], map(null, false));
-        assert\same([], map(null, $emptyCallable, false));
+        assert\same([], map(null, true));
+        assert\same([], map(null, $emptyCallable, true));
 
         assert\exception($message, function () {
             map(null);
         });
         assert\exception($message, function () {
-            map(null, true);
+            map(null, false);
         });
         assert\exception($message, function ($emptyCallable) {
             map(null, $emptyCallable);
         }, $emptyCallable);
         assert\exception($message, function ($emptyCallable) {
-            map(null, $emptyCallable, true);
+            map(null, $emptyCallable, false);
         }, $emptyCallable);
 
         assert\same(['v1' => 'k1', 'v2' => 'k2'], map(['k1' => 'v1', 'k2' => 'v2'], function ($value, &$key) {
@@ -58,8 +58,8 @@ class functionsMapTest extends \PHPUnit_Framework_TestCase
             return $value === 'b' ? map\null() : $value;
         }));
 
-        assert\same([1], map('value', 'count', false));
-        assert\same(['VALUE'], map('value', $this, false));
+        assert\same([1], map('value', 'count', true));
+        assert\same(['VALUE'], map('value', $this, true));
 
         assert\same(
             ['VALUE', 'KEY' => 'key', 'pair' => 'flip', 'no' => 'changes'],
