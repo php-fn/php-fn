@@ -49,13 +49,13 @@ class functionsMapTest extends \PHPUnit_Framework_TestCase
         }));
 
         assert\same([1 => null, 3 => 'd'], map(['a', 'b', 'c', 'd', 'e', 'f'], function ($value) {
-            if ($value == 'e') {
+            if ($value === 'e') {
                 return map\stop();
             }
-            if (in_array($value, ['a', 'c'])) {
+            if (in_array($value, ['a', 'c'], true)) {
                 return null;
             }
-            return $value == 'b' ? map\null() : $value;
+            return $value === 'b' ? map\null() : $value;
         }));
 
         assert\same([1], map('value', 'count', false));
@@ -64,13 +64,13 @@ class functionsMapTest extends \PHPUnit_Framework_TestCase
         assert\same(
             ['VALUE', 'KEY' => 'key', 'pair' => 'flip', 'no' => 'changes'],
             map(['value', 'key', 'flip' => 'pair', 'no' => 'changes'], function($value, $key) {
-                if ($value == 'value') {
+                if ($value === 'value') {
                     return map\value('VALUE');
                 }
-                if ($value == 'key') {
+                if ($value === 'key') {
                     return map\key('KEY');
                 }
-                if ($key == 'flip') {
+                if ($key === 'flip') {
                     return map\value($key)->andKey($value);
                 }
                 return map\value();

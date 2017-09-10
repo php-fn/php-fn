@@ -39,8 +39,9 @@ namespace fn {
         $null = map\null();
         $stop = map\stop();
         $map = [];
-        foreach (to\map($candidate, $strict === null || $strict) as $key => $sourceValue) {
-            $value = call_user_func_array($strictOrCallable, [$sourceValue, &$key]);
+        $iterable = to\iterable($candidate, $strict === null || $strict);
+        foreach ($iterable as $key => $sourceValue) {
+            $value = $strictOrCallable($sourceValue, $key);
 
             if (null === $value) {
                 continue;
@@ -210,7 +211,7 @@ namespace fn\to {
         if ($onError) {
             $exception = new \InvalidArgumentException('Argument $candidate must be iterable');
             if (is_callable($onError)) {
-                return call_user_func($onError, $candidate, $exception);
+                return $onError($candidate, $exception);
             }
             throw $exception;
         }
