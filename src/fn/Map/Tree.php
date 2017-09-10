@@ -19,10 +19,10 @@ class Tree implements \OuterIterator, \RecursiveIterator, \Countable
     private $needsNext = true;
     private $needsMap = true;
 
-    private $valid = null;
-    private $key = null;
-    private $current = null;
-    private $children = null;
+    private $valid;
+    private $key;
+    private $current;
+    private $children;
 
     /**
      * @var iterable|\Traversable
@@ -46,6 +46,7 @@ class Tree implements \OuterIterator, \RecursiveIterator, \Countable
 
     /**
      * @inheritdoc
+     * @throws \RuntimeException
      */
     public function getInnerIterator()
     {
@@ -75,7 +76,7 @@ class Tree implements \OuterIterator, \RecursiveIterator, \Countable
     /**
      * @return \RecursiveIterator
      */
-    private function children()
+    private function getChildrenIterator()
     {
         if ($this->mapper && $this->doMap() && $this->children) {
             if (is_callable($this->children)) {
@@ -94,11 +95,8 @@ class Tree implements \OuterIterator, \RecursiveIterator, \Countable
      */
     public function hasChildren()
     {
-        $inner = $this->getInnerIterator();
-        if ($inner instanceof \RecursiveIterator) {
-            return $inner->hasChildren();
-        }
-        return $this->children() && true;
+        $iter = $this->getInnerIterator();
+        return ($iter instanceof \RecursiveIterator && $iter->hasChildren()) || $this->getChildrenIterator();
     }
 
     /**
@@ -106,12 +104,12 @@ class Tree implements \OuterIterator, \RecursiveIterator, \Countable
      */
     public function getChildren()
     {
-        $inner = $this->getInnerIterator();
-        if ($inner instanceof \RecursiveIterator) {
-            return $inner->getChildren();
+        $iter = $this->getInnerIterator();
+        if ($iter instanceof \RecursiveIterator) {
+            return $iter->getChildren();
         }
-        if ($children = $this->children()) {
-            return $children;
+        if ($childrenIterator = $this->getChildrenIterator()) {
+            return $childrenIterator;
         }
         static $empty;
         if (!$empty) {
@@ -202,16 +200,16 @@ class Tree implements \OuterIterator, \RecursiveIterator, \Countable
             return $this->valid;
         }
 
-        $inner = $this->getInnerIterator();
+        $iter = $this->getInnerIterator();
         while (true) {
-            if (!$this->validateInner($inner)) {
+            if (!$this->validateInner($iter)) {
                 return false;
             }
             if ($this->needsNext) {
                 $this->needsNext = false;
                 $this->needsMap = true;
-                $inner->next();
-                if (!$this->validateInner($inner)) {
+                $iter->next();
+                if (!$this->validateInner($iter)) {
                     return false;
                 }
             }
@@ -220,30 +218,30 @@ class Tree implements \OuterIterator, \RecursiveIterator, \Countable
             }
             $this->needsMap = false;
 
-            $value = $current = $inner->current();
-            $key = $inner->key();
+            $value = $curValue = $iter->current();
+            $curKey = $iter->key();
 
-            $current = call_user_func_array($this->mapper, [$current, &$key, $this]);
+            $curValue = call_user_func_array($this->mapper, [$curValue, &$curKey, $this]);
 
-            if ($current === null) {
+            if ($curValue === null) {
                 $this->needsNext = true;
                 continue;
             }
 
-            if ($current === $stop) {
-                $this->validateInner($inner);
+            if ($curValue === $stop) {
+                $this->validateInner($iter);
                 $this->valid = $stop;
                 return false;
             }
 
-            if ($current instanceof Value) {
-                $key = isset($current->key) ? $current->key : $key;
-                $this->children = isset($current->children) ? $current->children : null;
-                $current = isset($current->value) ? $current->value : $value;
+            if ($curValue instanceof Value) {
+                $curKey = isset($curValue->key) ? $curValue->key : $curKey;
+                $this->children = isset($curValue->children) ? $curValue->children : null;
+                $curValue = isset($curValue->value) ? $curValue->value : $value;
             }
 
-            $this->key = $key;
-            $this->current = $current;
+            $this->key = $curKey;
+            $this->current = $curValue;
             break;
         }
         return true;

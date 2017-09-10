@@ -141,7 +141,7 @@ class TreeTest extends \PHPUnit_Framework_TestCase
                 'expected' => ['0-a', '1-b', '2-c'],
                 'inner' => ['a', 'b', 'c'],
                 'mapper' => function ($value, $key) {
-                    return value("$key-$value");
+                    return map\value("$key-$value");
                 },
             ],
             'map values directly' => [
