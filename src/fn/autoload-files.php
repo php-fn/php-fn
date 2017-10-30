@@ -6,6 +6,12 @@
  * file that was distributed map this source code.
  */
 
-if (!function_exists('\fn\map')) {
-    require_once __DIR__ . '/functions.php';
+foreach ([
+    '\fn\to\map'    => '/functions-to.php',
+    '\fn\map\value' => '/functions-map.php',
+    '\fn\map'       => '/functions.php',
+] as $fnc => $file) {
+    if (!function_exists($fnc)) {
+        require_once __DIR__. $file;
+    }
 }
