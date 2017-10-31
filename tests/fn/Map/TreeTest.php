@@ -8,15 +8,18 @@
 
 namespace fn\Map;
 
-use fn\test\assert;
+use ArrayIterator;
 use fn;
-use fn\map;
-use \RecursiveIteratorIterator as Rec;
+use fn\test\assert;
+use PHPUnit_Framework_TestCase;
+use RecursiveArrayIterator;
+use RecursiveIteratorIterator as Rec;
+use RuntimeException;
 
 /**
  * @covers Tree
  */
-class TreeTest extends \PHPUnit_Framework_TestCase
+class TreeTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @return array
@@ -26,14 +29,14 @@ class TreeTest extends \PHPUnit_Framework_TestCase
         return [
             'inner iterator is recursive' => [
                 'expected' => ['a', ['a-0'], 'a-0', 'b', ['b-0', 'b-1'], 'b-0', 'b-1'],
-                'inner' => new \RecursiveArrayIterator(['a', ['a-0'], 'b', ['b-0', 'b-1']]),
+                'inner' => new RecursiveArrayIterator(['a', ['a-0'], 'b', ['b-0', 'b-1']]),
                 'mapper' => null,
             ],
             'Map::andChildren with callable' => [
                 'expected' => ['a', 'a-0', 'b', 'b-0', 'b-1', 'c', 'c-0', 'c-1', 'c-2'],
                 'inner' => ['a', 'b', 'c'],
                 'mapper' => function () {
-                    return map\children(function ($value, $key) {
+                    return fn\map\children(function ($value, $key) {
                         $children = [];
                         for ($i = 0; $i <= $key; $i++) {
                             $children[] = "$value-$i";
@@ -50,7 +53,7 @@ class TreeTest extends \PHPUnit_Framework_TestCase
                     for ($i = 0; $i <= $key; $i++) {
                         $children[] = "$value-$i";
                     }
-                    return map\children($children);
+                    return fn\map\children($children);
                 },
             ],
             'no mapper' => [
@@ -64,7 +67,6 @@ class TreeTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider providerRecursiveIteration
      *
-     * @covers       Tree::children
      * @covers       Tree::getChildren
      * @covers       Tree::hasChildren
      * @covers       Tree::doMap
@@ -73,9 +75,12 @@ class TreeTest extends \PHPUnit_Framework_TestCase
      * @param iterable|\Traversable $inner
      * @param callable|null $mapper
      */
-    public function testRecursiveIteration($expected, $inner, $mapper)
+    public function testrecursiveiteration($expected, $inner, $mapper)
     {
         assert\equals($expected, fn\to\values(new Rec(new Tree($inner, $mapper), Rec::SELF_FIRST)));
+        assert\equals($expected, fn\to\values(new Rec(new Tree(function() use($inner) {
+            return $inner;
+        }, $mapper), Rec::SELF_FIRST)));
     }
 
     /**
@@ -88,18 +93,18 @@ class TreeTest extends \PHPUnit_Framework_TestCase
                 'expected' => ['directly-key' => 'directly-value', 'map-key' => 'map-value', 3 => 'd'],
                 'inner' => ['a', 'b', 'c', 'd', 'e', 'f'],
                 'mapper' => function ($value, &$key) {
-                    if ($value == 'e') {
-                        return map\stop();
+                    if ($value === 'e') {
+                        return fn\map\stop();
                     }
-                    if ($value == 'c') {
+                    if ($value === 'c') {
                         return null;
                     }
-                    if ($value == 'a') {
+                    if ($value === 'a') {
                         $key = 'directly-key';
                         return 'directly-value';
                     }
-                    if ($value == 'b') {
-                        return map\value('map-value', 'map-key');
+                    if ($value === 'b') {
+                        return fn\map\value('map-value', 'map-key');
                     }
 
                     return $value;
@@ -109,8 +114,8 @@ class TreeTest extends \PHPUnit_Framework_TestCase
                 'expected' => ['a', 'b', 'c'],
                 'inner' => ['a', 'b', 'c', 'd', 'e', 'f'],
                 'mapper' => function ($value) {
-                    if ($value == 'd') {
-                        return map\stop();
+                    if ($value === 'd') {
+                        return fn\map\stop();
                     }
                     return $value;
                 },
@@ -119,14 +124,14 @@ class TreeTest extends \PHPUnit_Framework_TestCase
                 'expected' => ['a', 3 => 'd', 5 => 'f'],
                 'inner' => ['a', 'b', 'c', 'd', 'e', 'f'],
                 'mapper' => function ($value) {
-                    return in_array($value, ['b', 'c', 'e']) ? null : $value;
+                    return in_array($value, ['b', 'c', 'e'], true) ? null : $value;
                 },
             ],
             'map keys with Value object' => [
                 'expected' => ['0-a' => 'a', '1-b' => 'b', '2-c' => 'c'],
                 'inner' => ['a', 'b', 'c'],
                 'mapper' => function ($value, $key) {
-                    return map\key("$key-$value");
+                    return fn\map\key("$key-$value");
                 },
             ],
             'map keys directly' => [
@@ -141,7 +146,7 @@ class TreeTest extends \PHPUnit_Framework_TestCase
                 'expected' => ['0-a', '1-b', '2-c'],
                 'inner' => ['a', 'b', 'c'],
                 'mapper' => function ($value, $key) {
-                    return map\value("$key-$value");
+                    return fn\map\value("$key-$value");
                 },
             ],
             'map values directly' => [
@@ -154,7 +159,7 @@ class TreeTest extends \PHPUnit_Framework_TestCase
             ],
             'simple iterator' => [
                 'expected' => ['a' => 'a', 'b' => ['c' => 'd']],
-                'inner' => new \ArrayIterator(['a' => 'a', 'b' => ['c' => 'd']]),
+                'inner' => new ArrayIterator(['a' => 'a', 'b' => ['c' => 'd']]),
                 'mapper' => null,
             ],
             'simple array' => [
@@ -168,7 +173,7 @@ class TreeTest extends \PHPUnit_Framework_TestCase
                 'mapper' => null,
             ],
             'null => exception' => [
-                'expected' => new \RuntimeException('Property $inner must be iterable'),
+                'expected' => new RuntimeException('Property $data must be iterable'),
                 'inner' => null,
                 'mapper' => null,
             ],
@@ -194,5 +199,11 @@ class TreeTest extends \PHPUnit_Framework_TestCase
         assert\equals\trial($expected, function($iterator) {
             return fn\map($iterator);
         }, new Tree($inner, $mapper));
+
+        assert\equals\trial($expected, function($iterator) {
+            return fn\map($iterator);
+        }, new Tree(function() use($inner) {
+            return $inner;
+        }, $mapper));
     }
 }
