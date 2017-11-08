@@ -13,7 +13,7 @@ use IteratorAggregate;
 
 /**
  */
-class Map implements IteratorAggregate, Countable
+class Fn implements IteratorAggregate, Countable
 {
     /**
      * @var Map\Tree
