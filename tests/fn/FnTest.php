@@ -37,6 +37,29 @@ class FnTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers Fn::offsetExists
+     * @covers Fn::offsetGet
+     * @covers Fn::offsetSet
+     * @covers Fn::offsetUnset
+     */
+    public function testArrayAccess()
+    {
+        $fn = new Fn(['a' => 'A']);
+        assert\true(isset($fn['a']));
+        assert\equals('A', $fn['a']);
+        assert\false(isset($fn['b']));
+        $fn['b'] = 'B';
+        assert\true(isset($fn['b']));
+        assert\equals('B', $fn['b']);
+        unset($fn['a']);
+        assert\false(isset($fn['a']));
+        assert\exception(new \InvalidArgumentException('a'), function() use($fn) {
+           $fn['a'];
+        });
+        assert\same(['b' => 'B', 'c' => 'C'], map($fn->replace(['c' => 'C'])));
+    }
+
+    /**
      * @covers Fn::map
      */
     public function testMap()

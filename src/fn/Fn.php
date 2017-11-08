@@ -8,17 +8,23 @@
 
 namespace fn;
 
+use ArrayAccess;
 use Countable;
 use IteratorAggregate;
 
 /**
  */
-class Fn implements IteratorAggregate, Countable
+class Fn implements IteratorAggregate, Countable, ArrayAccess
 {
     /**
      * @var Map\Tree
      */
-    private $inner;
+    private $iter;
+
+    /**
+     * @var array
+     */
+    private $data;
 
     /**
      * @param iterable $iterable
@@ -26,7 +32,7 @@ class Fn implements IteratorAggregate, Countable
      */
     public function __construct($iterable = null, callable $mapper = null)
     {
-        $this->inner = new Map\Tree($iterable ?: [], $mapper);
+        $this->iter = new Map\Tree($iterable ?: [], $mapper);
     }
 
     /**
@@ -34,7 +40,7 @@ class Fn implements IteratorAggregate, Countable
      */
     public function getIterator()
     {
-        return $this->inner;
+        return $this->data ? new Map\Tree($this->data) : $this->iter;
     }
 
     /**
@@ -42,7 +48,54 @@ class Fn implements IteratorAggregate, Countable
      */
     public function count()
     {
-        return $this->inner->count();
+        return $this->getIterator()->count();
+    }
+
+    /**
+     * @return array
+     */
+    public function __invoke()
+    {
+        return $this->data ?: $this->data = map($this);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function offsetExists($offset)
+    {
+        $this();
+        return isset($this->data[$offset]) || array_key_exists($offset, $this->data);
+    }
+
+    /**
+     * @inheritdoc
+     * @throws \InvalidArgumentException
+     */
+    public function offsetGet($offset)
+    {
+        if ($this->offsetExists($offset)) {
+            return $this->data[$offset];
+        }
+        throw new \InvalidArgumentException($offset);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function offsetSet($offset, $value)
+    {
+        $this();
+        $this->data[$offset] = $value;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function offsetUnset($offset)
+    {
+        $this();
+        unset($this->data[$offset]);
     }
 
     /**
@@ -68,7 +121,7 @@ class Fn implements IteratorAggregate, Countable
     public function keys(callable ...$mappers)
     {
         $counter = 0;
-        return (new static($this->inner, function($value, $key) use(&$counter) {
+        return (new static($this->getIterator(), function($value, $key) use(&$counter) {
             return map\value($key)->andKey($counter++);
         }))->map(...$mappers);
     }
