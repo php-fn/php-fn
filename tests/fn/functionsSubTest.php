@@ -71,12 +71,14 @@ class functionsSubTest extends \PHPUnit_Framework_TestCase
      */
     public function testSubWithIterable($expected, $candidate, $start, $lengthOrCallable, $encodingOrCallable)
     {
-        assert\same($expected, sub($candidate, $start, $lengthOrCallable, $encodingOrCallable), 'array');
+        assert\same($expected, sub($candidate, $start, $lengthOrCallable, $encodingOrCallable), 'candidate as array');
         assert\same(
             $expected,
             sub(new \ArrayObject($candidate), $start, $lengthOrCallable, $encodingOrCallable),
-            'iterator'
+            'candidate as iterator'
         );
+
+        assert\same([], sub([], $start, $lengthOrCallable, $encodingOrCallable), 'empty candidate');
     }
 
     /**
@@ -157,5 +159,6 @@ class functionsSubTest extends \PHPUnit_Framework_TestCase
         $callableOrNull
     ) {
         assert\same($expected, sub($candidate, $start, $lengthOrCallable, $encodingOrCallable, $callableOrNull));
+        assert\same('', sub('', $start, $lengthOrCallable, $encodingOrCallable, $callableOrNull));
     }
 }

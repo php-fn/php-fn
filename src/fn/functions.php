@@ -112,7 +112,7 @@ function sub($candidate, $start, $lengthOrCallable = null, $encodingOrCallable =
         }
     }
 
-    if ($iterable = to\iterable($candidate, false, false)) {
+    if (($iterable = to\iterable($candidate, false, false)) || is_array($iterable)) {
         return map(array_slice(map($iterable), $start, $length, true), $callable);
     }
 
