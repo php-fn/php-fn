@@ -42,6 +42,7 @@ class Fn implements IteratorAggregate, Countable, ArrayAccess
     /**
      * @param string $property
      * @return array
+     * @throws LogicException
      */
     public function __get($property)
     {
@@ -215,5 +216,17 @@ class Fn implements IteratorAggregate, Countable, ArrayAccess
     public function diff(...$iterables)
     {
         return new static(new Map\Lazy(self::variadic('array_diff', $this, ...$iterables)));
+    }
+
+    /**
+     * @param int $start
+     * @param int $length
+     * @return static
+     */
+    public function sub($start, $length = null)
+    {
+        return new static(new Map\Lazy(function () use($start, $length) {
+            return sub($this, $start, $length);
+        }));
     }
 }

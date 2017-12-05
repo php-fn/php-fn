@@ -139,6 +139,16 @@ class FnTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers Fn::sub
+     */
+    public function testSub()
+    {
+        $map = $this->fn(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c'])->sub(1, -1);
+        assert\type(Fn::class, $map);
+        assert\same(['a' => 'a', 'b' => 'b'], $map->map);
+    }
+
+    /**
      * @covers Fn::__get
      * @covers Fn::__isset
      * @covers Fn::__set
