@@ -9,6 +9,7 @@
 namespace fn;
 
 use fn\test\assert;
+use LogicException;
 use Traversable;
 
 /**
@@ -135,5 +136,48 @@ class FnTest extends \PHPUnit_Framework_TestCase
         );
         assert\type(Fn::class, $map);
         assert\equals(['a' => 'a', 'c' => 'c'], map($map));
+    }
+
+    /**
+     * @covers Fn::__get
+     * @covers Fn::__isset
+     * @covers Fn::__set
+     * @covers Fn::__unset
+     */
+    public function testProperties()
+    {
+        $data = ['a' => 'A', 'b' => 'B', 'c' => 'C'];
+        $map = $this->fn($data);
+
+        assert\same\trial(new LogicException('unknown'), function() use($map) {
+            $map->unknown;
+        });
+
+        assert\same\trial(new LogicException('values'), function() use($map) {
+            $property = 'values';
+            $map->$property = null;
+        });
+        assert\same\trial(new LogicException('keys'), function() use($map) {
+            $property = 'keys';
+            unset($map->$property);
+        });
+
+        assert\false(isset($map->unknown));
+        assert\true(isset($map->map));
+        assert\true(isset($map->values));
+        assert\true(isset($map->keys));
+
+        assert\same($data, $map->map);
+        assert\same(array_values($data), $map->values);
+        assert\same(array_keys($data), $map->keys);
+
+        $map['a'] = '-';
+        unset($map['b']);
+        $map['d'] = 'D';
+
+        $expected = ['a' => '-', 'c' => 'C', 'd' => 'D'];
+        assert\same($expected, $map->map);
+        assert\same(array_values($expected), $map->values);
+        assert\same(array_keys($expected), $map->keys);
     }
 }

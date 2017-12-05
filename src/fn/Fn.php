@@ -11,8 +11,12 @@ namespace fn;
 use ArrayAccess;
 use Countable;
 use IteratorAggregate;
+use LogicException;
 
 /**
+ * @property-read array $keys
+ * @property-read array $map
+ * @property-read array $values
  */
 class Fn implements IteratorAggregate, Countable, ArrayAccess
 {
@@ -33,6 +37,52 @@ class Fn implements IteratorAggregate, Countable, ArrayAccess
     public function __construct($iterable = null, callable $mapper = null)
     {
         $this->iter = new Map\Tree($iterable ?: [], $mapper);
+    }
+
+    /**
+     * @param string $property
+     * @return array
+     */
+    public function __get($property)
+    {
+        switch($property) {
+            case 'keys':
+                return map($this->keys());
+            case 'map':
+                return $this();
+            case 'values':
+                return toValues($this());
+            default:
+                throw new LogicException($property);
+        }
+    }
+
+    /**
+     * @param string $property
+     * @return bool
+     */
+    public function __isset($property)
+    {
+        return in_array($property, ['keys', 'map', 'values'], true);
+    }
+
+    /**
+     * @param string $property
+     * @param mixed $value
+     * @throws LogicException
+     */
+    public function __set($property, $value)
+    {
+        throw new LogicException($property);
+    }
+
+    /**
+     * @param string $property
+     * @throws LogicException
+     */
+    public function __unset($property)
+    {
+        throw new LogicException($property);
     }
 
     /**
