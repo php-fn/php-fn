@@ -196,10 +196,26 @@ class FnTest extends \PHPUnit_Framework_TestCase
      */
     public function testHas()
     {
-        $map = $this->fn(['1', 'a', 'b', 'c']);
+        $map = $this->fn(['a', '1']);
+        assert\true($map->has('a'));
         assert\true($map->has('1'));
         assert\false($map->has(1));
-        assert\true($map->has('c', 'a'));
-        assert\false($map->has('c', 'A'));
+        assert\true($map->has(1, false));
+        assert\false($map->has('A'));
+        assert\false($map->has('A', false));
+    }
+
+    /**
+     * @covers Fn::search
+     */
+    public function testSearch()
+    {
+        $map = $this->fn(['a', '1']);
+        assert\same(0, $map->search('a'));
+        assert\same(1, $map->search('1'));
+        assert\same(false, $map->search(1));
+        assert\same(1, $map->search(1, false));
+        assert\same(false, $map->search('A'));
+        assert\same(false, $map->search('A', false));
     }
 }

@@ -231,17 +231,22 @@ class Fn implements IteratorAggregate, Countable, ArrayAccess
     }
 
     /**
-     * @param mixed ...$needle
+     * @param mixed $needle
+     * @param bool $strict
      * @return bool
      */
-    public function has(...$needle)
+    public function has($needle, $strict = true)
     {
-        $array = $this();
-        foreach ($needle as $item) {
-            if (!in_array($item, $array, true)) {
-                return false;
-            }
-        }
-        return true;
+        return in_array($needle, $this(), $strict);
+    }
+
+    /**
+     * @param mixed $needle
+     * @param bool $strict
+     * @return false|int|string
+     */
+    public function search($needle, $strict = true)
+    {
+        return array_search($needle, $this(), $strict);
     }
 }
