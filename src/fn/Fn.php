@@ -229,4 +229,19 @@ class Fn implements IteratorAggregate, Countable, ArrayAccess
             return sub($this, $start, $length);
         }));
     }
+
+    /**
+     * @param mixed ...$needle
+     * @return bool
+     */
+    public function has(...$needle)
+    {
+        $array = $this();
+        foreach ($needle as $item) {
+            if (!in_array($item, $array, true)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

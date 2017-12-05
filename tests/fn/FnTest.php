@@ -190,4 +190,16 @@ class FnTest extends \PHPUnit_Framework_TestCase
         assert\same(array_values($expected), $map->values);
         assert\same(array_keys($expected), $map->keys);
     }
+
+    /**
+     * @covers Fn::has
+     */
+    public function testHas()
+    {
+        $map = $this->fn(['1', 'a', 'b', 'c']);
+        assert\true($map->has('1'));
+        assert\false($map->has(1));
+        assert\true($map->has('c', 'a'));
+        assert\false($map->has('c', 'A'));
+    }
 }
