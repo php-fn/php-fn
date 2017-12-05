@@ -11,29 +11,28 @@ namespace fn;
 use fn\test\assert;
 
 /**
- * @covers \fn\to
  */
 class functionsToTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers to\iterable()
+     * @covers toIterable()
      */
     public function testToIterable()
     {
         $ar = [true];
         $it = new \ArrayObject($ar);
-        assert\same($ar, to\iterable([true]));
-        assert\same($it, to\iterable($it));
-        assert\equals($it, to\iterable(new \ArrayObject($ar)));
-        assert\not\same($it, to\iterable(new \ArrayObject($ar)));
-        assert\same(['string'], to\iterable('string', true));
-        assert\same([], to\iterable(null, true));
+        assert\same($ar, toIterable([true]));
+        assert\same($it, toIterable($it));
+        assert\equals($it, toIterable(new \ArrayObject($ar)));
+        assert\not\same($it, toIterable(new \ArrayObject($ar)));
+        assert\same(['string'], toIterable('string', true));
+        assert\same([], toIterable(null, true));
         assert\exception('Argument $candidate must be iterable', function () {
-            to\iterable('string');
+            toIterable('string');
         });
-        assert\same(null, to\iterable('string', false, false));
+        assert\same(null, toIterable('string', false, false));
 
-        $result = to\iterable('string', false, function ($candidate, \InvalidArgumentException $e) {
+        $result = toIterable('string', false, function ($candidate, \InvalidArgumentException $e) {
             assert\same('string', $candidate);
             return $e;
         });
@@ -42,28 +41,28 @@ class functionsToTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers to\map()
+     * @covers toMap()
      */
     public function testToMap()
     {
-        assert\equals(['key' => 'value'], to\map(['key' => 'value']));
-        assert\equals(['key' => 'value'], to\map(new \ArrayObject(['key' => 'value'])));
-        assert\equals([], to\map(null, true));
+        assert\equals(['key' => 'value'], toMap(['key' => 'value']));
+        assert\equals(['key' => 'value'], toMap(new \ArrayObject(['key' => 'value'])));
+        assert\equals([], toMap(null, true));
         assert\exception('Argument $candidate must be iterable', function () {
-            to\map(null);
+            toMap(null);
         });
     }
 
     /**
-     * @covers to\values()
+     * @covers toValues()
      */
     public function testToValues()
     {
-        assert\equals(['value'], to\values(['key' => 'value']));
-        assert\equals(['value'], to\values(new \ArrayObject(['key' => 'value'])));
-        assert\equals([], to\values(null, true));
+        assert\equals(['value'], toValues(['key' => 'value']));
+        assert\equals(['value'], toValues(new \ArrayObject(['key' => 'value'])));
+        assert\equals([], toValues(null, true));
         assert\exception('Argument $candidate must be iterable', function () {
-            to\values(null);
+            toValues(null);
         });
     }
 }

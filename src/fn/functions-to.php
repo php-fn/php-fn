@@ -6,7 +6,7 @@
  * file that was distributed with this source code.
  */
 
-namespace fn\to;
+namespace fn;
 
 /**
  * Convert the given candidate to an iterable entity
@@ -17,9 +17,9 @@ namespace fn\to;
  * @return array|iterable|\Traversable|null
  * @throws \InvalidArgumentException
  */
-function iterable($candidate, $cast = false, $onError = true)
+function toIterable($candidate, $cast = false, $onError = true)
 {
-    if (is_array($candidate) || $candidate instanceof \Traversable) {
+    if (isIterable($candidate)) {
         return $candidate;
     }
     if ($cast) {
@@ -35,13 +35,13 @@ function iterable($candidate, $cast = false, $onError = true)
 /**
  * Convert the given candidate to an associative array
  *
- * @param mixed $candidate
+ * @param iterable|mixed $candidate
  * @param bool $cast
  * @return array
  */
-function map($candidate, $cast = false)
+function toMap($candidate, $cast = false)
 {
-    if (is_array($candidate = iterable($candidate, $cast))) {
+    if (is_array($candidate = toIterable($candidate, $cast))) {
         return $candidate;
     }
     return iterator_to_array($candidate);
@@ -54,9 +54,9 @@ function map($candidate, $cast = false)
  * @param bool $cast
  * @return array
  */
-function values($candidate, $cast = false)
+function toValues($candidate, $cast = false)
 {
-    if (is_array($candidate = iterable($candidate, $cast))) {
+    if (is_array($candidate = toIterable($candidate, $cast))) {
         return array_values($candidate);
     }
     return iterator_to_array($candidate, false);

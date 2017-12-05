@@ -33,13 +33,13 @@ namespace fn;
 function map($candidate, $castOrCallable = null, $cast = null)
 {
     if (!is_callable($castOrCallable)) {
-        return to\map($candidate, $castOrCallable);
+        return toMap($candidate, $castOrCallable);
     }
 
     $null = map\null();
     $stop = map\stop();
     $map = [];
-    $iterable = to\iterable($candidate, $cast);
+    $iterable = toIterable($candidate, $cast);
     foreach ($iterable as $key => $sourceValue) {
         $value = $castOrCallable($sourceValue, $key);
 
@@ -112,7 +112,7 @@ function sub($candidate, $start, $lengthOrCallable = null, $encodingOrCallable =
         }
     }
 
-    if (($iterable = to\iterable($candidate, false, false)) || is_array($iterable)) {
+    if (($iterable = toIterable($candidate, false, false)) || is_array($iterable)) {
         return map(array_slice(map($iterable), $start, $length, true), $callable);
     }
 
