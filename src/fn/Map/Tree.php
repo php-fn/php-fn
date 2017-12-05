@@ -12,22 +12,15 @@ use ArrayIterator;
 use Countable;
 use fn;
 use Iterator;
-use IteratorIterator;
-use OuterIterator;
+use IteratorAggregate;
 use RecursiveIterator;
 use RuntimeException;
-use Traversable;
 
 /**
  * Consolidates implementation of SPL array_* functions
  */
-class Tree implements OuterIterator, RecursiveIterator, Countable
+class Tree implements RecursiveIterator, Countable
 {
-    /**
-     * @var iterable|Traversable|callable
-     */
-    protected $data;
-
     /**
      * @var callable
      */
@@ -43,12 +36,12 @@ class Tree implements OuterIterator, RecursiveIterator, Countable
     private $children;
 
     /**
-     * @param iterable|Traversable|callable $data
+     * @param iterable|\Traversable $inner
      * @param callable|null $mapper
      */
-    public function __construct($data, callable $mapper = null)
+    public function __construct($inner, callable $mapper = null)
     {
-        $this->data = $data;
+        $this->inner = $inner;
         $this->mapper = $mapper;
     }
 
@@ -70,25 +63,27 @@ class Tree implements OuterIterator, RecursiveIterator, Countable
     }
 
     /**
-     * @inheritdoc
+     * @return Iterator
      * @throws RuntimeException
      */
     public function getInnerIterator()
     {
-        if ($this->inner) {
+        if ($this->inner instanceof Iterator) {
             return $this->inner;
         }
-        $iter = is_callable($this->data) ? call_user_func($this->data) : $this->data;
-        if ($iter instanceof Iterator) {
-            $this->inner = $iter;
-        } else if (is_array($iter)) {
-            $this->inner = new ArrayIterator($iter);
-        } else if (!$iter instanceof Iterator && $iter instanceof Traversable) {
-            $this->inner = new IteratorIterator($iter);
-        } else {
-            throw new RuntimeException('Property $data must be iterable');
+
+        if (is_array($this->inner)) {
+            return $this->inner = new ArrayIterator($this->inner);
         }
-        return $this->inner;
+
+        if ($this->inner instanceof IteratorAggregate) {
+            $this->inner = $this->inner->getIterator();
+        }
+
+        if ($this->inner instanceof Iterator) {
+            return $this->inner;
+        }
+        throw new RuntimeException('Property $inner must be iterable');
     }
 
     /**

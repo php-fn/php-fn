@@ -78,9 +78,9 @@ class TreeTest extends PHPUnit_Framework_TestCase
     public function testRecursiveIteration($expected, $inner, $mapper)
     {
         assert\equals($expected, fn\toValues(new Rec(new Tree($inner, $mapper), Rec::SELF_FIRST)));
-        assert\equals($expected, fn\toValues(new Rec(new Tree(function() use($inner) {
+        assert\equals($expected, fn\toValues(new Rec(new Tree(new Lazy(function() use($inner) {
             return $inner;
-        }, $mapper), Rec::SELF_FIRST)));
+        }), $mapper), Rec::SELF_FIRST)));
     }
 
     /**
@@ -173,7 +173,7 @@ class TreeTest extends PHPUnit_Framework_TestCase
                 'mapper' => null,
             ],
             'null => exception' => [
-                'expected' => new RuntimeException('Property $data must be iterable'),
+                'expected' => new RuntimeException('Property $inner must be iterable'),
                 'inner' => null,
                 'mapper' => null,
             ],
@@ -202,8 +202,8 @@ class TreeTest extends PHPUnit_Framework_TestCase
 
         assert\equals\trial($expected, function($iterator) {
             return fn\map($iterator);
-        }, new Tree(function() use($inner) {
+        }, new Tree(new Lazy(function() use($inner) {
             return $inner;
-        }, $mapper));
+        }), $mapper));
     }
 }

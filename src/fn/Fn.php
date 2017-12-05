@@ -27,7 +27,7 @@ class Fn implements IteratorAggregate, Countable, ArrayAccess
     private $data;
 
     /**
-     * @param iterable $iterable
+     * @param iterable ...$iterable
      * @param callable $mapper
      */
     public function __construct($iterable = null, callable $mapper = null)
@@ -121,7 +121,7 @@ class Fn implements IteratorAggregate, Countable, ArrayAccess
     public function keys(callable ...$mappers)
     {
         $counter = 0;
-        return (new static($this->getIterator(), function($value, $key) use(&$counter) {
+        return (new static($this->getIterator(), function ($value, $key) use (&$counter) {
             return map\value($key)->andKey($counter++);
         }))->map(...$mappers);
     }
@@ -129,15 +129,15 @@ class Fn implements IteratorAggregate, Countable, ArrayAccess
     /**
      * @param callable $function
      * @param array ...$iterables
-     * @return static
+     * @return \Closure
      */
-    private function variadic($function, ...$iterables)
+    private static function variadic($function, ...$iterables)
     {
-        return new static(function() use($function, $iterables) {
-            return $function(map($this), ...map($iterables, function($iterable) {
+        return function () use ($function, $iterables) {
+            return $function(...map($iterables, function ($iterable) {
                 return map($iterable);
             }));
-        });
+        };
     }
 
     /**
@@ -146,7 +146,7 @@ class Fn implements IteratorAggregate, Countable, ArrayAccess
      */
     public function merge(...$iterables)
     {
-        return $this->variadic('array_merge', ...$iterables);
+        return new static(new Map\Lazy(self::variadic('array_merge', $this, ...$iterables)));
     }
 
     /**
@@ -155,7 +155,7 @@ class Fn implements IteratorAggregate, Countable, ArrayAccess
      */
     public function replace(...$iterables)
     {
-        return $this->variadic('array_replace', ...$iterables);
+        return new static(new Map\Lazy(self::variadic('array_replace', $this, ...$iterables)));
     }
 
     /**
@@ -164,6 +164,6 @@ class Fn implements IteratorAggregate, Countable, ArrayAccess
      */
     public function diff(...$iterables)
     {
-        return $this->variadic('array_diff', ...$iterables);
+        return new static(new Map\Lazy(self::variadic('array_diff', $this, ...$iterables)));
     }
 }

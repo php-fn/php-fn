@@ -9,6 +9,25 @@
 namespace fn;
 
 /**
+ * Create a Fn instance
+ *
+ * @param iterable ...$iterable If more than one iterable argument is passed, they will be merged (replace)
+ * @param callable $mapper
+ *
+ * @return Fn
+ */
+function fn($iterable = null, $mapper = null)
+{
+    if (count($args = func_get_args()) > 1) {
+        if (!isIterable($last = toValues(sub($args, -1))[0]) && is_callable($last)) {
+            return (new Fn)->replace(...sub($args, 0, -1))->map($last);
+        }
+        return (new Fn)->replace(...$args);
+    }
+    return new Fn($iterable, $mapper);
+}
+
+/**
  * Convert the given candidate to an associative array and map/filter its values and keys if a callback is passed
  *
  * supports:

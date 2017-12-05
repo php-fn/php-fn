@@ -17,11 +17,20 @@ use Traversable;
 class FnTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @param array $arguments
+     * @return Fn
+     */
+    protected function fn(...$arguments)
+    {
+        return new Fn(...$arguments);
+    }
+
+    /**
      * @covers Fn::getIterator
      */
     public function testGetIterator()
     {
-        assert\type(Traversable::class, (new Fn)->getIterator());
+        assert\type(Traversable::class, $this->fn()->getIterator());
     }
 
     /**
@@ -29,9 +38,9 @@ class FnTest extends \PHPUnit_Framework_TestCase
      */
     public function testCount()
     {
-        assert\equals(0, count(new Fn));
-        assert\equals(1, count(new Fn([null])));
-        assert\equals(2, count(new Fn([1, 2, 3, 4], function($value) {
+        assert\equals(0, count($this->fn()));
+        assert\equals(1, count($this->fn([null])));
+        assert\equals(2, count($this->fn([1, 2, 3, 4], function($value) {
             return ($value % 2) ? $value : null;
         })));
     }
@@ -44,7 +53,7 @@ class FnTest extends \PHPUnit_Framework_TestCase
      */
     public function testArrayAccess()
     {
-        $fn = new Fn(['a' => 'A']);
+        $fn = $this->fn(['a' => 'A']);
         assert\true(isset($fn['a']));
         assert\equals('A', $fn['a']);
         assert\false(isset($fn['b']));
@@ -67,7 +76,7 @@ class FnTest extends \PHPUnit_Framework_TestCase
         $duplicate = function($value) {
             return "$value$value";
         };
-        $map = (new Fn(['a-']))->map($duplicate, $duplicate, $duplicate);
+        $map = $this->fn(['a-'])->map($duplicate, $duplicate, $duplicate);
         assert\type(Fn::class, $map);
         assert\equals(['a-a-a-a-a-a-a-a-'], map($map));
         assert\equals(['a-a-a-a-a-a-a-a-'], map($map->map()));
@@ -78,7 +87,7 @@ class FnTest extends \PHPUnit_Framework_TestCase
      */
     public function testKeys()
     {
-        $map = new Fn(['a' => null, 'b' => null, 'c' => null]);
+        $map = $this->fn(['a' => null, 'b' => null, 'c' => null]);
         assert\type(Fn::class, $map->keys());
         assert\equals(['a', 'b', 'c'], map($map->keys()));
         assert\equals(['A', 'B', 'C'], map($map->keys(function($value) {
@@ -91,9 +100,9 @@ class FnTest extends \PHPUnit_Framework_TestCase
      */
     public function testMerge()
     {
-        $map = (new Fn(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c']))->merge(
+        $map = $this->fn(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c'])->merge(
             ['d' => 'd', 'a' => 'A'],
-            new Fn(['c' => 'C']),
+            $this->fn(['c' => 'C']),
             ['z']
         );
         assert\type(Fn::class, $map);
@@ -105,9 +114,9 @@ class FnTest extends \PHPUnit_Framework_TestCase
      */
     public function testReplace()
     {
-        $map = (new Fn(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c']))->replace(
+        $map = $this->fn(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c'])->replace(
             ['d' => 'd', 'a' => 'A'],
-            new Fn(['c' => 'C']),
+            $this->fn(['c' => 'C']),
             ['z']
         );
         assert\type(Fn::class, $map);
@@ -119,9 +128,9 @@ class FnTest extends \PHPUnit_Framework_TestCase
      */
     public function testDiff()
     {
-        $map = (new Fn(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c']))->diff(
+        $map = $this->fn(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c'])->diff(
             ['d' => 'd', 'a' => 'A'],
-            new Fn(['c' => 'C']),
+            $this->fn(['c' => 'C']),
             ['z', 'b']
         );
         assert\type(Fn::class, $map);
