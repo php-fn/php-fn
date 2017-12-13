@@ -7,5 +7,5 @@
  */
 
 if (!function_exists('\fn\test\assert\equals')) {
-    require_once __DIR__ . '/functions.php';
+    require_once __DIR__ . '/fn/functions.php';
 }

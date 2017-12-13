@@ -28,7 +28,7 @@
       "fn\\": ["tests/fn"]
     },
     "files": [
-      "tests/fn/autoload-files.php"
+      "tests/autoload-files.php"
     ]
   }
 }
