@@ -13,8 +13,105 @@ use fn\test\assert;
 /**
  * @covers map\*
  */
-class functionsMapTest extends \PHPUnit_Framework_TestCase
+class functionsMapTest extends MapTest
 {
+    /**
+     * @inheritdoc
+     */
+    protected function map(...$arguments)
+    {
+        return map(...$arguments);
+    }
+
+    /**
+     * @covers map()
+     */
+    public function testMapReplace()
+    {
+        assert\same(
+            ['a' => 'A', 'b' => 'b', 'c' => 'C'],
+            traverse(map(
+                ['a' => 'a', 'b' => 'b'],
+                ['c' => 'C', 'a' => 'A']
+            )),
+            'two iterable arguments => replace'
+        );
+
+        assert\same(
+            ['a' => 'A', 'b' => 'b', 'c' => 'c', 'd'],
+            traverse(map(
+                ['a' => 'a', 'b' => 'b'],
+                ['c' => 'C', 'a' => 'A'],
+                map(['c' => 'c', 'd'])
+            )),
+            'three iterable arguments => replace'
+        );
+
+        assert\same(
+            ['k:a' => 'v:A', 'k:b' => 'v:b', 'k:c' => 'v:C'],
+            traverse(map(
+                ['a' => 'a', 'b' => 'b'],
+                ['c' => 'C', 'a' => 'A'],
+                function($value, $key) {
+                    return map\value("v:$value")->andKey("k:$key");
+                }
+            )),
+            'last argument is callable => replace and map'
+        );
+    }
+
+    /**
+     * @covers toIterable()
+     */
+    public function testToIterable()
+    {
+        $ar = [true];
+        $it = new \ArrayObject($ar);
+        assert\same($ar, toIterable([true]));
+        assert\same($it, toIterable($it));
+        assert\equals($it, toIterable(new \ArrayObject($ar)));
+        assert\not\same($it, toIterable(new \ArrayObject($ar)));
+        assert\same(['string'], toIterable('string', true));
+        assert\same([], toIterable(null, true));
+        assert\exception('Argument $candidate must be iterable', function () {
+            toIterable('string');
+        });
+        assert\same(null, toIterable('string', false, false));
+
+        $result = toIterable('string', false, function ($candidate, \InvalidArgumentException $e) {
+            assert\same('string', $candidate);
+            return $e;
+        });
+
+        assert\type(\InvalidArgumentException::class, $result);
+    }
+
+    /**
+     * @covers toMap()
+     */
+    public function testToMap()
+    {
+        assert\equals(['key' => 'value'], toMap(['key' => 'value']));
+        assert\equals(['key' => 'value'], toMap(new \ArrayObject(['key' => 'value'])));
+        assert\equals([], toMap(null, true));
+        assert\exception('Argument $candidate must be iterable', function () {
+            toMap(null);
+        });
+    }
+
+    /**
+     * @covers toValues()
+     */
+    public function testToValues()
+    {
+        assert\equals(['value'], toValues(['key' => 'value']));
+        assert\equals(['value'], toValues(new \ArrayObject(['key' => 'value'])));
+        assert\equals([], toValues(null, true));
+        assert\exception('Argument $candidate must be iterable', function () {
+            toValues(null);
+        });
+    }
+
     /**
      * @covers traverse()
      */

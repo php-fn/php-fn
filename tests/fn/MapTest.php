@@ -13,48 +13,48 @@ use LogicException;
 use Traversable;
 
 /**
- * @covers Fn
+ * @covers Map
  */
-class FnTest extends \PHPUnit_Framework_TestCase
+class MapTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param array $arguments
-     * @return Fn
+     * @return Map
      */
-    protected function fn(...$arguments)
+    protected function map(...$arguments)
     {
-        return new Fn(...$arguments);
+        return new Map(...$arguments);
     }
 
     /**
-     * @covers Fn::getIterator
+     * @covers Map::getIterator
      */
     public function testGetIterator()
     {
-        assert\type(Traversable::class, $this->fn()->getIterator());
+        assert\type(Traversable::class, $this->map()->getIterator());
     }
 
     /**
-     * @covers Fn::count
+     * @covers Map::count
      */
     public function testCount()
     {
-        assert\equals(0, count($this->fn()));
-        assert\equals(1, count($this->fn([null])));
-        assert\equals(2, count($this->fn([1, 2, 3, 4], function($value) {
+        assert\equals(0, count($this->map()));
+        assert\equals(1, count($this->map([null])));
+        assert\equals(2, count($this->map([1, 2, 3, 4], function($value) {
             return ($value % 2) ? $value : null;
         })));
     }
 
     /**
-     * @covers Fn::offsetExists
-     * @covers Fn::offsetGet
-     * @covers Fn::offsetSet
-     * @covers Fn::offsetUnset
+     * @covers Map::offsetExists
+     * @covers Map::offsetGet
+     * @covers Map::offsetSet
+     * @covers Map::offsetUnset
      */
     public function testArrayAccess()
     {
-        $fn = $this->fn(['a' => 'A']);
+        $fn = $this->map(['a' => 'A']);
         assert\true(isset($fn['a']));
         assert\equals('A', $fn['a']);
         assert\false(isset($fn['b']));
@@ -70,26 +70,26 @@ class FnTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Fn::map
+     * @covers Map::map
      */
     public function testMap()
     {
         $duplicate = function($value) {
             return "$value$value";
         };
-        $map = $this->fn(['a-'])->map($duplicate, $duplicate, $duplicate);
-        assert\type(Fn::class, $map);
+        $map = $this->map(['a-'])->map($duplicate, $duplicate, $duplicate);
+        assert\type(Map::class, $map);
         assert\equals(['a-a-a-a-a-a-a-a-'], traverse($map));
         assert\equals(['a-a-a-a-a-a-a-a-'], traverse($map->map()));
     }
 
     /**
-     * @covers Fn::keys
+     * @covers Map::keys
      */
     public function testKeys()
     {
-        $map = $this->fn(['a' => null, 'b' => null, 'c' => null]);
-        assert\type(Fn::class, $map->keys());
+        $map = $this->map(['a' => null, 'b' => null, 'c' => null]);
+        assert\type(Map::class, $map->keys());
         assert\equals(['a', 'b', 'c'], traverse($map->keys()));
         assert\equals(['A', 'B', 'C'], traverse($map->keys(function($value) {
             return strtoupper($value);
@@ -97,67 +97,67 @@ class FnTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Fn::merge
+     * @covers Map::merge
      */
     public function testMerge()
     {
-        $map = $this->fn(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c'])->merge(
+        $map = $this->map(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c'])->merge(
             ['d' => 'd', 'a' => 'A'],
-            $this->fn(['c' => 'C']),
+            $this->map(['c' => 'C']),
             ['z']
         );
-        assert\type(Fn::class, $map);
+        assert\type(Map::class, $map);
         assert\equals(['z', 'a' => 'A', 'b' => 'b', 'c' => 'C', 'd' => 'd', 'z'], traverse($map));
     }
 
     /**
-     * @covers Fn::replace
+     * @covers Map::replace
      */
     public function testReplace()
     {
-        $map = $this->fn(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c'])->replace(
+        $map = $this->map(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c'])->replace(
             ['d' => 'd', 'a' => 'A'],
-            $this->fn(['c' => 'C']),
+            $this->map(['c' => 'C']),
             ['z']
         );
-        assert\type(Fn::class, $map);
+        assert\type(Map::class, $map);
         assert\equals(['z', 'a' => 'A', 'b' => 'b', 'c' => 'C', 'd' => 'd'], traverse($map));
     }
 
     /**
-     * @covers Fn::diff
+     * @covers Map::diff
      */
     public function testDiff()
     {
-        $map = $this->fn(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c'])->diff(
+        $map = $this->map(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c'])->diff(
             ['d' => 'd', 'a' => 'A'],
-            $this->fn(['c' => 'C']),
+            $this->map(['c' => 'C']),
             ['z', 'b']
         );
-        assert\type(Fn::class, $map);
+        assert\type(Map::class, $map);
         assert\equals(['a' => 'a', 'c' => 'c'], traverse($map));
     }
 
     /**
-     * @covers Fn::sub
+     * @covers Map::sub
      */
     public function testSub()
     {
-        $map = $this->fn(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c'])->sub(1, -1);
-        assert\type(Fn::class, $map);
+        $map = $this->map(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c'])->sub(1, -1);
+        assert\type(Map::class, $map);
         assert\same(['a' => 'a', 'b' => 'b'], $map->map);
     }
 
     /**
-     * @covers Fn::__get
-     * @covers Fn::__isset
-     * @covers Fn::__set
-     * @covers Fn::__unset
+     * @covers Map::__get
+     * @covers Map::__isset
+     * @covers Map::__set
+     * @covers Map::__unset
      */
     public function testProperties()
     {
         $data = ['a' => 'A', 'b' => 'B', 'c' => 'C'];
-        $map = $this->fn($data);
+        $map = $this->map($data);
 
         assert\same\trial(new LogicException('unknown'), function() use($map) {
             $map->unknown;
@@ -192,11 +192,11 @@ class FnTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Fn::has
+     * @covers Map::has
      */
     public function testHas()
     {
-        $map = $this->fn(['a', '1']);
+        $map = $this->map(['a', '1']);
         assert\true($map->has('a'));
         assert\true($map->has('1'));
         assert\false($map->has(1));
@@ -206,11 +206,11 @@ class FnTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Fn::search
+     * @covers Map::search
      */
     public function testSearch()
     {
-        $map = $this->fn(['a', '1']);
+        $map = $this->map(['a', '1']);
         assert\same(0, $map->search('a'));
         assert\same(1, $map->search('1'));
         assert\same(false, $map->search(1));

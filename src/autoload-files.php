@@ -7,10 +7,8 @@
  */
 
 foreach ([
-    '\fn\isIterable' => 'functions-is.php',
-    '\fn\toIterable' => 'functions-to.php',
-    '\fn\map\value'   => 'functions-map.php',
-    '\fn\map'         => 'functions.php',
+    '\fn\isIterable' => 'functions-map.php',
+    '\fn\sub'        => 'functions.php',
 ] as $fnc => $file) {
     if (!function_exists($fnc)) {
         require_once __DIR__ . "/fn/{$file}" ;

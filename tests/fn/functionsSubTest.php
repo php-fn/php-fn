@@ -62,7 +62,7 @@ class functionsSubTest extends \PHPUnit_Framework_TestCase
      * @dataProvider providerSubWithIterable
      *
      * @covers       sub()
-     * @covers       Fn::sub()
+     * @covers       Map::sub()
      *
      * @param array $expected
      * @param array $candidate
@@ -79,7 +79,7 @@ class functionsSubTest extends \PHPUnit_Framework_TestCase
             'candidate as iterator'
         );
         if (!$encodingOrCallable) {
-            assert\same($expected, fn($candidate)->sub($start, $lengthOrCallable)->map);
+            assert\same($expected, map($candidate)->sub($start, $lengthOrCallable)->map);
         }
         assert\same([], sub([], $start, $lengthOrCallable, $encodingOrCallable), 'empty candidate');
     }

@@ -18,7 +18,7 @@ use LogicException;
  * @property-read array $map
  * @property-read array $values
  */
-class Fn implements IteratorAggregate, Countable, ArrayAccess
+class Map implements IteratorAggregate, Countable, ArrayAccess
 {
     /**
      * @var Map\Tree
