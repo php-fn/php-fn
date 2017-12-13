@@ -53,7 +53,7 @@ class functionsMapTest extends MapTest
                 ['a' => 'a', 'b' => 'b'],
                 ['c' => 'C', 'a' => 'A'],
                 function($value, $key) {
-                    return map\value("v:$value")->andKey("k:$key");
+                    return mapValue("v:$value")->andKey("k:$key");
                 }
             )),
             'last argument is callable => replace and map'
@@ -147,12 +147,12 @@ class functionsMapTest extends MapTest
 
         assert\same([1 => null, 3 => 'd'], traverse(['a', 'b', 'c', 'd', 'e', 'f'], function ($value) {
             if ($value === 'e') {
-                return map\stop();
+                return mapBreak();
             }
             if (in_array($value, ['a', 'c'], true)) {
                 return null;
             }
-            return $value === 'b' ? map\null() : $value;
+            return $value === 'b' ? mapNull() : $value;
         }));
 
         assert\same([1], traverse('value', 'count', true));
@@ -162,15 +162,15 @@ class functionsMapTest extends MapTest
             ['VALUE', 'KEY' => 'key', 'pair' => 'flip', 'no' => 'changes'],
             traverse(['value', 'key', 'flip' => 'pair', 'no' => 'changes'], function($value, $key) {
                 if ($value === 'value') {
-                    return map\value('VALUE');
+                    return mapValue('VALUE');
                 }
                 if ($value === 'key') {
-                    return map\key('KEY');
+                    return mapKey('KEY');
                 }
                 if ($key === 'flip') {
-                    return map\value($key)->andKey($value);
+                    return mapValue($key)->andKey($value);
                 }
-                return map\value();
+                return mapValue();
             }
         ));
     }
@@ -181,14 +181,14 @@ class functionsMapTest extends MapTest
      */
     public function testNullStop()
     {
-        assert\equals(new Map\Value, map\null());
-        assert\same(map\null(), map\null());
+        assert\equals(new Map\Value, mapNull());
+        assert\same(mapNull(), mapNull());
 
-        assert\equals(new Map\Value, map\stop());
-        assert\same(map\stop(), map\stop());
+        assert\equals(new Map\Value, mapBreak());
+        assert\same(mapBreak(), mapBreak());
 
-        assert\equals(map\stop(), map\null());
-        assert\not\same(map\stop(), map\null());
+        assert\equals(mapBreak(), mapNull());
+        assert\not\same(mapBreak(), mapNull());
     }
 
     /**
@@ -198,12 +198,12 @@ class functionsMapTest extends MapTest
      */
     public function testValueKeyChildren()
     {
-        assert\equals(new Map\Value, map\value());
-        assert\equals(new Map\Value('v'), map\value('v'));
-        assert\equals(new Map\Value('v', 'k'), map\value('v', 'k'));
-        assert\equals(new Map\Value('v', 'k', 'c'), map\value('v', 'k', 'c'));
-        assert\equals((new Map\Value)->andKey('k'), map\key('k'));
-        assert\equals((new Map\Value)->andChildren('c'), map\children('c'));
+        assert\equals(new Map\Value, mapValue());
+        assert\equals(new Map\Value('v'), mapValue('v'));
+        assert\equals(new Map\Value('v', 'k'), mapValue('v', 'k'));
+        assert\equals(new Map\Value('v', 'k', 'c'), mapValue('v', 'k', 'c'));
+        assert\equals((new Map\Value)->andKey('k'), mapKey('k'));
+        assert\equals((new Map\Value)->andChildren('c'), mapChildren('c'));
     }
 
     /**
