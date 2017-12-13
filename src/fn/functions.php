@@ -49,7 +49,7 @@ function fn($iterable = null, $mapper = null)
  * @param bool $cast
  * @return array
  */
-function map($candidate, $castOrCallable = null, $cast = null)
+function traverse($candidate, $castOrCallable = null, $cast = null)
 {
     if (!is_callable($castOrCallable)) {
         return toMap($candidate, $castOrCallable);
@@ -132,7 +132,7 @@ function sub($candidate, $start, $lengthOrCallable = null, $encodingOrCallable =
     }
 
     if (($iterable = toIterable($candidate, false, false)) || is_array($iterable)) {
-        return map(array_slice(map($iterable), $start, $length, true), $callable);
+        return traverse(array_slice(traverse($iterable), $start, $length, true), $callable);
     }
 
     if ($encoding) {

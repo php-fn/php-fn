@@ -66,7 +66,7 @@ class FnTest extends \PHPUnit_Framework_TestCase
         assert\exception(new \InvalidArgumentException('a'), function() use($fn) {
            $fn['a'];
         });
-        assert\same(['b' => 'B', 'c' => 'C'], map($fn->replace(['c' => 'C'])));
+        assert\same(['b' => 'B', 'c' => 'C'], traverse($fn->replace(['c' => 'C'])));
     }
 
     /**
@@ -79,8 +79,8 @@ class FnTest extends \PHPUnit_Framework_TestCase
         };
         $map = $this->fn(['a-'])->map($duplicate, $duplicate, $duplicate);
         assert\type(Fn::class, $map);
-        assert\equals(['a-a-a-a-a-a-a-a-'], map($map));
-        assert\equals(['a-a-a-a-a-a-a-a-'], map($map->map()));
+        assert\equals(['a-a-a-a-a-a-a-a-'], traverse($map));
+        assert\equals(['a-a-a-a-a-a-a-a-'], traverse($map->map()));
     }
 
     /**
@@ -90,8 +90,8 @@ class FnTest extends \PHPUnit_Framework_TestCase
     {
         $map = $this->fn(['a' => null, 'b' => null, 'c' => null]);
         assert\type(Fn::class, $map->keys());
-        assert\equals(['a', 'b', 'c'], map($map->keys()));
-        assert\equals(['A', 'B', 'C'], map($map->keys(function($value) {
+        assert\equals(['a', 'b', 'c'], traverse($map->keys()));
+        assert\equals(['A', 'B', 'C'], traverse($map->keys(function($value) {
             return strtoupper($value);
         })));
     }
@@ -107,7 +107,7 @@ class FnTest extends \PHPUnit_Framework_TestCase
             ['z']
         );
         assert\type(Fn::class, $map);
-        assert\equals(['z', 'a' => 'A', 'b' => 'b', 'c' => 'C', 'd' => 'd', 'z'], map($map));
+        assert\equals(['z', 'a' => 'A', 'b' => 'b', 'c' => 'C', 'd' => 'd', 'z'], traverse($map));
     }
 
     /**
@@ -121,7 +121,7 @@ class FnTest extends \PHPUnit_Framework_TestCase
             ['z']
         );
         assert\type(Fn::class, $map);
-        assert\equals(['z', 'a' => 'A', 'b' => 'b', 'c' => 'C', 'd' => 'd'], map($map));
+        assert\equals(['z', 'a' => 'A', 'b' => 'b', 'c' => 'C', 'd' => 'd'], traverse($map));
     }
 
     /**
@@ -135,7 +135,7 @@ class FnTest extends \PHPUnit_Framework_TestCase
             ['z', 'b']
         );
         assert\type(Fn::class, $map);
-        assert\equals(['a' => 'a', 'c' => 'c'], map($map));
+        assert\equals(['a' => 'a', 'c' => 'c'], traverse($map));
     }
 
     /**

@@ -31,7 +31,7 @@ function key($key)
 }
 
 /**
- * Returned object is used to mark the value as NULL in the @see \fn\map() function,
+ * Returned object is used to mark the value as NULL in the @see \fn\traverse() function,
  * since NULL itself is used to filter/skip values
  *
  * @return Value
@@ -46,7 +46,7 @@ function null()
 }
 
 /**
- * Returned object is used to stop the iteration in the @see \fn\map() function
+ * Returned object is used to stop the iteration in the @see \fn\traverse() function
  *
  * @return Value
  */

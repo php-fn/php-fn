@@ -197,11 +197,11 @@ class TreeTest extends PHPUnit_Framework_TestCase
     public function testSimpleIteration($expected, $inner, $mapper)
     {
         assert\equals\trial($expected, function($iterator) {
-            return fn\map($iterator);
+            return fn\traverse($iterator);
         }, new Tree($inner, $mapper));
 
         assert\equals\trial($expected, function($iterator) {
-            return fn\map($iterator);
+            return fn\traverse($iterator);
         }, new Tree(new Lazy(function() use($inner) {
             return $inner;
         }), $mapper));

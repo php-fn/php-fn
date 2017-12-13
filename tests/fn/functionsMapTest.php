@@ -16,39 +16,39 @@ use fn\test\assert;
 class functionsMapTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers map()
+     * @covers traverse()
      */
-    public function testMap()
+    public function testTraverse()
     {
         $emptyCallable = function () {
         };
         $message = 'Argument $candidate must be iterable';
 
-        assert\same(['key' => 'value'], map(['key' => 'value']));
-        assert\same(['key' => 'value'], map(new \ArrayObject(['key' => 'value'])));
-        assert\same([], map(null, true));
-        assert\same([], map(null, $emptyCallable, true));
+        assert\same(['key' => 'value'], traverse(['key' => 'value']));
+        assert\same(['key' => 'value'], traverse(new \ArrayObject(['key' => 'value'])));
+        assert\same([], traverse(null, true));
+        assert\same([], traverse(null, $emptyCallable, true));
 
         assert\exception($message, function () {
-            map(null);
+            traverse(null);
         });
         assert\exception($message, function () {
-            map(null, false);
+            traverse(null, false);
         });
         assert\exception($message, function ($emptyCallable) {
-            map(null, $emptyCallable);
+            traverse(null, $emptyCallable);
         }, $emptyCallable);
         assert\exception($message, function ($emptyCallable) {
-            map(null, $emptyCallable, false);
+            traverse(null, $emptyCallable, false);
         }, $emptyCallable);
 
-        assert\same(['v1' => 'k1', 'v2' => 'k2'], map(['k1' => 'v1', 'k2' => 'v2'], function ($value, &$key) {
+        assert\same(['v1' => 'k1', 'v2' => 'k2'], traverse(['k1' => 'v1', 'k2' => 'v2'], function ($value, &$key) {
             $tmp = $key;
             $key = $value;
             return $tmp;
         }));
 
-        assert\same([1 => null, 3 => 'd'], map(['a', 'b', 'c', 'd', 'e', 'f'], function ($value) {
+        assert\same([1 => null, 3 => 'd'], traverse(['a', 'b', 'c', 'd', 'e', 'f'], function ($value) {
             if ($value === 'e') {
                 return map\stop();
             }
@@ -58,12 +58,12 @@ class functionsMapTest extends \PHPUnit_Framework_TestCase
             return $value === 'b' ? map\null() : $value;
         }));
 
-        assert\same([1], map('value', 'count', true));
-        assert\same(['VALUE'], map('value', $this, true));
+        assert\same([1], traverse('value', 'count', true));
+        assert\same(['VALUE'], traverse('value', $this, true));
 
         assert\same(
             ['VALUE', 'KEY' => 'key', 'pair' => 'flip', 'no' => 'changes'],
-            map(['value', 'key', 'flip' => 'pair', 'no' => 'changes'], function($value, $key) {
+            traverse(['value', 'key', 'flip' => 'pair', 'no' => 'changes'], function($value, $key) {
                 if ($value === 'value') {
                     return map\value('VALUE');
                 }

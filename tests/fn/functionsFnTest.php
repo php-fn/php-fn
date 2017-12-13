@@ -30,7 +30,7 @@ class functionsFnTest extends FnTest
     {
         assert\same(
             ['a' => 'A', 'b' => 'b', 'c' => 'C'],
-            map(fn(
+            traverse(fn(
                 ['a' => 'a', 'b' => 'b'],
                 ['c' => 'C', 'a' => 'A']
             )),
@@ -39,7 +39,7 @@ class functionsFnTest extends FnTest
 
         assert\same(
             ['a' => 'A', 'b' => 'b', 'c' => 'c', 'd'],
-            map(fn(
+            traverse(fn(
                 ['a' => 'a', 'b' => 'b'],
                 ['c' => 'C', 'a' => 'A'],
                 fn(['c' => 'c', 'd'])
@@ -49,7 +49,7 @@ class functionsFnTest extends FnTest
 
         assert\same(
             ['k:a' => 'v:A', 'k:b' => 'v:b', 'k:c' => 'v:C'],
-            map(fn(
+            traverse(fn(
                 ['a' => 'a', 'b' => 'b'],
                 ['c' => 'C', 'a' => 'A'],
                 function($value, $key) {

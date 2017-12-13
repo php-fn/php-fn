@@ -48,7 +48,7 @@ class Fn implements IteratorAggregate, Countable, ArrayAccess
     {
         switch($property) {
             case 'keys':
-                return map($this->keys());
+                return traverse($this->keys());
             case 'map':
                 return $this();
             case 'values':
@@ -107,7 +107,7 @@ class Fn implements IteratorAggregate, Countable, ArrayAccess
      */
     public function __invoke()
     {
-        return $this->data ?: $this->data = map($this);
+        return $this->data ?: $this->data = traverse($this);
     }
 
     /**
@@ -185,8 +185,8 @@ class Fn implements IteratorAggregate, Countable, ArrayAccess
     private static function variadic($function, ...$iterables)
     {
         return function () use ($function, $iterables) {
-            return $function(...map($iterables, function ($iterable) {
-                return map($iterable);
+            return $function(...traverse($iterables, function ($iterable) {
+                return traverse($iterable);
             }));
         };
     }

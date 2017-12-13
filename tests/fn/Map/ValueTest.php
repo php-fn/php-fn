@@ -63,7 +63,7 @@ class ValueTest extends \PHPUnit_Framework_TestCase
      */
     public function testExceptions()
     {
-        fn\map(['value', 'key', 'children', 'unknown'], function($property) {
+        fn\traverse(['value', 'key', 'children', 'unknown'], function($property) {
             assert\exception(new \InvalidArgumentException($property), function($property) {
                 $val = new Value;
                 $val->$property = null;
