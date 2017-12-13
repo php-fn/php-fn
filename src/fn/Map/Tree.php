@@ -108,11 +108,11 @@ class Tree implements RecursiveIterator, Countable
      */
     private function doMap()
     {
-        static $stop;
-        if (!$stop) {
-            $stop = fn\map\stop();
+        static $break;
+        if (!$break) {
+            $break = fn\mapBreak();
         }
-        if ($this->currentValid === $stop) {
+        if ($this->currentValid === $break) {
             return false;
         }
         $this->needsRewind && $this->rewind();
@@ -149,9 +149,9 @@ class Tree implements RecursiveIterator, Countable
                 continue;
             }
 
-            if ($curValue === $stop) {
+            if ($curValue === $break) {
                 $this->validateInner($iter);
-                $this->currentValid = $stop;
+                $this->currentValid = $break;
                 return false;
             }
 

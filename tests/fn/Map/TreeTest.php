@@ -36,7 +36,7 @@ class TreeTest extends PHPUnit_Framework_TestCase
                 'expected' => ['a', 'a-0', 'b', 'b-0', 'b-1', 'c', 'c-0', 'c-1', 'c-2'],
                 'inner' => ['a', 'b', 'c'],
                 'mapper' => function () {
-                    return fn\map\children(function ($value, $key) {
+                    return fn\mapChildren(function ($value, $key) {
                         $children = [];
                         for ($i = 0; $i <= $key; $i++) {
                             $children[] = "$value-$i";
@@ -53,7 +53,7 @@ class TreeTest extends PHPUnit_Framework_TestCase
                     for ($i = 0; $i <= $key; $i++) {
                         $children[] = "$value-$i";
                     }
-                    return fn\map\children($children);
+                    return fn\mapChildren($children);
                 },
             ],
             'no mapper' => [
@@ -94,7 +94,7 @@ class TreeTest extends PHPUnit_Framework_TestCase
                 'inner' => ['a', 'b', 'c', 'd', 'e', 'f'],
                 'mapper' => function ($value, &$key) {
                     if ($value === 'e') {
-                        return fn\map\stop();
+                        return fn\mapBreak();
                     }
                     if ($value === 'c') {
                         return null;
@@ -104,7 +104,7 @@ class TreeTest extends PHPUnit_Framework_TestCase
                         return 'directly-value';
                     }
                     if ($value === 'b') {
-                        return fn\map\value('map-value', 'map-key');
+                        return fn\mapValue('map-value', 'map-key');
                     }
 
                     return $value;
@@ -115,7 +115,7 @@ class TreeTest extends PHPUnit_Framework_TestCase
                 'inner' => ['a', 'b', 'c', 'd', 'e', 'f'],
                 'mapper' => function ($value) {
                     if ($value === 'd') {
-                        return fn\map\stop();
+                        return fn\mapBreak();
                     }
                     return $value;
                 },
@@ -131,7 +131,7 @@ class TreeTest extends PHPUnit_Framework_TestCase
                 'expected' => ['0-a' => 'a', '1-b' => 'b', '2-c' => 'c'],
                 'inner' => ['a', 'b', 'c'],
                 'mapper' => function ($value, $key) {
-                    return fn\map\key("$key-$value");
+                    return fn\mapKey("$key-$value");
                 },
             ],
             'map keys directly' => [
@@ -146,7 +146,7 @@ class TreeTest extends PHPUnit_Framework_TestCase
                 'expected' => ['0-a', '1-b', '2-c'],
                 'inner' => ['a', 'b', 'c'],
                 'mapper' => function ($value, $key) {
-                    return fn\map\value("$key-$value");
+                    return fn\mapValue("$key-$value");
                 },
             ],
             'map values directly' => [

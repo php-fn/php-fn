@@ -173,7 +173,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     {
         $counter = 0;
         return (new static($this->getIterator(), function ($value, $key) use (&$counter) {
-            return map\value($key)->andKey($counter++);
+            return mapValue($key)->andKey($counter++);
         }))->map(...$mappers);
     }
 
