@@ -8,6 +8,8 @@
 
 namespace fn\Map;
 
+use fn;
+
 /**
  * @property-read mixed $value
  * @property-read mixed $key
@@ -16,6 +18,11 @@ namespace fn\Map;
  */
 class Value
 {
+    /**
+     * @var string[]
+     */
+    const PROPERTIES = ['value', 'key', 'children', 'group'];
+
     /**
      * @var array
      */
@@ -30,18 +37,10 @@ class Value
     public function __construct()
     {
         $args = func_get_args();
-        if (isset($args[0]) || array_key_exists(0, $args)) {
-            $this->andValue($args[0]);
-        }
-        if (isset($args[1]) || array_key_exists(1, $args)) {
-            $this->andKey($args[1]);
-        }
-        if (isset($args[2]) || array_key_exists(2, $args)) {
-            $this->andGroup($args[2]);
-        }
-        if (isset($args[3]) || array_key_exists(3, $args)) {
-            $this->andChildren($args[3]);
-        }
+        fn\is(0, $args) && $this->andValue($args[0]);
+        fn\is(1, $args) && $this->andKey($args[1]);
+        fn\is(2, $args) && $this->andGroup($args[2]);
+        fn\is(3, $args) && $this->andChildren($args[3]);
     }
 
     /**
@@ -54,7 +53,6 @@ class Value
         $this->properties['value'] = $value;
         return $this;
     }
-
 
     /**
      * @param mixed $key
@@ -96,7 +94,7 @@ class Value
      */
     public function __isset($property)
     {
-        return isset($this->properties[$property]) || array_key_exists($property, $this->properties);
+        return fn\is($property, $this->properties);
     }
 
     /**
@@ -109,7 +107,7 @@ class Value
         if (isset($this->properties[$property])) {
             return $this->properties[$property];
         }
-        if (in_array($property, ['value', 'key', 'children', 'group'])) {
+        if (fn\in($property, static::PROPERTIES)) {
             return null;
         }
         throw new \InvalidArgumentException($property);

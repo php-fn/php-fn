@@ -64,7 +64,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function __isset($property)
     {
-        return in_array($property, ['keys', 'map', 'values'], true);
+        return in($property, ['keys', 'map', 'values']);
     }
 
     /**
@@ -115,8 +115,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function offsetExists($offset)
     {
-        $this();
-        return isset($this->data[$offset]) || array_key_exists($offset, $this->data);
+        return is($offset, $this());
     }
 
     /**
@@ -231,13 +230,13 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     }
 
     /**
-     * @param mixed $needle
+     * @param mixed $value
      * @param bool $strict
      * @return bool
      */
-    public function has($needle, $strict = true)
+    public function has($value, $strict = true)
     {
-        return in_array($needle, $this(), $strict);
+        return in($value, $this(), $strict);
     }
 
     /**

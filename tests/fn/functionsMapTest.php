@@ -24,6 +24,47 @@ class functionsMapTest extends MapTest
     }
 
     /**
+     * @covers is()
+     */
+    public function testIs()
+    {
+        assert\false(is('key', null));
+        assert\false(is('key', []));
+        assert\false(is('key', map()));
+
+        assert\true(is('key', map(['key' => null])));
+        assert\true(is('key', ['key' => null]));
+
+        assert\true(is('key', map(['key' => false])));
+        assert\true(is('key', ['key' => false]));
+
+        assert\true(is('key', map(['key' => 0])));
+        assert\true(is('key', ['key' => 0]));
+        assert\true(is('key', ['key' => 0]));
+
+        assert\true(is(0, 'a'));
+        assert\false(is(0, ''));
+    }
+
+    /**
+     * @covers in()
+     */
+    public function testIn()
+    {
+        assert\false(in('value', null));
+        assert\false(in('value', []));
+        assert\false(in('value', map()));
+
+        assert\true(in(100, [100]));
+        assert\false(in('100', [100]));
+        assert\true(in('100', [100], false));
+
+        assert\true(in(100, map([100])));
+        assert\false(in('100', map([100])));
+        assert\true(in('100', map([100]), false));
+    }
+
+    /**
      * @covers map()
      */
     public function testMapReplace()

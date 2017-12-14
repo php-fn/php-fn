@@ -74,6 +74,35 @@ function toValues($candidate, $cast = false)
 }
 
 /**
+ * @param string|int $key
+ * @param iterable|mixed $in
+ *
+ * @return bool
+ */
+function is($key, $in)
+{
+    if (isset($in[$key])) {
+        return true;
+    }
+    if ($in instanceof \ArrayAccess) {
+        return false;
+    }
+    return isIterable($in) && array_key_exists($key, toMap($in));
+}
+
+/**
+ * @param mixed $value
+ * @param iterable|mixed $in
+ * @param bool $strict
+ *
+ * @return bool
+ */
+function in($value, $in, $strict = true)
+{
+    return isIterable($in) && in_array($value, toMap($in), $strict);
+}
+
+/**
  * Convert the given candidate to an associative array and map/filter its values and keys if a callback is passed
  *
  * supports:
