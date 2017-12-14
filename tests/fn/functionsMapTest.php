@@ -173,6 +173,41 @@ class functionsMapTest extends MapTest
                 return mapValue();
             }
         ));
+
+        $toGroup = [['a', 'a'], ['a', 'b'], ['b', 'b'], ['b', 'a']];
+        assert\same(
+            [
+                'a' => [
+                    0 => ['a', 'a'],
+                    1 => ['a', 'b'],
+                ],
+                'b' => [
+                    2 => ['b', 'b'],
+                    3 => ['b', 'a'],
+                ],
+            ],
+            traverse($toGroup, function($value) {
+                return mapGroup($value[0]);
+            }),
+            'group by a single value'
+        );
+
+        assert\same(
+            [
+                'a' => [
+                    'a' => [100 => ['a', 'a']],
+                    'b' => [101 => ['a', 'b']],
+                ],
+                'b' => [
+                    'b' => [102 => ['b', 'b']],
+                    'a' => [103 => ['b', 'a']],
+                ],
+            ],
+            traverse($toGroup, function($value, $key) {
+                return mapGroup($value)->andKey($key + 100);
+            }),
+            'group by multiple values, with key  '
+        );
     }
 
     /**
@@ -201,8 +236,11 @@ class functionsMapTest extends MapTest
         assert\equals(new Map\Value, mapValue());
         assert\equals(new Map\Value('v'), mapValue('v'));
         assert\equals(new Map\Value('v', 'k'), mapValue('v', 'k'));
-        assert\equals(new Map\Value('v', 'k', 'c'), mapValue('v', 'k', 'c'));
+        assert\equals(new Map\Value('v', 'k', 'g'), mapValue('v', 'k', 'g'));
+        assert\equals(new Map\Value('v', 'k', 'g', 'c'), mapValue('v', 'k', 'g', 'c'));
+
         assert\equals((new Map\Value)->andKey('k'), mapKey('k'));
+        assert\equals((new Map\Value)->andGroup('g'), mapGroup('g'));
         assert\equals((new Map\Value)->andChildren('c'), mapChildren('c'));
     }
 

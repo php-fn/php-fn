@@ -11,6 +11,7 @@ namespace fn\Map;
 /**
  * @property-read mixed $value
  * @property-read mixed $key
+ * @property-read mixed $group
  * @property-read iterable|callable $children
  */
 class Value
@@ -23,6 +24,7 @@ class Value
     /**
      * @param mixed [$value]
      * @param mixed [$key]
+     * @param mixed [$group]
      * @param iterable|callable [$children]
      */
     public function __construct()
@@ -35,7 +37,10 @@ class Value
             $this->andKey($args[1]);
         }
         if (isset($args[2]) || array_key_exists(2, $args)) {
-            $this->andChildren($args[2]);
+            $this->andGroup($args[2]);
+        }
+        if (isset($args[3]) || array_key_exists(3, $args)) {
+            $this->andChildren($args[3]);
         }
     }
 
@@ -74,6 +79,17 @@ class Value
     }
 
     /**
+     * @param mixed $group
+     *
+     * @return $this
+     */
+    public function andGroup($group)
+    {
+        $this->properties['group'] = $group;
+        return $this;
+    }
+
+    /**
      * @param string $property
      *
      * @return bool
@@ -93,7 +109,7 @@ class Value
         if (isset($this->properties[$property])) {
             return $this->properties[$property];
         }
-        if (in_array($property, ['value', 'key', 'children'])) {
+        if (in_array($property, ['value', 'key', 'children', 'group'])) {
             return null;
         }
         throw new \InvalidArgumentException($property);

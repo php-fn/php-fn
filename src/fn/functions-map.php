@@ -25,7 +25,7 @@ function isIterable($candidate)
  * @param mixed $candidate
  * @param bool $cast
  * @param bool|callable $onError
- * @return array|iterable|\Traversable|null
+ * @return array|iterable|\Traversable
  * @throws \InvalidArgumentException
  */
 function toIterable($candidate, $cast = false, $onError = true)
@@ -80,11 +80,13 @@ function toValues($candidate, $cast = false)
  *
  * - value mapping
  *  - directly (by return)
- *  - with Value object @see map\value()
+ *  - with Value object @see mapValue
  *
  * - key mapping
  *  - directly (by reference)
- *  - with Value object @see map\key()
+ *  - with Value object @see mapKey
+
+ * - grouping with Value object @see mapGroup
  *
  * @see array_walk
  * @see array_filter
@@ -134,7 +136,15 @@ function traverse($candidate, $castOrCallable = null, $cast = null)
             $sourceValue = $value->value;
         }
 
-        $map[$key] = $sourceValue;
+        $groups = &$map;
+        foreach(isset($value->group) ? toIterable($value->group, true) : [] as $group) {
+            if (!isset($groups[$group])) {
+                $groups[$group] = [];
+            }
+            $groups = &$groups[$group];
+        }
+
+        $groups[$key] = $sourceValue;
     }
     return $map;
 }
@@ -178,6 +188,14 @@ function mapKey($key)
     return mapValue()->andKey($key);
 }
 
+/**
+ * @param mixed $group
+ * @return Map\Value
+ */
+function mapGroup($group)
+{
+    return mapValue()->andGroup($group);
+}
 
 /**
  * @param iterable|callable $children
