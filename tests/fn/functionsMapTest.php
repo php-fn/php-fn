@@ -9,6 +9,7 @@
 namespace fn;
 
 use fn\test\assert;
+use stdClass;
 
 /**
  * @covers map\*
@@ -29,6 +30,7 @@ class functionsMapTest extends MapTest
     public function testHasKey()
     {
         assert\false(hasKey('key', null));
+        assert\false(hasKey('key', new stdClass));
         assert\false(hasKey('key', []));
         assert\false(hasKey('key', map()));
 

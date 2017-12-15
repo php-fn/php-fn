@@ -81,7 +81,7 @@ function toValues($candidate, $cast = false)
  */
 function hasKey($key, $in)
 {
-    if (isset($in[$key])) {
+    if ((is_array($in) || $in instanceof \ArrayAccess || is_scalar($in)) && isset($in[$key])) {
         return true;
     }
     if ($in instanceof \ArrayAccess) {
