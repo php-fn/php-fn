@@ -9,6 +9,7 @@
 namespace fn\Map;
 
 use fn;
+use InvalidArgumentException;
 
 /**
  * @property-read mixed $value
@@ -37,10 +38,10 @@ class Value
     public function __construct()
     {
         $args = func_get_args();
-        fn\is(0, $args) && $this->andValue($args[0]);
-        fn\is(1, $args) && $this->andKey($args[1]);
-        fn\is(2, $args) && $this->andGroup($args[2]);
-        fn\is(3, $args) && $this->andChildren($args[3]);
+        fn\hasKey(0, $args) && $this->andValue($args[0]);
+        fn\hasKey(1, $args) && $this->andKey($args[1]);
+        fn\hasKey(2, $args) && $this->andGroup($args[2]);
+        fn\hasKey(3, $args) && $this->andChildren($args[3]);
     }
 
     /**
@@ -94,7 +95,7 @@ class Value
      */
     public function __isset($property)
     {
-        return fn\is($property, $this->properties);
+        return fn\hasKey($property, $this->properties);
     }
 
     /**
@@ -107,10 +108,11 @@ class Value
         if (isset($this->properties[$property])) {
             return $this->properties[$property];
         }
-        if (fn\in($property, static::PROPERTIES)) {
+        if (fn\hasValue($property, static::PROPERTIES)) {
             return null;
         }
-        throw new \InvalidArgumentException($property);
+        /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
+        throw new InvalidArgumentException($property);
     }
 
     /**
@@ -119,7 +121,8 @@ class Value
      */
     public function __set($property, $value)
     {
-        throw new \InvalidArgumentException($property);
+        /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
+        throw new InvalidArgumentException($property);
     }
 
     /**
@@ -127,6 +130,7 @@ class Value
      */
     public function __unset($property)
     {
-        throw new \InvalidArgumentException($property);
+        /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
+        throw new InvalidArgumentException($property);
     }
 }

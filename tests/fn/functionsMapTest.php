@@ -24,44 +24,44 @@ class functionsMapTest extends MapTest
     }
 
     /**
-     * @covers is()
+     * @covers hasKey()
      */
-    public function testIs()
+    public function testHasKey()
     {
-        assert\false(is('key', null));
-        assert\false(is('key', []));
-        assert\false(is('key', map()));
+        assert\false(hasKey('key', null));
+        assert\false(hasKey('key', []));
+        assert\false(hasKey('key', map()));
 
-        assert\true(is('key', map(['key' => null])));
-        assert\true(is('key', ['key' => null]));
+        assert\true(hasKey('key', map(['key' => null])));
+        assert\true(hasKey('key', ['key' => null]));
 
-        assert\true(is('key', map(['key' => false])));
-        assert\true(is('key', ['key' => false]));
+        assert\true(hasKey('key', map(['key' => false])));
+        assert\true(hasKey('key', ['key' => false]));
 
-        assert\true(is('key', map(['key' => 0])));
-        assert\true(is('key', ['key' => 0]));
-        assert\true(is('key', ['key' => 0]));
+        assert\true(hasKey('key', map(['key' => 0])));
+        assert\true(hasKey('key', ['key' => 0]));
+        assert\true(hasKey('key', ['key' => 0]));
 
-        assert\true(is(0, 'a'));
-        assert\false(is(0, ''));
+        assert\true(hasKey(0, 'a'));
+        assert\false(hasKey(0, ''));
     }
 
     /**
-     * @covers in()
+     * @covers hasValue()
      */
-    public function testIn()
+    public function testHasValue()
     {
-        assert\false(in('value', null));
-        assert\false(in('value', []));
-        assert\false(in('value', map()));
+        assert\false(hasValue('value', null));
+        assert\false(hasValue('value', []));
+        assert\false(hasValue('value', map()));
 
-        assert\true(in(100, [100]));
-        assert\false(in('100', [100]));
-        assert\true(in('100', [100], false));
+        assert\true(hasValue(100, [100]));
+        assert\false(hasValue('100', [100]));
+        assert\true(hasValue('100', [100], false));
 
-        assert\true(in(100, map([100])));
-        assert\false(in('100', map([100])));
-        assert\true(in('100', map([100]), false));
+        assert\true(hasValue(100, map([100])));
+        assert\false(hasValue('100', map([100])));
+        assert\true(hasValue('100', map([100]), false));
     }
 
     /**

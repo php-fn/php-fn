@@ -79,7 +79,7 @@ function toValues($candidate, $cast = false)
  *
  * @return bool
  */
-function is($key, $in)
+function hasKey($key, $in)
 {
     if (isset($in[$key])) {
         return true;
@@ -97,7 +97,7 @@ function is($key, $in)
  *
  * @return bool
  */
-function in($value, $in, $strict = true)
+function hasValue($value, $in, $strict = true)
 {
     return isIterable($in) && in_array($value, toMap($in), $strict);
 }

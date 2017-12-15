@@ -64,7 +64,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function __isset($property)
     {
-        return in($property, ['keys', 'map', 'values']);
+        return hasValue($property, ['keys', 'map', 'values']);
     }
 
     /**
@@ -111,11 +111,21 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     }
 
     /**
+     * @param mixed $value
+     * @param bool $strict
+     * @return bool
+     */
+    public function has($value, $strict = true)
+    {
+        return hasValue($value, $this(), $strict);
+    }
+
+    /**
      * @inheritdoc
      */
     public function offsetExists($offset)
     {
-        return is($offset, $this());
+        return hasKey($offset, $this());
     }
 
     /**
@@ -227,16 +237,6 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
         return new static(new Map\Lazy(function () use($start, $length) {
             return sub($this, $start, $length);
         }));
-    }
-
-    /**
-     * @param mixed $value
-     * @param bool $strict
-     * @return bool
-     */
-    public function has($value, $strict = true)
-    {
-        return in($value, $this(), $strict);
     }
 
     /**
