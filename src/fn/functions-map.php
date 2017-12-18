@@ -198,8 +198,24 @@ function map($iterable = null, $mapper = null)
 }
 
 /**
+ * @param iterable|\ArrayAccess $row
+ * @param string|\Closure $key
+ * @param string|\Closure $value
+ *
+ * @return Map\Row
+ */
+function mapRow($row, $key = null, $value = null)
+{
+    $row =  new Map\Row($row);
+    $key && $row->andKey($key);
+    $value && $row->andValue($value);
+    return $row;
+}
+
+/**
  * @param mixed $value
  * @param mixed $key
+ * @param mixed $group
  * @param mixed $children
  * @return Map\Value
  */
