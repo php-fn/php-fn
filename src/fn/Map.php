@@ -91,7 +91,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function getIterator()
     {
-        return $this->data ? new Map\Tree($this->data) : $this->iter;
+        return is_array($this->data) ? new Map\Tree($this->data) : $this->iter;
     }
 
     /**
@@ -107,7 +107,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function __invoke()
     {
-        return $this->data ?: $this->data = traverse($this);
+        return is_array($this->data) ? $this->data : $this->data = traverse($this);
     }
 
     /**
