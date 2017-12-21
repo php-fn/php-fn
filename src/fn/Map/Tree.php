@@ -108,9 +108,10 @@ class Tree implements RecursiveIterator, Countable
      */
     private function doMap()
     {
-        static $break;
+        static $break, $null;
         if (!$break) {
             $break = fn\mapBreak();
+            $null  = fn\mapNull();
         }
         if ($this->currentValid === $break) {
             return false;
@@ -162,7 +163,7 @@ class Tree implements RecursiveIterator, Countable
             }
 
             $this->currentKey = $curKey;
-            $this->currentValue = $curValue;
+            $this->currentValue = $curValue === $null ? null : $curValue;
             break;
         }
         return true;
