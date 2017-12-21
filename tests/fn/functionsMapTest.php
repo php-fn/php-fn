@@ -156,6 +156,117 @@ class functionsMapTest extends MapTest
     }
 
     /**
+     * @return array[]
+     */
+    public function providerSameBehaviourTraverseAndMap()
+    {
+        $toGroup = [['a', 'a'], ['a', 'b'], ['b', 'b'], ['b', 'a']];
+
+        return [
+            'without Map\Value class' => [
+                ['v1' => 'k1', 'v2' => 'k2'],
+                ['k1' => 'v1', 'k2' => 'v2'],
+                function ($value, &$key) {
+                    $tmp = $key;
+                    $key = $value;
+                    return $tmp;
+                }
+            ],
+            'using mapBreak() and mapNull()' => [
+                [1 => null, 3 => 'd'],
+                ['a', 'b', 'c', 'd', 'e', 'f'],
+                function ($value) {
+                    if ($value === 'e') {
+                        return mapBreak();
+                    }
+                    if (in_array($value, ['a', 'c'], true)) {
+                        return null;
+                    }
+
+                    return $value === 'b' ? mapNull() : $value;
+                },
+            ],
+            'using mapValue() and mapKey()' => [
+                ['VALUE', 'KEY' => 'key', 'pair' => 'flip', 'no' => 'changes'],
+                ['value', 'key', 'flip' => 'pair', 'no' => 'changes'],
+                function ($value, $key) {
+                    if ($value === 'value') {
+                        return mapValue('VALUE');
+                    }
+                    if ($value === 'key') {
+                        return mapKey('KEY');
+                    }
+                    if ($key === 'flip') {
+                        return mapValue($key)->andKey($value);
+                    }
+
+                    return mapValue();
+                },
+            ],
+            'group by a single value' => [
+                [
+                    'a' => [
+                        0 => ['a', 'a'],
+                        1 => ['a', 'b'],
+                    ],
+                    'b' => [
+                        2 => ['b', 'b'],
+                        3 => ['b', 'a'],
+                    ],
+                ],
+                $toGroup,
+                function ($value) {
+                    return mapGroup($value[0]);
+                },
+            ],
+            'group by multiple values, with key' => [
+                [
+                    'a' => [
+                        'a' => [100 => ['a', 'a']],
+                        'b' => [101 => ['a', 'b']],
+                    ],
+                    'b' => [
+                        'b' => [102 => ['b', 'b']],
+                        'a' => [103 => ['b', 'a']],
+                    ],
+                ],
+                $toGroup,
+                function($value, $key) {
+                    return mapGroup($value)->andKey($key + 100);
+                },
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider providerSameBehaviourTraverseAndMap
+     *
+     * @covers traverse()
+     *
+     * @param mixed $expected
+     * @param mixed $iterable
+     * @param mixed $mapper
+     */
+    public function testSameBehaviourTraverse($expected, $iterable, $mapper)
+    {
+        assert\same($expected, traverse($iterable, $mapper));
+    }
+
+    /**
+     * @dataProvider providerSameBehaviourTraverseAndMap
+     *
+     * @covers map()
+     *
+     * @param mixed $expected
+     * @param mixed $iterable
+     * @param mixed $mapper
+     */
+    public function testSameBehaviourMap($expected, $iterable, $mapper)
+    {
+        assert\same($expected, map($iterable, $mapper)->map);
+    }
+
+    /**
      * @covers traverse()
      */
     public function testTraverse()
@@ -182,75 +293,8 @@ class functionsMapTest extends MapTest
             traverse(null, $emptyCallable, false);
         }, $emptyCallable);
 
-        assert\same(['v1' => 'k1', 'v2' => 'k2'], traverse(['k1' => 'v1', 'k2' => 'v2'], function ($value, &$key) {
-            $tmp = $key;
-            $key = $value;
-            return $tmp;
-        }));
-
-        assert\same([1 => null, 3 => 'd'], traverse(['a', 'b', 'c', 'd', 'e', 'f'], function ($value) {
-            if ($value === 'e') {
-                return mapBreak();
-            }
-            if (in_array($value, ['a', 'c'], true)) {
-                return null;
-            }
-            return $value === 'b' ? mapNull() : $value;
-        }));
-
         assert\same([1], traverse('value', 'count', true));
         assert\same(['VALUE'], traverse('value', $this, true));
-
-        assert\same(
-            ['VALUE', 'KEY' => 'key', 'pair' => 'flip', 'no' => 'changes'],
-            traverse(['value', 'key', 'flip' => 'pair', 'no' => 'changes'], function($value, $key) {
-                if ($value === 'value') {
-                    return mapValue('VALUE');
-                }
-                if ($value === 'key') {
-                    return mapKey('KEY');
-                }
-                if ($key === 'flip') {
-                    return mapValue($key)->andKey($value);
-                }
-                return mapValue();
-            }
-        ));
-
-        $toGroup = [['a', 'a'], ['a', 'b'], ['b', 'b'], ['b', 'a']];
-        assert\same(
-            [
-                'a' => [
-                    0 => ['a', 'a'],
-                    1 => ['a', 'b'],
-                ],
-                'b' => [
-                    2 => ['b', 'b'],
-                    3 => ['b', 'a'],
-                ],
-            ],
-            traverse($toGroup, function($value) {
-                return mapGroup($value[0]);
-            }),
-            'group by a single value'
-        );
-
-        assert\same(
-            [
-                'a' => [
-                    'a' => [100 => ['a', 'a']],
-                    'b' => [101 => ['a', 'b']],
-                ],
-                'b' => [
-                    'b' => [102 => ['b', 'b']],
-                    'a' => [103 => ['b', 'a']],
-                ],
-            ],
-            traverse($toGroup, function($value, $key) {
-                return mapGroup($value)->andKey($key + 100);
-            }),
-            'group by multiple values, with key  '
-        );
     }
 
     /**
