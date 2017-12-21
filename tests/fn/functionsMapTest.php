@@ -254,15 +254,15 @@ class functionsMapTest extends MapTest
     }
 
     /**
-     * @covers map\null()
-     * @covers map\stop()
+     * @covers mapNull()
+     * @covers mapBreak()
      */
-    public function testNullStop()
+    public function testNullBreak()
     {
-        assert\equals(new Map\Value, mapNull());
+        assert\equals(new stdClass, mapNull());
         assert\same(mapNull(), mapNull());
 
-        assert\equals(new Map\Value, mapBreak());
+        assert\equals(new stdClass, mapBreak());
         assert\same(mapBreak(), mapBreak());
 
         assert\equals(mapBreak(), mapNull());
@@ -270,11 +270,12 @@ class functionsMapTest extends MapTest
     }
 
     /**
-     * @covers map\value()
-     * @covers map\key()
-     * @covers map\children()
+     * @covers mapValue()
+     * @covers mapKey()
+     * @covers mapGroup()
+     * @covers mapChildren()
      */
-    public function testValueKeyChildren()
+    public function testValueFunctions()
     {
         assert\equals(new Map\Value, mapValue());
         assert\equals(new Map\Value('v'), mapValue('v'));

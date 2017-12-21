@@ -10,6 +10,7 @@ namespace fn;
 
 use ArrayAccess;
 use Countable;
+use InvalidArgumentException;
 use IteratorAggregate;
 use LogicException;
 
@@ -130,14 +131,14 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
 
     /**
      * @inheritdoc
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function offsetGet($offset)
     {
         if ($this->offsetExists($offset)) {
             return $this->data[$offset];
         }
-        throw new \InvalidArgumentException($offset);
+        throw new InvalidArgumentException($offset);
     }
 
     /**

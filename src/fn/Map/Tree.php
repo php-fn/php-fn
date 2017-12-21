@@ -156,9 +156,9 @@ class Tree implements RecursiveIterator, Countable
             }
 
             if ($curValue instanceof Value) {
-                $curKey = isset($curValue->key) ? $curValue->key : $curKey;
-                $this->children = isset($curValue->children) ? $curValue->children : null;
-                $curValue = isset($curValue->value) ? $curValue->value : $value;
+                $curKey = $curValue->key !== null ? $curValue->key : $curKey;
+                $this->children = $curValue->children;
+                $curValue = $curValue->value !== null ? $curValue->value : $value;
             }
 
             $this->currentKey = $curKey;

@@ -91,6 +91,30 @@ function hasKey($key, $in)
 }
 
 /**
+ * @param string|int                         $index
+ * @param array|\ArrayAccess|iterable|string $in
+ * @param mixed                              $default
+ *
+ * @return mixed
+ */
+function at($index, $in, $default = null)
+{
+    if ((is_array($in) || $in instanceof \ArrayAccess || is_scalar($in)) && isset($in[$index])) {
+        return $in[$index];
+    }
+    if (isIterable($in) && array_key_exists($index, $map = toMap($in))) {
+        return $map[$index];
+    }
+    if (func_num_args() > 2) {
+        return $default;
+    }
+    /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
+    throw new \OutOfRangeException(sprintf('undefined index: %s',
+        $index
+    ));
+}
+
+/**
  * @param mixed $value
  * @param iterable|mixed $in
  * @param bool $strict
@@ -143,11 +167,6 @@ function traverse($candidate, $castOrCallable = null, $cast = null)
             continue;
         }
 
-        if (!$value instanceof Map\Value) {
-            $map[$key] = $value;
-            continue;
-        }
-
         if ($null === $value) {
             $map[$key] = null;
             continue;
@@ -157,16 +176,21 @@ function traverse($candidate, $castOrCallable = null, $cast = null)
             break;
         }
 
-        if (isset($value->key)) {
+        if (!$value instanceof Map\Value) {
+            $map[$key] = $value;
+            continue;
+        }
+
+        if ($value->key !== null) {
             $key = $value->key;
         }
 
-        if (isset($value->value)) {
+        if ($value->value !== null) {
             $sourceValue = $value->value;
         }
 
         $groups = &$map;
-        foreach(isset($value->group) ? toIterable($value->group, true) : [] as $group) {
+        foreach(toIterable($value->group, true) as $group) {
             if (!isset($groups[$group])) {
                 $groups[$group] = [];
             }
@@ -198,18 +222,14 @@ function map($iterable = null, $mapper = null)
 }
 
 /**
- * @param iterable|\ArrayAccess $row
- * @param string|\Closure $key
- * @param string|\Closure $value
+ * @param string $key column to
+ * @param string|iterable|\Closure $value
  *
- * @return Map\Row
+ * @return Map\RowMapper
  */
-function mapRow($row, $key = null, $value = null)
+function mapRow($key, $value, ...$group)
 {
-    $row =  new Map\Row($row);
-    $key && $row->andKey($key);
-    $value && $row->andValue($value);
-    return $row;
+    return new Map\RowMapper($key, $value, ...$group);
 }
 
 /**
@@ -255,13 +275,13 @@ function mapChildren($children)
  * Returned object is used to mark the value as NULL in the @see \fn\traverse() function,
  * since NULL itself is used to filter/skip values
  *
- * @return Map\Value
+ * @return \stdClass
  */
 function mapNull()
 {
     static $null;
     if (!$null) {
-        $null = mapValue();
+        $null = new \stdClass;
     }
     return $null;
 }
@@ -269,13 +289,13 @@ function mapNull()
 /**
  * Returned object is used to stop the iteration in the @see \fn\traverse() function
  *
- * @return Map\Value
+ * @return \stdClass
  */
 function mapBreak()
 {
     static $break;
     if (!$break) {
-        $break = mapValue();
+        $break = new \stdClass;
     }
     return $break;
 }

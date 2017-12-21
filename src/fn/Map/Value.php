@@ -9,7 +9,6 @@
 namespace fn\Map;
 
 use fn;
-use InvalidArgumentException;
 
 /**
  * @property-read mixed $value
@@ -19,15 +18,12 @@ use InvalidArgumentException;
  */
 class Value
 {
-    /**
-     * @var string[]
-     */
-    const PROPERTIES = ['value', 'key', 'children', 'group'];
+    use fn\Meta\Properties\ReadOnlyTrait;
 
     /**
      * @var array
      */
-    protected $properties = [];
+    protected $properties;
 
     /**
      * @param mixed [$value]
@@ -35,13 +31,14 @@ class Value
      * @param mixed [$group]
      * @param iterable|callable [$children]
      */
-    public function __construct()
+    public function __construct(...$args)
     {
-        $args = func_get_args();
-        fn\hasKey(0, $args) && $this->andValue($args[0]);
-        fn\hasKey(1, $args) && $this->andKey($args[1]);
-        fn\hasKey(2, $args) && $this->andGroup($args[2]);
-        fn\hasKey(3, $args) && $this->andChildren($args[3]);
+        $this->properties = [
+            'value'    => fn\hasKey(0, $args) ? $args[0] : null,
+            'key'      => fn\hasKey(1, $args) ? $args[1] : null,
+            'group'    => fn\hasKey(2, $args) ? $args[2] : null,
+            'children' => fn\hasKey(3, $args) ? $args[3] : null,
+        ];
     }
 
     /**
@@ -67,17 +64,6 @@ class Value
     }
 
     /**
-     * @param iterable|callable $children
-     *
-     * @return $this
-     */
-    public function andChildren($children)
-    {
-        $this->properties['children'] = $children;
-        return $this;
-    }
-
-    /**
      * @param mixed $group
      *
      * @return $this
@@ -89,48 +75,13 @@ class Value
     }
 
     /**
-     * @param string $property
+     * @param iterable|callable $children
      *
-     * @return bool
+     * @return $this
      */
-    public function __isset($property)
+    public function andChildren($children)
     {
-        return fn\hasKey($property, $this->properties);
-    }
-
-    /**
-     * @param string $property
-     *
-     * @return mixed
-     */
-    public function __get($property)
-    {
-        if (isset($this->properties[$property])) {
-            return $this->properties[$property];
-        }
-        if (fn\hasValue($property, static::PROPERTIES)) {
-            return null;
-        }
-        /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
-        throw new InvalidArgumentException($property);
-    }
-
-    /**
-     * @param string $property
-     * @param string $value
-     */
-    public function __set($property, $value)
-    {
-        /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
-        throw new InvalidArgumentException($property);
-    }
-
-    /**
-     * @param string $property
-     */
-    public function __unset($property)
-    {
-        /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
-        throw new InvalidArgumentException($property);
+        $this->properties['children'] = $children;
+        return $this;
     }
 }
