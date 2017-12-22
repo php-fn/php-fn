@@ -157,12 +157,27 @@ class Tree implements RecursiveIterator, Countable
             }
 
             if ($curValue instanceof Value) {
-                $curKey = $curValue->key !== null ? $curValue->key : $curKey;
+                /**
+                 * if there is at least one group instruction, we have to traverse the inner iterator completely
+                 * from the current position (inclusive)
+                 * @todo in this case the remaining children information is lost, fix it ASAP
+                 */
+                if ($curValue->group) {
+                    $iter = $this->inner = new ArrayIterator(fn\traverse($iter, $this->mapper, false));
+                    $iter->rewind();
+                    $this->needsMap = true;
+                    $this->mapper   = function() {
+                        return new Value;
+                    };
+                    continue;
+                }
+
+                $curKey         = $curValue->key !== null ? $curValue->key : $curKey;
                 $this->children = $curValue->children;
-                $curValue = $curValue->value !== null ? $curValue->value : $value;
+                $curValue       = $curValue->value !== null ? $curValue->value : $value;
             }
 
-            $this->currentKey = $curKey;
+            $this->currentKey   = $curKey;
             $this->currentValue = $curValue === $null ? null : $curValue;
             break;
         }
