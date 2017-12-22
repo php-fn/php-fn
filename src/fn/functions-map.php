@@ -22,25 +22,25 @@ function isIterable($candidate)
 /**
  * Convert the given candidate to an iterable entity
  *
- * @param mixed $candidate
+ * @param iterable $iterable
  * @param bool $cast
  * @param bool|callable $onError
  * @return array|iterable|\Traversable
  * @throws \InvalidArgumentException
  */
-function toIterable($candidate, $cast = false, $onError = true)
+function toIterable($iterable, $cast = false, $onError = true)
 {
-    if (isIterable($candidate)) {
-        return $candidate;
+    if (isIterable($iterable)) {
+        return $iterable;
     }
     if ($cast) {
-        return (array)$candidate;
+        return (array)$iterable;
     }
-    $exception = new \InvalidArgumentException('Argument $candidate must be iterable');
+    $exception = new \InvalidArgumentException('argument $iterable must be iterable');
     if ($onError === true) {
         throw $exception;
     }
-    return is_callable($onError) ? $onError($candidate, $exception) : null;
+    return is_callable($onError) ? $onError($iterable, $exception) : null;
 }
 
 /**
@@ -127,7 +127,7 @@ function hasValue($value, $in, $strict = true)
 }
 
 /**
- * Convert the given candidate to an associative array and map/filter its values and keys if a callback is passed
+ * Convert the given candidate to an associative array and map/filter/group its values and keys if a callback is passed
  *
  * supports:
  *
@@ -138,66 +138,81 @@ function hasValue($value, $in, $strict = true)
  * - key mapping
  *  - directly (by reference)
  *  - with Value object @see mapKey
-
+ *
  * - grouping with Value object @see mapGroup
  *
  * @see array_walk
  * @see array_filter
  * @see iterator_apply
  *
- * @param mixed $candidate
- * @param bool|callable $castOrCallable
- * @param bool $cast
+ * @param iterable|mixed $iterable
+ * @param callable       $callable
+ * @param bool           $reset Should the iterable be reset before traversing?
+ *
  * @return array
  */
-function traverse($candidate, $castOrCallable = null, $cast = null)
+function traverse($iterable, callable $callable = null, $reset = true)
 {
-    if (!is_callable($castOrCallable)) {
-        return toMap($candidate, $castOrCallable);
+    if (!$callable) {
+        return toMap($iterable);
     }
-
-    $null = mapNull();
+    if (!($isArray = is_array($iterable)) && !$iterable instanceof \Iterator) {
+        if (!$iterable instanceof \Traversable) {
+            throw new \InvalidArgumentException('argument $iterable must be iterable');
+        }
+        $iterable = new \IteratorIterator($iterable);
+    }
+    $null  = mapNull();
     $break = mapBreak();
-    $map = [];
-    $iterable = toIterable($candidate, $cast);
-    foreach ($iterable as $key => $sourceValue) {
-        $value = $castOrCallable($sourceValue, $key);
+    $map   = [];
+    if ($reset) {
+        $isArray ? reset($iterable) : $iterable->rewind();
+    }
+    while($isArray ? key($iterable) !== null : $iterable->valid()) {
+        if ($isArray) {
+            $current = current($iterable);
+            $key     = key($iterable);
+            next($iterable);
+        } else {
+            $current = $iterable->current();
+            $key     = $iterable->key();
+            $iterable->next();
+        }
 
-        if (null === $value) {
+        if (null === $mapped = $callable($current, $key)) {
             continue;
         }
 
-        if ($null === $value) {
+        if ($null === $mapped) {
             $map[$key] = null;
             continue;
         }
 
-        if ($break === $value) {
+        if ($break === $mapped) {
             break;
         }
 
-        if (!$value instanceof Map\Value) {
-            $map[$key] = $value;
+        if (!$mapped instanceof Map\Value) {
+            $map[$key] = $mapped;
             continue;
         }
 
-        if ($value->key !== null) {
-            $key = $value->key;
+        if ($mapped->key !== null) {
+            $key = $mapped->key;
         }
 
-        if ($value->value !== null) {
-            $sourceValue = $value->value;
+        if ($mapped->value !== null) {
+            $current = $mapped->value;
         }
 
         $groups = &$map;
-        foreach(toIterable($value->group, true) as $group) {
+        foreach(toIterable($mapped->group, true) as $group) {
             if (!isset($groups[$group])) {
                 $groups[$group] = [];
             }
             $groups = &$groups[$group];
         }
-
-        $groups[$key] = $sourceValue;
+        $groups[$key] = $current;
     }
     return $map;
 }

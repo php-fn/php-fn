@@ -116,7 +116,7 @@ class functionsMapTest extends MapTest
         assert\not\same($it, toIterable(new \ArrayObject($ar)));
         assert\same(['string'], toIterable('string', true));
         assert\same([], toIterable(null, true));
-        assert\exception('Argument $candidate must be iterable', function () {
+        assert\exception('argument $iterable must be iterable', function () {
             toIterable('string');
         });
         assert\same(null, toIterable('string', false, false));
@@ -137,7 +137,7 @@ class functionsMapTest extends MapTest
         assert\equals(['key' => 'value'], toMap(['key' => 'value']));
         assert\equals(['key' => 'value'], toMap(new \ArrayObject(['key' => 'value'])));
         assert\equals([], toMap(null, true));
-        assert\exception('Argument $candidate must be iterable', function () {
+        assert\exception('argument $iterable must be iterable', function () {
             toMap(null);
         });
     }
@@ -150,7 +150,7 @@ class functionsMapTest extends MapTest
         assert\equals(['value'], toValues(['key' => 'value']));
         assert\equals(['value'], toValues(new \ArrayObject(['key' => 'value'])));
         assert\equals([], toValues(null, true));
-        assert\exception('Argument $candidate must be iterable', function () {
+        assert\exception('argument $iterable must be iterable', function () {
             toValues(null);
         });
     }
@@ -271,30 +271,22 @@ class functionsMapTest extends MapTest
      */
     public function testTraverse()
     {
-        $emptyCallable = function () {
-        };
-        $message = 'Argument $candidate must be iterable';
+        $emptyCallable = function () {};
+        $message = 'argument $iterable must be iterable';
 
         assert\same(['key' => 'value'], traverse(['key' => 'value']));
         assert\same(['key' => 'value'], traverse(new \ArrayObject(['key' => 'value'])));
-        assert\same([], traverse(null, true));
-        assert\same([], traverse(null, $emptyCallable, true));
+        assert\same([], traverse(toMap(null, true)));
+        assert\same([], traverse(toMap(null, true), $emptyCallable));
 
         assert\exception($message, function () {
             traverse(null);
         });
-        assert\exception($message, function () {
-            traverse(null, false);
-        });
         assert\exception($message, function ($emptyCallable) {
             traverse(null, $emptyCallable);
         }, $emptyCallable);
-        assert\exception($message, function ($emptyCallable) {
-            traverse(null, $emptyCallable, false);
-        }, $emptyCallable);
-
-        assert\same([1], traverse('value', 'count', true));
-        assert\same(['VALUE'], traverse('value', $this, true));
+        assert\same([1], traverse(toMap('value', true), 'count'));
+        assert\same(['VALUE'], traverse(toMap('value', true), $this));
     }
 
     /**

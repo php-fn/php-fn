@@ -54,19 +54,19 @@ class MapTest extends \PHPUnit_Framework_TestCase
      */
     public function testArrayAccess()
     {
-        $fn = $this->map(['a' => 'A']);
-        assert\true(isset($fn['a']));
-        assert\equals('A', $fn['a']);
-        assert\false(isset($fn['b']));
-        $fn['b'] = 'B';
-        assert\true(isset($fn['b']));
-        assert\equals('B', $fn['b']);
-        unset($fn['a']);
-        assert\false(isset($fn['a']));
-        assert\exception(new \InvalidArgumentException('a'), function() use($fn) {
-           $fn['a'];
+        $map = $this->map(['a' => 'A']);
+        assert\true(isset($map['a']));
+        assert\equals('A', $map['a']);
+        assert\false(isset($map['b']));
+        $map['b'] = 'B';
+        assert\true(isset($map['b']));
+        assert\equals('B', $map['b']);
+        unset($map['a']);
+        assert\false(isset($map['a']));
+        assert\exception(new \InvalidArgumentException('a'), function() use($map) {
+           $map['a'];
         });
-        assert\same(['b' => 'B', 'c' => 'C'], traverse($fn->replace(['c' => 'C'])));
+        assert\same(['b' => 'B', 'c' => 'C'], traverse($map->replace(['c' => 'C'])));
     }
 
     /**
