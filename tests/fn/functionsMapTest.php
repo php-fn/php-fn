@@ -9,10 +9,9 @@
 namespace fn;
 
 use fn\test\assert;
-use stdClass;
 
 /**
- * @covers map\*
+ * @covers \fn\*
  */
 class functionsMapTest extends MapTest
 {
@@ -25,12 +24,12 @@ class functionsMapTest extends MapTest
     }
 
     /**
-     * @covers hasKey()
+     * @covers \fn\hasKey()
      */
     public function testHasKey()
     {
         assert\false(hasKey('key', null));
-        assert\false(hasKey('key', new stdClass));
+        assert\false(hasKey('key', (object)[]));
         assert\false(hasKey('key', []));
         assert\false(hasKey('key', map()));
 
@@ -49,7 +48,7 @@ class functionsMapTest extends MapTest
     }
 
     /**
-     * @covers hasValue()
+     * @covers \fn\hasValue()
      */
     public function testHasValue()
     {
@@ -67,7 +66,7 @@ class functionsMapTest extends MapTest
     }
 
     /**
-     * @covers map()
+     * @covers \fn\map()
      */
     public function testMapReplace()
     {
@@ -104,7 +103,7 @@ class functionsMapTest extends MapTest
     }
 
     /**
-     * @covers toIterable()
+     * @covers \fn\toIterable()
      */
     public function testToIterable()
     {
@@ -130,7 +129,7 @@ class functionsMapTest extends MapTest
     }
 
     /**
-     * @covers toMap()
+     * @covers \fn\toMap()
      */
     public function testToMap()
     {
@@ -143,7 +142,7 @@ class functionsMapTest extends MapTest
     }
 
     /**
-     * @covers toValues()
+     * @covers \fn\toValues()
      */
     public function testToValues()
     {
@@ -241,7 +240,7 @@ class functionsMapTest extends MapTest
     /**
      * @dataProvider providerSameBehaviourTraverseAndMap
      *
-     * @covers traverse()
+     * @covers \fn\traverse()
      *
      * @param mixed $expected
      * @param mixed $iterable
@@ -255,7 +254,7 @@ class functionsMapTest extends MapTest
     /**
      * @dataProvider providerSameBehaviourTraverseAndMap
      *
-     * @covers map()
+     * @covers \fn\map()
      *
      * @param mixed $expected
      * @param mixed $iterable
@@ -267,7 +266,7 @@ class functionsMapTest extends MapTest
     }
 
     /**
-     * @covers traverse()
+     * @covers \fn\traverse()
      */
     public function testTraverse()
     {
@@ -290,15 +289,15 @@ class functionsMapTest extends MapTest
     }
 
     /**
-     * @covers mapNull()
-     * @covers mapBreak()
+     * @covers \fn\mapNull()
+     * @covers \fn\mapBreak()
      */
     public function testNullBreak()
     {
-        assert\equals(new stdClass, mapNull());
+        assert\equals((object)[], mapNull());
         assert\same(mapNull(), mapNull());
 
-        assert\equals(new stdClass, mapBreak());
+        assert\equals((object)[], mapBreak());
         assert\same(mapBreak(), mapBreak());
 
         assert\equals(mapBreak(), mapNull());
@@ -306,10 +305,10 @@ class functionsMapTest extends MapTest
     }
 
     /**
-     * @covers mapValue()
-     * @covers mapKey()
-     * @covers mapGroup()
-     * @covers mapChildren()
+     * @covers \fn\mapValue()
+     * @covers \fn\mapKey()
+     * @covers \fn\mapGroup()
+     * @covers \fn\mapChildren()
      */
     public function testValueFunctions()
     {
@@ -322,6 +321,37 @@ class functionsMapTest extends MapTest
         assert\equals((new Map\Value)->andKey('k'), mapKey('k'));
         assert\equals((new Map\Value)->andGroup('g'), mapGroup('g'));
         assert\equals((new Map\Value)->andChildren('c'), mapChildren('c'));
+    }
+
+    /**
+     * @covers \fn\map()
+     */
+    public function testMap()
+    {
+        assert\type(Map::class, map());
+        assert\equals([], map()->map, 'args = 0');
+        assert\equals(
+            ['a', 'b', 'c', 'd', 'e'],
+            map(['a', 'b'], ['c'], ['d', 'e'])->map,
+            'args > 1, no mapper'
+        );
+        assert\equals(
+            ['a', 'k' => 'e', 'c', 'd'],
+            map(['a', 'k' => 'b'], ['c'], ['d', 'k' => 'e'])->map,
+            'args > 1, no mapper, with assoc key'
+        );
+        assert\equals(['A', 'C', 'D', 'E'], map(['a', 'b'], ['c'], ['d', 'e'], function($value) {
+            return $value === 'b' ? null : strtoupper($value);
+        })->values, 'args > 1, with mapper');
+
+        // array_key_exists('a', array_merge(['a' => 'A'], ['b' => 'B']))
+        assert\true(isset(map(['a' => null], ['b' => 'B'])['a']));
+
+        // in_array('B', array_merge(['a' => 'A'], ['b' => 'B']), true)
+        assert\true(map(['a' => null], ['b' => 'B'])->has('B'));
+
+        // array_merge(['a' => 'A'], ['b' => 'B'])['b']
+        assert\same('B', map(['a' => 'A'], ['b' => 'B'])['b']);
     }
 
     /**

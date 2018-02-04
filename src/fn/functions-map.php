@@ -218,9 +218,7 @@ function traverse($iterable, callable $callable = null, $reset = true)
 }
 
 /**
- * Create a Fn instance
- *
- * @param iterable ...$iterable If more than one iterable argument is passed, they will be merged (replace)
+ * @param iterable ...$iterable If more than one iterable argument is passed, they will be merged
  * @param callable $mapper
  *
  * @return Map
@@ -229,9 +227,9 @@ function map($iterable = null, $mapper = null)
 {
     if (count($args = func_get_args()) > 1) {
         if (!isIterable($last = toValues(sub($args, -1))[0]) && is_callable($last)) {
-            return (new Map)->replace(...sub($args, 0, -1))->map($last);
+            return (new Map)->merge(...sub($args, 0, -1))->map($last);
         }
-        return (new Map)->replace(...$args);
+        return (new Map)->merge(...$args);
     }
     return new Map($iterable, $mapper);
 }
