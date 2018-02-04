@@ -235,12 +235,12 @@ function map($iterable = null, $mapper = null)
 }
 
 /**
- * @param string $key column to
  * @param string|iterable|\Closure $value
+ * @param string $key column to
  *
  * @return Map\RowMapper
  */
-function mapRow($key, $value, ...$group)
+function mapRow($value, $key = null, ...$group)
 {
     return new Map\RowMapper($key, $value, ...$group);
 }

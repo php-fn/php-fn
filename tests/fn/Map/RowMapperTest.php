@@ -90,7 +90,7 @@ class RowMapperTest extends \PHPUnit_Framework_TestCase
             ['id' => 'a', 'name' => 'A', 'group' => 'g1'],
             ['id' => 'b', 'name' => 'B', 'group' => 'g2'],
             ['id' => 'c', 'name' => 'C', 'group' => 'g1'],
-        ], fn\mapRow('id', 'name', 'group')));
+        ], fn\mapRow('name', 'id', 'group')));
 
         assert\equals([
             'g1' => ['a' => fn\mapValue(['k1' => 'A']), 'c' => fn\mapValue(['k3' => 'C'])],
@@ -99,8 +99,36 @@ class RowMapperTest extends \PHPUnit_Framework_TestCase
             'k1' => ['id' => 'a', 'name' => 'A', 'group' => 'g1'],
             'k2' => ['id' => 'b', 'name' => 'B', 'group' => 'g2'],
             'k3' => ['id' => 'c', 'name' => 'C', 'group' => 'g1'],
-        ], fn\mapRow('id', function(array $row, $key) {
+        ], fn\mapRow(function(array $row, $key) {
             return fn\mapValue([$key => $row['name']]);
-        }, 'group')));
+        }, 'id', 'group')));
+
+        $rows = [
+            ['k1' => 'a-k1', 'k2' => 'a-k2', 'k3' => 'g1'],
+            ['k1' => 'b-k1', 'k2' => 'b-k2', 'k3' => 'g2'],
+            ['k1' => 'c-k1', 'k2' => 'c-k2', 'k3' => 'g1'],
+        ];
+
+        assert\same([
+            'a-k2' => 'a-k1',
+            'b-k2' => 'b-k1',
+            'c-k2' => 'c-k1',
+        ], fn\traverse($rows, fn\mapRow(0, 1)));
+
+        assert\same([
+            'a-k1' => ['k3' => 'g1', 'a-k2'],
+            'b-k1' => ['k3' => 'g2', 'b-k2'],
+            'c-k1' => ['k3' => 'g1', 'c-k2'],
+        ], fn\traverse($rows, fn\mapRow(['k3', 1], 0)));
+
+        assert\same([
+            'g1' => [
+                'a-k1' => ['a-k2', 'a-k1', 'a-k2'],
+                'c-k1' => ['c-k2', 'c-k1', 'c-k2'],
+            ],
+            'g2' => [
+                'b-k1' => ['b-k2', 'b-k1', 'b-k2'],
+            ],
+        ], fn\traverse($rows, fn\mapRow([1, 0, 1], 0, 2)));
     }
 }

@@ -90,10 +90,23 @@ class MapTest extends \PHPUnit_Framework_TestCase
     {
         $map = $this->map(['a' => null, 'b' => null, 'c' => null]);
         assert\type(Map::class, $map->keys());
-        assert\equals(['a', 'b', 'c'], traverse($map->keys()));
-        assert\equals(['A', 'B', 'C'], traverse($map->keys(function($value) {
+        assert\same(['a', 'b', 'c'], traverse($map->keys()));
+        assert\same(['A', 'B', 'C'], traverse($map->keys(function($value) {
             return strtoupper($value);
         })));
+    }
+
+    /**
+     * @covers Map::values
+     */
+    public function testValues()
+    {
+        $map = $this->map(['a' => 'A', 'b' => 'B', 'c' => 'C']);
+        assert\type(Map::class, $map->values());
+        assert\same(['A', 'B', 'C'], traverse($map->values()));
+
+        $increment = function($value) {return ++$value;};
+        assert\same(['D', 'E', 'F'], traverse($map->values($increment, $increment, $increment)));
     }
 
     /**
