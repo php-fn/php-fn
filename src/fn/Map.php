@@ -160,7 +160,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     }
 
     /**
-     * @param callable[] ...$mappers
+     * @param callable ...$mappers
      * @return static
      */
     public function map(callable ...$mappers)
@@ -176,15 +176,29 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     }
 
     /**
-     * @param callable[] ...$mappers
+     * @param callable ...$mappers
      * @return static
      */
     public function keys(callable ...$mappers)
     {
         $counter = 0;
-        return (new static($this->getIterator(), function ($value, $key) use (&$counter) {
+        $mapped = new static($this->getIterator(), function ($value, $key) use (&$counter) {
             return mapValue($key)->andKey($counter++);
-        }))->map(...$mappers);
+        });
+        return $mappers ? $mapped->map(...$mappers) : $mapped;
+    }
+
+    /**
+     * @param callable ...$mappers
+     * @return static
+     */
+    public function values(callable ...$mappers)
+    {
+        $counter = 0;
+        $mapped = new static($this->getIterator(), function ($value) use (&$counter) {
+            return mapValue($value)->andKey($counter++);
+        });
+        return $mappers ? $mapped->map(...$mappers) : $mapped;
     }
 
     /**
@@ -202,7 +216,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     }
 
     /**
-     * @param iterable[] ...$iterables
+     * @param iterable ...$iterables
      * @return static
      */
     public function merge(...$iterables)
@@ -211,7 +225,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     }
 
     /**
-     * @param iterable[] ...$iterables
+     * @param iterable ...$iterables
      * @return static
      */
     public function replace(...$iterables)
@@ -220,7 +234,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     }
 
     /**
-     * @param iterable[] ...$iterables
+     * @param iterable ...$iterables
      * @return static
      */
     public function diff(...$iterables)
