@@ -8,6 +8,7 @@
 
 namespace fn;
 
+use fn\Map\Sort;
 use fn\test\assert;
 use LogicException;
 use Traversable;
@@ -81,6 +82,60 @@ class MapTest extends \PHPUnit_Framework_TestCase
         assert\type(Map::class, $map);
         assert\equals(['a-a-a-a-a-a-a-a-'], traverse($map));
         assert\equals(['a-a-a-a-a-a-a-a-'], traverse($map->map()));
+    }
+
+    /**
+     * @return array[]
+     */
+    public function providerSort()
+    {
+        $map = ['C' => 'C', 'A' => 'a', 'b' => 'B'];
+        $compare = function($left, $right) {
+            static $sort = [
+                'B' => 1,
+                'a' => 2,
+                'C' => 3,
+                'b' => 4,
+                'A' => 5,
+            ];
+            return $sort[$left] - $sort[$right];
+        };
+
+        return [
+            'callback' => [['b' => 'B', 'A' => 'a', 'C' => 'C'], $map, $compare],
+            'callback,reverse' => [$map, $map, $compare, Sort::REVERSE],
+            'callback,keys' => [['C' => 'C', 'b' => 'B', 'A' => 'a'], $map, $compare, Sort::KEYS],
+            'callback,keys|reverse' => [['A' => 'a', 'b' => 'B', 'C' => 'C'], $map, $compare, Sort::KEYS | Sort::REVERSE],
+            'empty' => [[], []],
+            'not specified' => [['b' => 'B', 'C' => 'C', 'A' => 'a'], $map],
+            'regular' => [['b' => 'B', 'C' => 'C', 'A' => 'a'], $map, Sort::REGULAR],
+            'reverse' => [['A' => 'a', 'C' => 'C', 'b' => 'B'], $map, Sort::REVERSE],
+            'keys' => [['A' => 'a', 'C' => 'C', 'b' => 'B'], $map, Sort::KEYS],
+            'keys|reverse' => [['b' => 'B', 'C' => 'C', 'A' => 'a'], $map, Sort::KEYS | Sort::REVERSE],
+            'keys,reverse' => [['b' => 'B', 'C' => 'C', 'A' => 'a'], $map, Sort::KEYS, Sort::REVERSE],
+            'string|case' => [['A' => 'a', 'b' => 'B', 'C' => 'C'], $map, Sort::STRING | Sort::FLAG_CASE],
+            'string|case|keys' => [['A' => 'a', 'b' => 'B', 'C' => 'C'], $map, null, Sort::STRING | Sort::FLAG_CASE | Sort::KEYS],
+            'string' => [[2 => 'a10b', 1 => 'a1ba', 0 => 'a2bB'], ['a2bB', 'a1ba', 'a10b'], Sort::STRING],
+            'natural' => [[1 => 'a1ba', 0 => 'a2bB', 2 => 'a10b'], ['a2bB', 'a1ba', 'a10b'], Sort::NATURAL],
+            'numeric' => [[1 => '1', 0 => '11', 2 => '12'], ['11', '1', '12'], Sort::NUMERIC],
+        ];
+    }
+
+    /**
+     * @dataProvider providerSort
+     * @covers \fn\Map::sort
+     * @covers \fn\Map\Sort::getIterator
+     *
+     * @param array $expected
+     * @param array $map
+     * @param callable|int $strategy
+     * @param int $flags
+     */
+    public function testSort(array $expected, array $map, $strategy = null, $flags = null)
+    {
+        $result = $this->map($map)->sort($strategy, $flags);
+        assert\type(Map::class, $result);
+        assert\same($expected, traverse($result));
     }
 
     /**

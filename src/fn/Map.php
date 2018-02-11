@@ -10,6 +10,7 @@ namespace fn;
 
 use ArrayAccess;
 use Countable;
+use fn\Map\Sort;
 use InvalidArgumentException;
 use IteratorAggregate;
 use LogicException;
@@ -122,6 +123,16 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     }
 
     /**
+     * @param string $key
+     * @param mixed $default
+     * @return mixed|null
+     */
+    public function get($key, $default = null)
+    {
+        return $this->offsetExists($key) ? $this->offsetGet($key) : $default;
+    }
+
+    /**
      * @inheritdoc
      */
     public function offsetExists($offset)
@@ -173,6 +184,16 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
             $new = new static($new, $mapper);
         }
         return $new;
+    }
+
+    /**
+     * @param callable|int $strategy callable or SORT_ constants
+     * @param int $flags SORT_ constants
+     * @return static
+     */
+    public function sort($strategy = null, $flags = null)
+    {
+        return new static(new Sort($this, $strategy, $flags));
     }
 
     /**
