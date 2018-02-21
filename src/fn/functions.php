@@ -46,8 +46,8 @@ function sub($candidate, $start, $lengthOrCallable = null, $encodingOrCallable =
         }
     }
 
-    if (($iterable = toIterable($candidate, false, false)) || is_array($iterable)) {
-        return traverse(array_slice(traverse($iterable), $start, $length, true), $callable);
+    if (isIterable($candidate)) {
+        return traverse(array_slice(traverse($candidate), $start, $length, true), $callable);
     }
 
     if ($encoding) {

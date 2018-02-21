@@ -8,6 +8,9 @@
 
 namespace fn;
 
+use InvalidArgumentException;
+use IteratorIterator;
+
 /**
  * Check if the given candidate is iterable
  *
@@ -24,11 +27,10 @@ function isIterable($candidate)
  *
  * @param iterable $iterable
  * @param bool $cast
- * @param bool|callable $onError
  * @return array|iterable|\Traversable
- * @throws \InvalidArgumentException
+ * @throws InvalidArgumentException
  */
-function toIterable($iterable, $cast = false, $onError = true)
+function toIterable($iterable, $cast = false)
 {
     if (isIterable($iterable)) {
         return $iterable;
@@ -36,11 +38,7 @@ function toIterable($iterable, $cast = false, $onError = true)
     if ($cast) {
         return (array)$iterable;
     }
-    $exception = new \InvalidArgumentException('argument $iterable must be iterable');
-    if ($onError === true) {
-        throw $exception;
-    }
-    return isCallable($onError, true) ? $onError($iterable, $exception) : null;
+    throw new InvalidArgumentException('argument $iterable must be iterable');
 }
 
 /**
@@ -91,10 +89,9 @@ function hasKey($key, $in)
 }
 
 /**
- * @param string|int                         $index
+ * @param string|int $index
  * @param array|\ArrayAccess|iterable|string $in
- * @param mixed                              $default
- *
+ * @param mixed $default
  * @return mixed
  */
 function at($index, $in, $default = null)
@@ -118,7 +115,6 @@ function at($index, $in, $default = null)
  * @param mixed $value
  * @param iterable|mixed $in
  * @param bool $strict
- *
  * @return bool
  */
 function hasValue($value, $in, $strict = true)
@@ -146,9 +142,8 @@ function hasValue($value, $in, $strict = true)
  * @see iterator_apply
  *
  * @param iterable|mixed $iterable
- * @param callable       $callable
- * @param bool           $reset Should the iterable be reset before traversing?
- *
+ * @param callable $callable
+ * @param bool $reset Should the iterable be reset before traversing?
  * @return array
  */
 function traverse($iterable, callable $callable = null, $reset = true)
@@ -158,24 +153,24 @@ function traverse($iterable, callable $callable = null, $reset = true)
     }
     if (!($isArray = is_array($iterable)) && !$iterable instanceof \Iterator) {
         if (!$iterable instanceof \Traversable) {
-            throw new \InvalidArgumentException('argument $iterable must be iterable');
+            throw new InvalidArgumentException('argument $iterable must be iterable');
         }
-        $iterable = new \IteratorIterator($iterable);
+        $iterable = new IteratorIterator($iterable);
     }
-    $null  = mapNull();
+    $null = mapNull();
     $break = mapBreak();
-    $map   = [];
+    $map = [];
     if ($reset) {
         $isArray ? reset($iterable) : $iterable->rewind();
     }
-    while($isArray ? key($iterable) !== null : $iterable->valid()) {
+    while ($isArray ? key($iterable) !== null : $iterable->valid()) {
         if ($isArray) {
             $current = current($iterable);
-            $key     = key($iterable);
+            $key = key($iterable);
             next($iterable);
         } else {
             $current = $iterable->current();
-            $key     = $iterable->key();
+            $key = $iterable->key();
             $iterable->next();
         }
 
@@ -206,7 +201,7 @@ function traverse($iterable, callable $callable = null, $reset = true)
         }
 
         $groups = &$map;
-        foreach(toIterable($mapped->group, true) as $group) {
+        foreach (toIterable($mapped->group, true) as $group) {
             if (!isset($groups[$group])) {
                 $groups[$group] = [];
             }
@@ -220,7 +215,6 @@ function traverse($iterable, callable $callable = null, $reset = true)
 /**
  * @param iterable ...$iterable If more than one iterable argument is passed, they will be merged
  * @param callable $mapper
- *
  * @return Map
  */
 function map($iterable = null, $mapper = null)
@@ -237,7 +231,6 @@ function map($iterable = null, $mapper = null)
 /**
  * @param string|iterable|\Closure $value
  * @param string $key column to
- *
  * @return Map\RowMapper
  */
 function mapRow($value, $key = null, ...$group)

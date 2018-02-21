@@ -118,14 +118,6 @@ class functionsMapTest extends MapTest
         assert\exception('argument $iterable must be iterable', function () {
             toIterable('string');
         });
-        assert\same(null, toIterable('string', false, false));
-
-        $result = toIterable('string', false, function ($candidate, \InvalidArgumentException $e) {
-            assert\same('string', $candidate);
-            return $e;
-        });
-
-        assert\type(\InvalidArgumentException::class, $result);
     }
 
     /**

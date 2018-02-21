@@ -144,7 +144,7 @@ class functionsSubTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider providerSubWithString
      *
-     * @covers       sub()
+     * @covers       ::sub
      *
      * @param array $expected
      * @param array $candidate
