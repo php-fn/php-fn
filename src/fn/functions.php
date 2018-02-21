@@ -34,11 +34,11 @@ function sub($candidate, $start, $lengthOrCallable = null, $encodingOrCallable =
     $callable = null;
     $encoding = null;
 
-    if (is_callable($lengthOrCallable)) {
+    if (isCallable($lengthOrCallable, true)) {
         $callable = $lengthOrCallable;
     } else {
         $length = $lengthOrCallable;
-        if (is_callable($encodingOrCallable)) {
+        if (isCallable($encodingOrCallable, true)) {
             $callable = $encodingOrCallable;
         } else {
             $encoding = $encodingOrCallable;
@@ -57,4 +57,17 @@ function sub($candidate, $start, $lengthOrCallable = null, $encodingOrCallable =
     }
 
     return $callable ? $callable($subStr) : $subStr;
+}
+
+/**
+ * @param callable|mixed $candidate
+ * @param bool $strict
+ * @return bool
+ */
+function isCallable($candidate, $strict = false)
+{
+    if (!is_callable($candidate, !$strict) || ($strict && is_string($candidate) && !strpos($candidate, '::'))) {
+        return false;
+    }
+    return true;
 }

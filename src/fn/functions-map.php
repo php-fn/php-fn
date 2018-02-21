@@ -40,7 +40,7 @@ function toIterable($iterable, $cast = false, $onError = true)
     if ($onError === true) {
         throw $exception;
     }
-    return is_callable($onError) ? $onError($iterable, $exception) : null;
+    return isCallable($onError, true) ? $onError($iterable, $exception) : null;
 }
 
 /**
@@ -226,7 +226,7 @@ function traverse($iterable, callable $callable = null, $reset = true)
 function map($iterable = null, $mapper = null)
 {
     if (count($args = func_get_args()) > 1) {
-        if (!isIterable($last = toValues(sub($args, -1))[0]) && is_callable($last)) {
+        if (!isIterable($last = toValues(sub($args, -1))[0]) && isCallable($last, true)) {
             return (new Map)->merge(...sub($args, 0, -1))->map($last);
         }
         return (new Map)->merge(...$args);

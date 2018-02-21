@@ -78,7 +78,7 @@ class TreeTest extends PHPUnit_Framework_TestCase
     public function testRecursiveIteration($expected, $inner, $mapper)
     {
         assert\equals($expected, fn\toValues(new Rec(new Tree($inner, $mapper), Rec::SELF_FIRST)));
-        assert\equals($expected, fn\toValues(new Rec(new Tree(new Lazy(function() use($inner) {
+        assert\equals($expected, fn\toValues(new Rec(new Tree(new Lazy(function () use ($inner) {
             return $inner;
         }), $mapper), Rec::SELF_FIRST)));
     }
@@ -196,13 +196,13 @@ class TreeTest extends PHPUnit_Framework_TestCase
      */
     public function testSimpleIteration($expected, $inner, $mapper)
     {
-        assert\equals\trial($expected, function($iterator) {
+        assert\equals\trial($expected, function ($iterator) {
             return fn\traverse($iterator);
         }, new Tree($inner, $mapper));
 
-        assert\equals\trial($expected, function($iterator) {
+        assert\equals\trial($expected, function ($iterator) {
             return fn\traverse($iterator);
-        }, new Tree(new Lazy(function() use($inner) {
+        }, new Tree(new Lazy(function () use ($inner) {
             return $inner;
         }), $mapper));
     }

@@ -92,7 +92,7 @@ class Tree implements RecursiveIterator, Countable
     private function getChildrenIterator()
     {
         if ($this->mapper && $this->doMap() && $this->children) {
-            if (is_callable($this->children)) {
+            if (fn\isCallable($this->children, true)) {
                 $this->children = call_user_func($this->children, $this->current(), $this->key(), $this);
             }
             if (!$this->children instanceof RecursiveIterator) {
