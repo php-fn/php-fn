@@ -213,19 +213,28 @@ function traverse($iterable, callable $callable = null, $reset = true)
 }
 
 /**
- * @param iterable ...$iterable If more than one iterable argument is passed, they will be merged
- * @param callable $mapper
+ * @param iterable|callable ...$iterable If more than one iterable argument is passed, they will be merged
  * @return Map
  */
-function map($iterable = null, $mapper = null)
+function map(...$iterable)
 {
-    if (count($args = func_get_args()) > 1) {
-        if (!isIterable($last = toValues(sub($args, -1))[0]) && isCallable($last, true)) {
-            return (new Map)->merge(...sub($args, 0, -1))->map($last);
-        }
-        return (new Map)->merge(...$args);
+    $callable = _\lastCallable($iterable);
+    $merged = (new Map)->merge(...$iterable);
+    return $callable ? $merged->map($callable) : $merged;
+}
+
+/**
+ * @param iterable|callable ...$iterable If more than one iterable argument is passed, they will be merged
+ * @return array
+ */
+function merge(...$iterable)
+{
+    if (!$iterable) {
+        return [];
     }
-    return new Map($iterable, $mapper);
+    $callable = _\lastCallable($iterable);
+    $merged = array_merge(...traverse($iterable, function($candidate) {return toMap($candidate);}));
+    return $callable ? traverse($merged, $callable) : $merged;
 }
 
 /**

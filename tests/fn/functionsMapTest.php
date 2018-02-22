@@ -24,7 +24,7 @@ class functionsMapTest extends MapTest
     }
 
     /**
-     * @covers \fn\hasKey()
+     * @covers ::hasKey
      */
     public function testHasKey()
     {
@@ -48,7 +48,7 @@ class functionsMapTest extends MapTest
     }
 
     /**
-     * @covers \fn\hasValue()
+     * @covers ::hasValue
      */
     public function testHasValue()
     {
@@ -66,7 +66,7 @@ class functionsMapTest extends MapTest
     }
 
     /**
-     * @covers \fn\map()
+     * @covers ::map
      */
     public function testMapReplace()
     {
@@ -103,7 +103,7 @@ class functionsMapTest extends MapTest
     }
 
     /**
-     * @covers \fn\toIterable()
+     * @covers ::toIterable
      */
     public function testToIterable()
     {
@@ -121,7 +121,7 @@ class functionsMapTest extends MapTest
     }
 
     /**
-     * @covers \fn\toMap()
+     * @covers ::toMap
      */
     public function testToMap()
     {
@@ -134,7 +134,7 @@ class functionsMapTest extends MapTest
     }
 
     /**
-     * @covers \fn\toValues()
+     * @covers ::toValues
      */
     public function testToValues()
     {
@@ -232,7 +232,7 @@ class functionsMapTest extends MapTest
     /**
      * @dataProvider providerSameBehaviourTraverseAndMap
      *
-     * @covers \fn\traverse()
+     * @covers ::traverse
      *
      * @param mixed $expected
      * @param mixed $iterable
@@ -246,7 +246,7 @@ class functionsMapTest extends MapTest
     /**
      * @dataProvider providerSameBehaviourTraverseAndMap
      *
-     * @covers \fn\map()
+     * @covers ::map
      *
      * @param mixed $expected
      * @param mixed $iterable
@@ -258,7 +258,7 @@ class functionsMapTest extends MapTest
     }
 
     /**
-     * @covers \fn\traverse()
+     * @covers ::traverse
      */
     public function testTraverse()
     {
@@ -281,8 +281,8 @@ class functionsMapTest extends MapTest
     }
 
     /**
-     * @covers \fn\mapNull()
-     * @covers \fn\mapBreak()
+     * @covers ::mapNull
+     * @covers ::mapBreak
      */
     public function testNullBreak()
     {
@@ -297,10 +297,10 @@ class functionsMapTest extends MapTest
     }
 
     /**
-     * @covers \fn\mapValue()
-     * @covers \fn\mapKey()
-     * @covers \fn\mapGroup()
-     * @covers \fn\mapChildren()
+     * @covers ::mapValue
+     * @covers ::mapKey
+     * @covers ::mapGroup
+     * @covers ::mapChildren
      */
     public function testValueFunctions()
     {
@@ -316,7 +316,7 @@ class functionsMapTest extends MapTest
     }
 
     /**
-     * @covers \fn\map()
+     * @covers ::map
      */
     public function testMap()
     {
@@ -332,7 +332,7 @@ class functionsMapTest extends MapTest
             map(['a', 'k' => 'b'], ['c'], ['d', 'k' => 'e'])->map,
             'args > 1, no mapper, with assoc key'
         );
-        assert\equals(['A', 'C', 'D', 'E'], map(['a', 'b'], ['c'], ['d', 'e'], function($value) {
+        assert\equals(['A', 'C', 'D', 'E'], map(['a', 'b'], ['c'], ['d', 'e'], function ($value) {
             return $value === 'b' ? null : strtoupper($value);
         })->values, 'args > 1, with mapper');
 
@@ -344,6 +344,30 @@ class functionsMapTest extends MapTest
 
         // array_merge(['a' => 'A'], ['b' => 'B'])['b']
         assert\same('B', map(['a' => 'A'], ['b' => 'B'])['b']);
+    }
+
+    /**
+     * @covers ::merge
+     */
+    public function testMerge()
+    {
+        assert\same([], merge(), 'args = 0');
+        assert\same([], merge([]));
+        assert\same([], merge([], new Map));
+        assert\equals(['a', 'b', 'c', 'd', 'e'], merge(['a', 'b'], ['c'], ['d', 'e']), 'args > 1, no mapper');
+
+        assert\equals(
+            ['a', 'k' => 'e', 'c', 'd'],
+            merge(['a', 'k' => 'b'], ['c'], ['d', 'k' => 'e']),
+            'args > 1, no mapper, with assoc key'
+        );
+
+        assert\equals(['A', 'C', 'D', 'E'], toValues(merge(['a', 'b'], ['c'], ['d', 'e'], function ($value) {
+            return $value === 'b' ? null : strtoupper($value);
+        })), 'args > 1, with mapper');
+
+        // array_merge(['a' => 'A'], ['b' => 'B'])['b']
+        assert\same('B', merge(['a' => 'A'], ['b' => 'B'])['b']);
     }
 
     /**
