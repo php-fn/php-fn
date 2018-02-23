@@ -46,7 +46,7 @@ function sub($candidate, $start, $lengthOrCallable = null, $encodingOrCallable =
         }
     }
 
-    if (_\isIterable($candidate)) {
+    if (_\isTraversable($candidate)) {
         return traverse(array_slice(traverse($candidate), $start, $length, true), $callable);
     }
 

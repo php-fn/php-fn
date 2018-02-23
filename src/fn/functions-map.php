@@ -25,7 +25,7 @@ function hasKey($key, $in)
     if ($in instanceof \ArrayAccess) {
         return false;
     }
-    return _\isIterable($in) && array_key_exists($key, _\toMap($in));
+    return _\isTraversable($in) && array_key_exists($key, _\toMap($in));
 }
 
 /**
@@ -39,7 +39,7 @@ function at($index, $in, $default = null)
     if ((is_array($in) || $in instanceof \ArrayAccess || is_scalar($in)) && isset($in[$index])) {
         return $in[$index];
     }
-    if (_\isIterable($in) && array_key_exists($index, $map = _\toMap($in))) {
+    if (_\isTraversable($in) && array_key_exists($index, $map = _\toMap($in))) {
         return $map[$index];
     }
     if (func_num_args() > 2) {
@@ -59,7 +59,7 @@ function at($index, $in, $default = null)
  */
 function hasValue($value, $in, $strict = true)
 {
-    return _\isIterable($in) && in_array($value, _\toMap($in), $strict);
+    return _\isTraversable($in) && in_array($value, _\toMap($in), $strict);
 }
 
 /**

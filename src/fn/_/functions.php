@@ -19,7 +19,7 @@ function lastCallable(array &$args)
     if (!$args) {
         return null;
     }
-    if (!isIterable($last = array_pop($args)) && fn\isCallable($last, true)) {
+    if (!isTraversable($last = array_pop($args)) && fn\isCallable($last, true)) {
         if (!$args) {
             throw new InvalidArgumentException('single argument should not be a callable');
         }
@@ -35,7 +35,7 @@ function lastCallable(array &$args)
  * @param mixed $candidate
  * @return bool
  */
-function isIterable($candidate)
+function isTraversable($candidate)
 {
     return is_array($candidate) || $candidate instanceof \Traversable;
 }
@@ -50,7 +50,7 @@ function isIterable($candidate)
  */
 function toIterable($iterable, $cast = false)
 {
-    if (isIterable($iterable)) {
+    if (isTraversable($iterable)) {
         return $iterable;
     }
     if ($cast) {
