@@ -6,14 +6,18 @@
  * file that was distributed with this source code.
  */
 
-namespace fn\_;
+namespace fn;
 
+use function fn\_\toArray;
+use function fn\_\toString;
+use function fn\_\toTraversable;
+use function fn\_\toValues;
 use fn\test\assert;
 
 /**
  * @covers \fn\_\
  */
-class functionsTest extends \PHPUnit_Framework_TestCase
+class FunctionsHelperTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @covers ::toTraversable

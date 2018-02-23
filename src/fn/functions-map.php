@@ -252,7 +252,7 @@ function mapChildren($children)
 }
 
 /**
- * Returned object is used to mark the value as NULL in the @see \fn\traverse() function,
+ * Returned object is used to mark the value as NULL in the @see traverse function,
  * since NULL itself is used to filter/skip values
  *
  * @return \stdClass
@@ -267,7 +267,7 @@ function mapNull()
 }
 
 /**
- * Returned object is used to stop the iteration in the @see \fn\traverse() function
+ * Returned object is used to stop the iteration in the @see traverse function
  *
  * @return \stdClass
  */
@@ -279,4 +279,3 @@ function mapBreak()
     }
     return $break;
 }
-

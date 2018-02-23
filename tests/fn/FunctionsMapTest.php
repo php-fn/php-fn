@@ -13,7 +13,7 @@ use fn\test\assert;
 /**
  * @covers \fn\*
  */
-class functionsMapTest extends MapTest
+class FunctionsMapTest extends MapTest
 {
     /**
      * @inheritdoc

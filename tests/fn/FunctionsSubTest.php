@@ -13,7 +13,7 @@ use fn\test\assert;
 /**
  * @covers sub()
  */
-class functionsSubTest extends \PHPUnit_Framework_TestCase
+class FunctionsSubTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * for iterable:

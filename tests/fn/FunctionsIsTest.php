@@ -12,7 +12,7 @@ use fn\test\assert;
 
 /**
  */
-class functionsIsTest extends \PHPUnit_Framework_TestCase
+class FunctionsIsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @covers \fn\isCallable()
