@@ -34,15 +34,15 @@ class functionsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::toMap
+     * @covers ::toArray
      */
-    public function testToMap()
+    public function testToArray()
     {
-        assert\equals(['key' => 'value'], toMap(['key' => 'value']));
-        assert\equals(['key' => 'value'], toMap(new \ArrayObject(['key' => 'value'])));
-        assert\equals([], toMap(null, true));
+        assert\equals(['key' => 'value'], toArray(['key' => 'value']));
+        assert\equals(['key' => 'value'], toArray(new \ArrayObject(['key' => 'value'])));
+        assert\equals([], toArray(null, true));
         assert\exception('argument $iterable must be iterable', function () {
-            toMap(null);
+            toArray(null);
         });
     }
 

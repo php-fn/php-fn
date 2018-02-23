@@ -43,7 +43,7 @@ function isTraversable($candidate)
 /**
  * Convert the given candidate to an iterable entity
  *
- * @param iterable $iterable
+ * @param iterable|mixed $iterable
  * @param bool $cast
  * @return array|iterable|\Traversable
  * @throws InvalidArgumentException
@@ -66,7 +66,7 @@ function toTraversable($iterable, $cast = false)
  * @param bool $cast
  * @return array
  */
-function toMap($candidate, $cast = false)
+function toArray($candidate, $cast = false)
 {
     if (is_array($candidate = toTraversable($candidate, $cast))) {
         return $candidate;

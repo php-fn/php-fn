@@ -25,7 +25,7 @@ function hasKey($key, $in)
     if ($in instanceof \ArrayAccess) {
         return false;
     }
-    return _\isTraversable($in) && array_key_exists($key, _\toMap($in));
+    return _\isTraversable($in) && array_key_exists($key, _\toArray($in));
 }
 
 /**
@@ -39,7 +39,7 @@ function at($index, $in, $default = null)
     if ((is_array($in) || $in instanceof \ArrayAccess || is_scalar($in)) && isset($in[$index])) {
         return $in[$index];
     }
-    if (_\isTraversable($in) && array_key_exists($index, $map = _\toMap($in))) {
+    if (_\isTraversable($in) && array_key_exists($index, $map = _\toArray($in))) {
         return $map[$index];
     }
     if (func_num_args() > 2) {
@@ -59,7 +59,7 @@ function at($index, $in, $default = null)
  */
 function hasValue($value, $in, $strict = true)
 {
-    return _\isTraversable($in) && in_array($value, _\toMap($in), $strict);
+    return _\isTraversable($in) && in_array($value, _\toArray($in), $strict);
 }
 
 /**
@@ -89,7 +89,7 @@ function hasValue($value, $in, $strict = true)
 function traverse($iterable, callable $callable = null, $reset = true)
 {
     if (!$callable) {
-        return _\toMap($iterable);
+        return _\toArray($iterable);
     }
     if (!($isArray = is_array($iterable)) && !$iterable instanceof \Iterator) {
         if (!$iterable instanceof \Traversable) {
@@ -173,7 +173,7 @@ function merge(...$iterable)
         return [];
     }
     $callable = _\lastCallable($iterable);
-    $merged = array_merge(...traverse($iterable, function($candidate) {return _\toMap($candidate);}));
+    $merged = array_merge(...traverse($iterable, function($candidate) {return _\toArray($candidate);}));
     return $callable ? traverse($merged, $callable) : $merged;
 }
 

@@ -223,8 +223,8 @@ class functionsMapTest extends MapTest
 
         assert\same(['key' => 'value'], traverse(['key' => 'value']));
         assert\same(['key' => 'value'], traverse(new \ArrayObject(['key' => 'value'])));
-        assert\same([], traverse(_\toMap(null, true)));
-        assert\same([], traverse(_\toMap(null, true), $emptyCallable));
+        assert\same([], traverse(_\toArray(null, true)));
+        assert\same([], traverse(_\toArray(null, true), $emptyCallable));
 
         assert\exception($message, function () {
             traverse(null);
@@ -232,8 +232,8 @@ class functionsMapTest extends MapTest
         assert\exception($message, function ($emptyCallable) {
             traverse(null, $emptyCallable);
         }, $emptyCallable);
-        assert\same([1], traverse(_\toMap('value', true), 'count'));
-        assert\same(['VALUE'], traverse(_\toMap('value', true), $this));
+        assert\same([1], traverse(_\toArray('value', true), 'count'));
+        assert\same(['VALUE'], traverse(_\toArray('value', true), $this));
     }
 
     /**

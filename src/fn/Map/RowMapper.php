@@ -45,7 +45,7 @@ class RowMapper
                 /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
                 throw new DomainException('row should be of type: array|ArrayAccess|iterable');
             }
-            $row = fn\_\toMap($row);
+            $row = fn\_\toArray($row);
         }
 
         $rowValues = fn\map($row)->values();

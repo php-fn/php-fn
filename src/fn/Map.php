@@ -231,7 +231,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     {
         return function () use ($function, $iterables) {
             return $function(...traverse($iterables, function ($iterable) {
-                return _\toMap($iterable);
+                return _\toArray($iterable);
             }));
         };
     }
