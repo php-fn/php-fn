@@ -48,7 +48,7 @@ function isTraversable($candidate)
  * @return array|iterable|\Traversable
  * @throws InvalidArgumentException
  */
-function toIterable($iterable, $cast = false)
+function toTraversable($iterable, $cast = false)
 {
     if (isTraversable($iterable)) {
         return $iterable;
@@ -68,7 +68,7 @@ function toIterable($iterable, $cast = false)
  */
 function toMap($candidate, $cast = false)
 {
-    if (is_array($candidate = toIterable($candidate, $cast))) {
+    if (is_array($candidate = toTraversable($candidate, $cast))) {
         return $candidate;
     }
     return iterator_to_array($candidate);
@@ -83,7 +83,7 @@ function toMap($candidate, $cast = false)
  */
 function toValues($candidate, $cast = false)
 {
-    if (is_array($candidate = toIterable($candidate, $cast))) {
+    if (is_array($candidate = toTraversable($candidate, $cast))) {
         return array_values($candidate);
     }
     return iterator_to_array($candidate, false);

@@ -16,20 +16,20 @@ use fn\test\assert;
 class functionsTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers ::toIterable
+     * @covers ::toTraversable
      */
-    public function testToIterable()
+    public function testToTraversable()
     {
         $ar = [true];
         $it = new \ArrayObject($ar);
-        assert\same($ar, toIterable([true]));
-        assert\same($it, toIterable($it));
-        assert\equals($it, toIterable(new \ArrayObject($ar)));
-        assert\not\same($it, toIterable(new \ArrayObject($ar)));
-        assert\same(['string'], toIterable('string', true));
-        assert\same([], toIterable(null, true));
+        assert\same($ar, toTraversable([true]));
+        assert\same($it, toTraversable($it));
+        assert\equals($it, toTraversable(new \ArrayObject($ar)));
+        assert\not\same($it, toTraversable(new \ArrayObject($ar)));
+        assert\same(['string'], toTraversable('string', true));
+        assert\same([], toTraversable(null, true));
         assert\exception('argument $iterable must be iterable', function () {
-            toIterable('string');
+            toTraversable('string');
         });
     }
 

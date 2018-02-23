@@ -141,7 +141,7 @@ function traverse($iterable, callable $callable = null, $reset = true)
         }
 
         $groups = &$map;
-        foreach (_\toIterable($mapped->group, true) as $group) {
+        foreach (_\toTraversable($mapped->group, true) as $group) {
             if (!isset($groups[$group])) {
                 $groups[$group] = [];
             }
