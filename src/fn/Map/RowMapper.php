@@ -41,11 +41,11 @@ class RowMapper
     public function __invoke($row, $key)
     {
         if (!(is_array($row) || $row instanceof ArrayAccess)) {
-            if (!fn\isIterable($row)) {
+            if (!fn\_\isIterable($row)) {
                 /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
                 throw new DomainException('row should be of type: array|ArrayAccess|iterable');
             }
-            $row = fn\toMap($row);
+            $row = fn\_\toMap($row);
         }
 
         $rowValues = fn\map($row)->values();
@@ -54,7 +54,7 @@ class RowMapper
         if (null !== $valueColumns = $this->config->value) {
             if ($valueColumns instanceof Closure) {
                 $mappedValue = $valueColumns($row, $key, $mapped);
-            } else if (fn\isIterable($valueColumns)) {
+            } else if (fn\_\isIterable($valueColumns)) {
                 $mappedValue = [];
                 foreach ($valueColumns as $toColumn => $fromColumn) {
                     if (is_numeric($toColumn)) {

@@ -12,66 +12,6 @@ use InvalidArgumentException;
 use IteratorIterator;
 
 /**
- * Check if the given candidate is iterable
- *
- * @param mixed $candidate
- * @return bool
- */
-function isIterable($candidate)
-{
-    return is_array($candidate) || $candidate instanceof \Traversable;
-}
-
-/**
- * Convert the given candidate to an iterable entity
- *
- * @param iterable $iterable
- * @param bool $cast
- * @return array|iterable|\Traversable
- * @throws InvalidArgumentException
- */
-function toIterable($iterable, $cast = false)
-{
-    if (isIterable($iterable)) {
-        return $iterable;
-    }
-    if ($cast) {
-        return (array)$iterable;
-    }
-    throw new InvalidArgumentException('argument $iterable must be iterable');
-}
-
-/**
- * Convert the given candidate to an associative array
- *
- * @param iterable|mixed $candidate
- * @param bool $cast
- * @return array
- */
-function toMap($candidate, $cast = false)
-{
-    if (is_array($candidate = toIterable($candidate, $cast))) {
-        return $candidate;
-    }
-    return iterator_to_array($candidate);
-}
-
-/**
- * Convert the given candidate to an array
- *
- * @param mixed $candidate
- * @param bool $cast
- * @return array
- */
-function toValues($candidate, $cast = false)
-{
-    if (is_array($candidate = toIterable($candidate, $cast))) {
-        return array_values($candidate);
-    }
-    return iterator_to_array($candidate, false);
-}
-
-/**
  * @param string|int $key
  * @param iterable|mixed $in
  *
@@ -85,7 +25,7 @@ function hasKey($key, $in)
     if ($in instanceof \ArrayAccess) {
         return false;
     }
-    return isIterable($in) && array_key_exists($key, toMap($in));
+    return _\isIterable($in) && array_key_exists($key, _\toMap($in));
 }
 
 /**
@@ -99,7 +39,7 @@ function at($index, $in, $default = null)
     if ((is_array($in) || $in instanceof \ArrayAccess || is_scalar($in)) && isset($in[$index])) {
         return $in[$index];
     }
-    if (isIterable($in) && array_key_exists($index, $map = toMap($in))) {
+    if (_\isIterable($in) && array_key_exists($index, $map = _\toMap($in))) {
         return $map[$index];
     }
     if (func_num_args() > 2) {
@@ -119,7 +59,7 @@ function at($index, $in, $default = null)
  */
 function hasValue($value, $in, $strict = true)
 {
-    return isIterable($in) && in_array($value, toMap($in), $strict);
+    return _\isIterable($in) && in_array($value, _\toMap($in), $strict);
 }
 
 /**
@@ -149,7 +89,7 @@ function hasValue($value, $in, $strict = true)
 function traverse($iterable, callable $callable = null, $reset = true)
 {
     if (!$callable) {
-        return toMap($iterable);
+        return _\toMap($iterable);
     }
     if (!($isArray = is_array($iterable)) && !$iterable instanceof \Iterator) {
         if (!$iterable instanceof \Traversable) {
@@ -201,7 +141,7 @@ function traverse($iterable, callable $callable = null, $reset = true)
         }
 
         $groups = &$map;
-        foreach (toIterable($mapped->group, true) as $group) {
+        foreach (_\toIterable($mapped->group, true) as $group) {
             if (!isset($groups[$group])) {
                 $groups[$group] = [];
             }
@@ -233,7 +173,7 @@ function merge(...$iterable)
         return [];
     }
     $callable = _\lastCallable($iterable);
-    $merged = array_merge(...traverse($iterable, function($candidate) {return toMap($candidate);}));
+    $merged = array_merge(...traverse($iterable, function($candidate) {return _\toMap($candidate);}));
     return $callable ? traverse($merged, $callable) : $merged;
 }
 

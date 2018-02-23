@@ -54,7 +54,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
             case 'map':
                 return $this();
             case 'values':
-                return toValues($this());
+                return _\toValues($this());
             default:
                 throw new LogicException($property);
         }
@@ -231,7 +231,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     {
         return function () use ($function, $iterables) {
             return $function(...traverse($iterables, function ($iterable) {
-                return toMap($iterable);
+                return _\toMap($iterable);
             }));
         };
     }

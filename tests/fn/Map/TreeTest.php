@@ -77,8 +77,8 @@ class TreeTest extends PHPUnit_Framework_TestCase
      */
     public function testRecursiveIteration($expected, $inner, $mapper)
     {
-        assert\equals($expected, fn\toValues(new Rec(new Tree($inner, $mapper), Rec::SELF_FIRST)));
-        assert\equals($expected, fn\toValues(new Rec(new Tree(new Lazy(function () use ($inner) {
+        assert\equals($expected, fn\_\toValues(new Rec(new Tree($inner, $mapper), Rec::SELF_FIRST)));
+        assert\equals($expected, fn\_\toValues(new Rec(new Tree(new Lazy(function () use ($inner) {
             return $inner;
         }), $mapper), Rec::SELF_FIRST)));
     }
