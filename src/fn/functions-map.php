@@ -81,37 +81,37 @@ function hasValue($value, $in, $strict = true)
  * @see array_filter
  * @see iterator_apply
  *
- * @param iterable|mixed $iterable
+ * @param iterable|mixed $traversable
  * @param callable $callable
  * @param bool $reset Should the iterable be reset before traversing?
  * @return array
  */
-function traverse($iterable, callable $callable = null, $reset = true)
+function traverse($traversable, callable $callable = null, $reset = true)
 {
     if (!$callable) {
-        return _\toArray($iterable);
+        return _\toArray($traversable);
     }
-    if (!($isArray = is_array($iterable)) && !$iterable instanceof \Iterator) {
-        if (!$iterable instanceof \Traversable) {
-            throw new InvalidArgumentException('argument $iterable must be iterable');
+    if (!($isArray = is_array($traversable)) && !$traversable instanceof \Iterator) {
+        if (!$traversable instanceof \Traversable) {
+            throw new InvalidArgumentException('argument $traversable must be traversable');
         }
-        $iterable = new IteratorIterator($iterable);
+        $traversable = new IteratorIterator($traversable);
     }
     $null = mapNull();
     $break = mapBreak();
     $map = [];
     if ($reset) {
-        $isArray ? reset($iterable) : $iterable->rewind();
+        $isArray ? reset($traversable) : $traversable->rewind();
     }
-    while ($isArray ? key($iterable) !== null : $iterable->valid()) {
+    while ($isArray ? key($traversable) !== null : $traversable->valid()) {
         if ($isArray) {
-            $current = current($iterable);
-            $key = key($iterable);
-            next($iterable);
+            $current = current($traversable);
+            $key = key($traversable);
+            next($traversable);
         } else {
-            $current = $iterable->current();
-            $key = $iterable->key();
-            $iterable->next();
+            $current = $traversable->current();
+            $key = $traversable->key();
+            $traversable->next();
         }
 
         if (null === $mapped = $callable($current, $key)) {

@@ -219,7 +219,6 @@ class functionsMapTest extends MapTest
     public function testTraverse()
     {
         $emptyCallable = function () {};
-        $message = 'argument $iterable must be iterable';
 
         assert\same(['key' => 'value'], traverse(['key' => 'value']));
         assert\same(['key' => 'value'], traverse(new \ArrayObject(['key' => 'value'])));
@@ -229,7 +228,7 @@ class functionsMapTest extends MapTest
         assert\exception('argument $candidate must be traversable', function () {
             traverse(null);
         });
-        assert\exception($message, function ($emptyCallable) {
+        assert\exception('argument $traversable must be traversable', function ($emptyCallable) {
             traverse(null, $emptyCallable);
         }, $emptyCallable);
         assert\same([1], traverse(_\toArray('value', true), 'count'));
