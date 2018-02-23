@@ -11,9 +11,7 @@ namespace fn;
 use ArrayAccess;
 use Countable;
 use fn\Map\Sort;
-use InvalidArgumentException;
 use IteratorAggregate;
-use LogicException;
 
 /**
  * @property-read array $keys
@@ -44,7 +42,6 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     /**
      * @param string $property
      * @return array
-     * @throws LogicException
      */
     public function __get($property)
     {
@@ -56,8 +53,9 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
             case 'values':
                 return _\toValues($this());
             default:
-                throw new LogicException($property);
+                fail\logic($property);
         }
+        return null;
     }
 
     /**
@@ -70,22 +68,19 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     }
 
     /**
-     * @param string $property
-     * @param mixed $value
-     * @throws LogicException
+     * @inheritdoc
      */
     public function __set($property, $value)
     {
-        throw new LogicException($property);
+        fail\logic($property);
     }
 
     /**
-     * @param string $property
-     * @throws LogicException
+     * @inheritdoc
      */
     public function __unset($property)
     {
-        throw new LogicException($property);
+        fail\logic($property);
     }
 
     /**
@@ -142,14 +137,11 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
 
     /**
      * @inheritdoc
-     * @throws InvalidArgumentException
      */
     public function offsetGet($offset)
     {
-        if ($this->offsetExists($offset)) {
-            return $this->data[$offset];
-        }
-        throw new InvalidArgumentException($offset);
+        $this->offsetExists($offset) ?: fail\argument($offset);
+        return $this->data[$offset];
     }
 
     /**

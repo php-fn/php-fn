@@ -14,7 +14,6 @@ use fn;
 use Iterator;
 use IteratorAggregate;
 use RecursiveIterator;
-use RuntimeException;
 
 /**
  * Consolidates implementation of SPL array_* functions
@@ -64,7 +63,6 @@ class Tree implements RecursiveIterator, Countable
 
     /**
      * @return Iterator
-     * @throws RuntimeException
      */
     public function getInnerIterator()
     {
@@ -80,10 +78,8 @@ class Tree implements RecursiveIterator, Countable
             $this->inner = $this->inner->getIterator();
         }
 
-        if ($this->inner instanceof Iterator) {
-            return $this->inner;
-        }
-        throw new RuntimeException('Property $inner must be iterable');
+        $this->inner instanceof Iterator ?: fn\fail('Property $inner must be iterable');
+        return $this->inner;
     }
 
     /**

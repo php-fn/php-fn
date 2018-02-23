@@ -7,8 +7,8 @@
  */
 
 namespace fn\_;
+
 use fn;
-use InvalidArgumentException;
 
 /**
  * @param array $args
@@ -20,9 +20,7 @@ function lastCallable(array &$args)
         return null;
     }
     if (!isTraversable($last = array_pop($args)) && fn\isCallable($last, true)) {
-        if (!$args) {
-            throw new InvalidArgumentException('single argument should not be a callable');
-        }
+        $args ?: fn\fail\argument('single argument should not be a callable');
         return $last;
     }
     $args[] = $last;
@@ -73,17 +71,14 @@ function isTraversable($candidate)
  * @param iterable|mixed $candidate
  * @param bool $cast
  * @return array|iterable|\Traversable
- * @throws InvalidArgumentException
  */
 function toTraversable($candidate, $cast = false)
 {
     if (isTraversable($candidate)) {
         return $candidate;
     }
-    if ($cast) {
-        return (array)$candidate;
-    }
-    throw new InvalidArgumentException('argument $candidate must be traversable');
+    $cast ?: fn\fail\argument('argument $candidate must be traversable');
+    return (array)$candidate;
 }
 
 /**
@@ -150,4 +145,14 @@ function toString($subject, ...$replacements)
         return str_replace(array_keys($replacements), $replacements, $subject);
     }
     return vsprintf($subject, $replacements);
+}
+
+/**
+ * @param string $class
+ * @param string $message
+ * @param mixed ...$replacements
+ */
+function fail($class, $message, ...$replacements)
+{
+    throw new $class(toString($message, ...$replacements));
 }

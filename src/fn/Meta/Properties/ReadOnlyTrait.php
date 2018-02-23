@@ -8,7 +8,7 @@
 
 namespace fn\Meta\Properties;
 
-use RuntimeException;
+use fn;
 
 /**
  */
@@ -17,29 +17,18 @@ trait ReadOnlyTrait
     use ReadWriteTrait;
 
     /**
-     * @param string $property
-     * @param string $value
+     * @inheritdoc
      */
     public function __set($property, $value)
     {
-        /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
-        throw new RuntimeException(sprintf(
-            'class %s has read-only access for magic-properties: %s',
-            get_class($this),
-            $property
-        ));
+        fn\fail('class %s has read-only access for magic-properties: %s', get_class($this), $property);
     }
 
     /**
-     * @param string $property
+     * @inheritdoc
      */
     public function __unset($property)
     {
-        /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
-        throw new RuntimeException(sprintf(
-            'class %s has read-only access for magic-properties: %s',
-            get_class($this),
-            $property
-        ));
+        fn\fail('class %s has read-only access for magic-properties: %s', get_class($this), $property);
     }
 }

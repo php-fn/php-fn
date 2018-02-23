@@ -9,9 +9,6 @@
 namespace fn\Meta\Properties;
 
 use fn;
-use OutOfBoundsException;
-use RuntimeException;
-use UnexpectedValueException;
 
 /**
  * @property array $properties
@@ -23,14 +20,10 @@ trait ReadWriteTrait
      */
     public function __construct(array $properties = null)
     {
-        if (!property_exists($this, 'properties')) {
-            /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
-            throw new RuntimeException(sprintf('missing property $properties in %s', get_class($this)));
-        }
+        property_exists($this, 'properties') ?: fn\fail('missing property $properties in %s', get_class($this));
         if ($properties !== null) {
             if ($diff = implode(', ', array_diff(array_keys($properties), array_keys($this->properties)))) {
-                /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
-                throw new UnexpectedValueException($diff);
+                fn\fail\value($diff);
             }
             $this->properties = array_replace($this->properties, $properties);
         }
@@ -41,10 +34,7 @@ trait ReadWriteTrait
      */
     private function assertProperty($name)
     {
-        if (!fn\hasKey($name, $this->properties)) {
-            /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
-            throw new OutOfBoundsException(sprintf('missing magic-property %s in %s', $name, get_class($this)));
-        }
+        fn\hasKey($name, $this->properties) ?: fn\fail\bounds('missing magic-property %s in %s', $name, get_class($this));
     }
 
     /**

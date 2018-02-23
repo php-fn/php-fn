@@ -8,8 +8,11 @@
 
 namespace fn;
 
-use InvalidArgumentException;
+use ArrayAccess;
+use Iterator;
 use IteratorIterator;
+use stdClass;
+use Traversable;
 
 /**
  * @param string|int $key
@@ -19,10 +22,10 @@ use IteratorIterator;
  */
 function hasKey($key, $in)
 {
-    if ((is_array($in) || $in instanceof \ArrayAccess || is_scalar($in)) && isset($in[$key])) {
+    if ((is_array($in) || $in instanceof ArrayAccess || is_scalar($in)) && isset($in[$key])) {
         return true;
     }
-    if ($in instanceof \ArrayAccess) {
+    if ($in instanceof ArrayAccess) {
         return false;
     }
     return _\isTraversable($in) && array_key_exists($key, _\toArray($in));
@@ -30,25 +33,20 @@ function hasKey($key, $in)
 
 /**
  * @param string|int $index
- * @param array|\ArrayAccess|iterable|string $in
+ * @param array|ArrayAccess|iterable|string $in
  * @param mixed $default
  * @return mixed
  */
 function at($index, $in, $default = null)
 {
-    if ((is_array($in) || $in instanceof \ArrayAccess || is_scalar($in)) && isset($in[$index])) {
+    if ((is_array($in) || $in instanceof ArrayAccess || is_scalar($in)) && isset($in[$index])) {
         return $in[$index];
     }
     if (_\isTraversable($in) && array_key_exists($index, $map = _\toArray($in))) {
         return $map[$index];
     }
-    if (func_num_args() > 2) {
-        return $default;
-    }
-    /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
-    throw new \OutOfRangeException(sprintf('undefined index: %s',
-        $index
-    ));
+    func_num_args() > 2 ?: fail\range('undefined index: %s', $index);
+    return $default;
 }
 
 /**
@@ -91,10 +89,8 @@ function traverse($traversable, callable $callable = null, $reset = true)
     if (!$callable) {
         return _\toArray($traversable);
     }
-    if (!($isArray = is_array($traversable)) && !$traversable instanceof \Iterator) {
-        if (!$traversable instanceof \Traversable) {
-            throw new InvalidArgumentException('argument $traversable must be traversable');
-        }
+    if (!($isArray = is_array($traversable)) && !$traversable instanceof Iterator) {
+        $traversable instanceof Traversable ?: fail\argument('argument $traversable must be traversable');
         $traversable = new IteratorIterator($traversable);
     }
     $null = mapNull();
@@ -255,13 +251,13 @@ function mapChildren($children)
  * Returned object is used to mark the value as NULL in the @see traverse function,
  * since NULL itself is used to filter/skip values
  *
- * @return \stdClass
+ * @return stdClass
  */
 function mapNull()
 {
     static $null;
     if (!$null) {
-        $null = new \stdClass;
+        $null = new stdClass;
     }
     return $null;
 }
@@ -269,13 +265,13 @@ function mapNull()
 /**
  * Returned object is used to stop the iteration in the @see traverse function
  *
- * @return \stdClass
+ * @return stdClass
  */
 function mapBreak()
 {
     static $break;
     if (!$break) {
-        $break = new \stdClass;
+        $break = new stdClass;
     }
     return $break;
 }

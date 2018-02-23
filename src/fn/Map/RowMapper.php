@@ -10,7 +10,6 @@ namespace fn\Map;
 
 use ArrayAccess;
 use Closure;
-use DomainException;
 use fn;
 
 /**
@@ -41,10 +40,7 @@ class RowMapper
     public function __invoke($row, $key)
     {
         if (!(is_array($row) || $row instanceof ArrayAccess)) {
-            if (!fn\_\isTraversable($row)) {
-                /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
-                throw new DomainException('row should be of type: array|ArrayAccess|iterable');
-            }
+            fn\_\isTraversable($row) ?: fn\fail\domain('row should be of type: array|ArrayAccess|iterable');
             $row = fn\_\toArray($row);
         }
 
