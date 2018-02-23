@@ -58,4 +58,39 @@ class functionsTest extends \PHPUnit_Framework_TestCase
             toValues(null);
         });
     }
+
+    /**
+     * @dataProvider providerToString
+     * @covers ::toString
+     * @param string $expected
+     * @param string $subject
+     * @param array $replacements
+     */
+    public function testToString($expected, $subject, ...$replacements)
+    {
+        assert\same($expected, toString($subject, ...$replacements));
+    }
+
+    /**
+     * @return array[]
+     */
+    public function providerToString()
+    {
+        return [
+            '{0 %s %d  | format' => [
+                '{0 string 7 111',
+                '{0 %s %d %b',
+                'string', 7, 7
+            ],
+            '{0}{unknown}{merged} %s {1} {orig} {2} | merged replace' => [
+                'zero{unknown}RENAMED %s {1} ORIG two',
+                '{0}{unknown}{merged} %s {1} {orig} {2}',
+                'zero', ['merged' => 'NAMED', 'orig' => 'ORIG'], 'two', ['merged' => 'RENAMED']
+            ],
+            '{0} | replace without args' => ['{0}', '{0}'],
+            '%s | format without args' => ['%s', '%s'],
+            'null | with args' => ['', null, 'arg'],
+            'null' => ['', null],
+        ];
+    }
 }
