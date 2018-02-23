@@ -177,6 +177,19 @@ function merge(...$iterable)
 }
 
 /**
+ * Mixin (@see array_replace) all passed iterables.
+ * The last argument can be a callable, in that case it will be applied to each element of the mixed in result.
+ *
+ * @param iterable|callable ...$iterable
+ *
+ * @return array
+ */
+function mixin(...$iterable)
+{
+    return _\chainIterables(['array_replace' => true], ...$iterable);
+}
+
+/**
  * @param string|iterable|\Closure $value
  * @param string $key column to
  * @return Map\RowMapper

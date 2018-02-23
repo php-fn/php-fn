@@ -326,6 +326,27 @@ class functionsMapTest extends MapTest
     }
 
     /**
+     * @covers ::mixin
+     */
+    public function testMixin()
+    {
+        assert\same([], mixin(), 'args = 0');
+        assert\same([], mixin([]));
+        assert\same([], mixin([], new Map));
+        assert\equals(['d', 'b'], mixin(['a', 'b'], ['c'], ['d']), 'args > 1, no mapper');
+
+        assert\equals(
+            ['d', 'K' => 'c', 'k' => 'e'],
+            mixin(['a', 'k' => 'b', 'K' => 'c'], ['c'], ['d', 'k' => 'e']),
+            'args > 1, no mapper, with assoc key'
+        );
+
+        assert\equals(['D'], _\toValues(mixin(['a', 'b'], ['c'], ['d'], function ($value) {
+            return $value === 'b' ? null : strtoupper($value);
+        })), 'args > 1, with mapper');
+    }
+
+    /**
      * @param mixed $value
      * @param mixed $key
      * @return string
