@@ -177,6 +177,19 @@ function merge(...$iterable)
 }
 
 /**
+ * Return keys (@see array_keys) from the iterable. If multiple iterables are passed they will be merged before.
+ * The last argument can be a callable, in that case it will be applied to all merged keys.
+ *
+ * @param iterable|callable ...$iterable
+ *
+ * @return array
+ */
+function keys(...$iterable)
+{
+    return _\chainIterables(['array_merge' => true, 'array_keys'], ...$iterable);
+}
+
+/**
  * Mixin (@see array_replace) all passed iterables.
  * The last argument can be a callable, in that case it will be applied to each element of the mixed in result.
  *

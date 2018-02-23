@@ -326,6 +326,27 @@ class functionsMapTest extends MapTest
     }
 
     /**
+     * @covers ::keys
+     */
+    public function testKeys()
+    {
+        assert\same([], keys(), 'args = 0');
+        assert\same([], keys([]));
+        assert\same([], keys([], new Map));
+        assert\equals([0, 1, 2, 3, 4], keys(['a', 'b'], ['c'], ['d', 'e']), 'args > 1, no mapper');
+
+        assert\equals(
+            [0, 'k', 1, 2],
+            keys(['a', 'k' => 'b'], ['c'], ['d', 'k' => 'e']),
+            'args > 1, no mapper, with assoc key'
+        );
+
+        assert\equals([0, 20, 30, 40], _\toValues(keys(['a', 'b'], ['c'], ['d', 'e'], function ($value) {
+            return $value === 1 ? null : $value * 10;
+        })), 'args > 1, with mapper');
+    }
+
+    /**
      * @covers ::mixin
      */
     public function testMixin()
