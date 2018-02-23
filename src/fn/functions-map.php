@@ -164,17 +164,16 @@ function map(...$iterable)
 }
 
 /**
- * @param iterable|callable ...$iterable If more than one iterable argument is passed, they will be merged
+ * Merge (@see array_merge) all passed iterables.
+ * The last argument can be a callable, in that case it will be applied to each element of the merged result.
+ *
+ * @param iterable|callable ...$iterable
+ *
  * @return array
  */
 function merge(...$iterable)
 {
-    if (!$iterable) {
-        return [];
-    }
-    $callable = _\lastCallable($iterable);
-    $merged = array_merge(...traverse($iterable, function($candidate) {return _\toArray($candidate);}));
-    return $callable ? traverse($merged, $callable) : $merged;
+    return _\chainIterables(['array_merge' => true], ...$iterable);
 }
 
 /**

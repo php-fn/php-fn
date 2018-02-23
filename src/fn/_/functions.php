@@ -30,6 +30,33 @@ function lastCallable(array &$args)
 }
 
 /**
+ * Call all functions one by one with softly converted iterables to arrays.
+ *
+ * @param callable[]|bool[] $functions
+ * @param iterable[] ...$args
+ * @return array|mixed
+ */
+function chainIterables(array $functions, ...$args)
+{
+    if (!$args) {
+        return [];
+    }
+    $callable = lastCallable($args);
+    $result = [];
+    foreach ($args as $candidate) {
+        $result[] = toArray($candidate);
+    }
+    foreach ($functions as $function => $variadic) {
+        if (is_numeric($function)) {
+            $function = $variadic;
+            $variadic = false;
+        }
+        $result = $variadic ? call_user_func($function, ...$result) : call_user_func($function, $result);
+    }
+    return $callable ? fn\traverse($result, $callable) : $result;
+}
+
+/**
  * Check if the given candidate is iterable
  *
  * @param mixed $candidate
