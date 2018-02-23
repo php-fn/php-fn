@@ -226,7 +226,7 @@ class functionsMapTest extends MapTest
         assert\same([], traverse(_\toArray(null, true)));
         assert\same([], traverse(_\toArray(null, true), $emptyCallable));
 
-        assert\exception($message, function () {
+        assert\exception('argument $candidate must be traversable', function () {
             traverse(null);
         });
         assert\exception($message, function ($emptyCallable) {

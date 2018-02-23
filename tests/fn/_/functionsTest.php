@@ -28,7 +28,7 @@ class functionsTest extends \PHPUnit_Framework_TestCase
         assert\not\same($it, toTraversable(new \ArrayObject($ar)));
         assert\same(['string'], toTraversable('string', true));
         assert\same([], toTraversable(null, true));
-        assert\exception('argument $iterable must be iterable', function () {
+        assert\exception('argument $candidate must be traversable', function () {
             toTraversable('string');
         });
     }
@@ -41,7 +41,7 @@ class functionsTest extends \PHPUnit_Framework_TestCase
         assert\equals(['key' => 'value'], toArray(['key' => 'value']));
         assert\equals(['key' => 'value'], toArray(new \ArrayObject(['key' => 'value'])));
         assert\equals([], toArray(null, true));
-        assert\exception('argument $iterable must be iterable', function () {
+        assert\exception('argument $candidate must be traversable', function () {
             toArray(null);
         });
     }
@@ -54,7 +54,7 @@ class functionsTest extends \PHPUnit_Framework_TestCase
         assert\equals(['value'], toValues(['key' => 'value']));
         assert\equals(['value'], toValues(new \ArrayObject(['key' => 'value'])));
         assert\equals([], toValues(null, true));
-        assert\exception('argument $iterable must be iterable', function () {
+        assert\exception('argument $candidate must be traversable', function () {
             toValues(null);
         });
     }

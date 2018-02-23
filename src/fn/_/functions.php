@@ -43,20 +43,20 @@ function isTraversable($candidate)
 /**
  * Convert the given candidate to an iterable entity
  *
- * @param iterable|mixed $iterable
+ * @param iterable|mixed $candidate
  * @param bool $cast
  * @return array|iterable|\Traversable
  * @throws InvalidArgumentException
  */
-function toTraversable($iterable, $cast = false)
+function toTraversable($candidate, $cast = false)
 {
-    if (isTraversable($iterable)) {
-        return $iterable;
+    if (isTraversable($candidate)) {
+        return $candidate;
     }
     if ($cast) {
-        return (array)$iterable;
+        return (array)$candidate;
     }
-    throw new InvalidArgumentException('argument $iterable must be iterable');
+    throw new InvalidArgumentException('argument $candidate must be traversable');
 }
 
 /**
