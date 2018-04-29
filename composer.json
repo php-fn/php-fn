@@ -4,9 +4,7 @@
   "keywords": ["php", "library"],
   "homepage": "https://github.com/php-fn/php-fn",
   "license": "MIT",
-  "authors": [
-    {"name": "Demjan Kaluzki", "email": "phpfn.phpfn@gmail.com"}
-  ],
+  "authors": [{"name": "Demjan Kaluzki", "email": "kaluzkidemjan@gmail.com"}],
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
@@ -31,5 +29,8 @@
     "files": [
       "tests/autoload-files.php"
     ]
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit"
   }
 }
