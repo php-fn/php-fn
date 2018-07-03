@@ -110,6 +110,10 @@ class FunctionsMapTest extends MapTest
         $toGroup = [['a', 'a'], ['a', 'b'], ['b', 'b'], ['b', 'a']];
 
         return [
+            'fn\map should not merge single iterable' => [
+                [2 => 'numeric-key'],
+                [2 => 'numeric-key']
+            ],
             'without Map\Value class' => [
                 ['v1' => 'k1', 'v2' => 'k2'],
                 ['k1' => 'v1', 'k2' => 'v2'],
@@ -194,9 +198,9 @@ class FunctionsMapTest extends MapTest
      * @param mixed $iterable
      * @param mixed $mapper
      */
-    public function testSameBehaviourTraverse($expected, $iterable, $mapper)
+    public function testSameBehaviourTraverse($expected, $iterable, ...$mapper)
     {
-        assert\same($expected, traverse($iterable, $mapper));
+        assert\same($expected, traverse($iterable, ...$mapper));
     }
 
     /**
@@ -208,9 +212,9 @@ class FunctionsMapTest extends MapTest
      * @param mixed $iterable
      * @param mixed $mapper
      */
-    public function testSameBehaviourMap($expected, $iterable, $mapper)
+    public function testSameBehaviourMap($expected, $iterable, ...$mapper)
     {
-        assert\same($expected, map($iterable, $mapper)->map);
+        assert\same($expected, map($iterable, ...$mapper)->map);
     }
 
     /**

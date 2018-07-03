@@ -155,6 +155,9 @@ function traverse($traversable, callable $callable = null, $reset = true)
 function map(...$iterable)
 {
     $callable = _\lastCallable($iterable);
+    if (count($iterable) === 1) {
+        return new Map($iterable[0], $callable);
+    }
     $merged = (new Map)->merge(...$iterable);
     return $callable ? $merged->map($callable) : $merged;
 }
