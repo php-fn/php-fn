@@ -88,7 +88,54 @@ class TreeTest extends PHPUnit_Framework_TestCase
      */
     public function providerSimpleIteration()
     {
+        $ref = null;
         return [
+            '$inner::getIterator returns same instance' => [
+                'expected' => new RuntimeException('Implementation $inner::getIterator returns same instance'),
+                'inner' => $ref = new Lazy(function() use(&$ref) {
+                    return $ref;
+                }),
+                'mapper' => null,
+            ],
+            '$inner::getIterator is too deep' => [
+                'expected' => new RuntimeException('$inner::getIterator is too deep'),
+                'inner' => new Lazy(function() {
+                    return new Lazy(function() {
+                        return new Lazy(function() {
+                            return new Lazy(function() {
+                                return new Lazy(function() {
+                                    return new Lazy(function() {
+                                        return new Lazy(function() {
+                                            return new Lazy(function() {
+                                                return new Lazy(function() {
+                                                    return new Lazy(function() {
+                                                        return new Lazy(function() {
+                                                            return new Lazy(function() {
+                                                            });
+                                                        });
+                                                    });
+                                                });
+                                            });
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                }),
+                'mapper' => null,
+            ],
+            '$inner depth = 3' => [
+                'expected' => ['depth' => 3],
+                'inner' => new Lazy(function() {
+                    return new Lazy(function() {
+                        return new Lazy(function() {
+                            return ['depth' => 3];
+                        });
+                    });
+                }),
+                'mapper' => null,
+            ],
             'combine map, skip and stop' => [
                 'expected' => ['directly-key' => 'directly-value', 'map-key' => 'map-value', 3 => 'd'],
                 'inner' => ['a', 'b', 'c', 'd', 'e', 'f'],

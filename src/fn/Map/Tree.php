@@ -74,11 +74,16 @@ class Tree implements RecursiveIterator, Countable
             return $this->inner = new ArrayIterator($this->inner);
         }
 
-        if ($this->inner instanceof IteratorAggregate) {
-            $this->inner = $this->inner->getIterator();
+        $counter = 0;
+        while ($this->inner instanceof IteratorAggregate) {
+            $counter++ > 10 && fn\fail('$inner::getIterator is too deep');
+            if (($inner = $this->inner->getIterator()) === $this->inner) {
+                fn\fail('Implementation $inner::getIterator returns same instance');
+            }
+            $this->inner = $inner;
         }
 
-        $this->inner instanceof Iterator ?: fn\fail('Property $inner must be iterable');
+        $this->inner instanceof Iterator || fn\fail('Property $inner must be iterable');
         return $this->inner;
     }
 
