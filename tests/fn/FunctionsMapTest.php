@@ -348,6 +348,8 @@ class FunctionsMapTest extends MapTest
         assert\equals([0, 20, 30, 40], _\toValues(keys(['a', 'b'], ['c'], ['d', 'e'], function ($value) {
             return $value === 1 ? null : $value * 10;
         })), 'args > 1, with mapper');
+
+        assert\equals([10], keys([10 => 'numeric']));
     }
 
     /**

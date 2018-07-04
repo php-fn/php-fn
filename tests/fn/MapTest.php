@@ -143,10 +143,10 @@ class MapTest extends \PHPUnit_Framework_TestCase
      */
     public function testKeys()
     {
-        $map = $this->map(['a' => null, 'b' => null, 'c' => null]);
+        $map = $this->map(['a' => null, 'b' => null, 'c' => null, 10 => null]);
         assert\type(Map::class, $map->keys());
-        assert\same(['a', 'b', 'c'], traverse($map->keys()));
-        assert\same(['A', 'B', 'C'], traverse($map->keys(function($value) {
+        assert\same(['a', 'b', 'c', 10], traverse($map->keys()));
+        assert\same(['A', 'B', 'C', '10'], traverse($map->keys(function($value) {
             return strtoupper($value);
         })));
     }
