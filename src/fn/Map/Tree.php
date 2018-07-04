@@ -13,7 +13,9 @@ use Countable;
 use fn;
 use Iterator;
 use IteratorAggregate;
+use IteratorIterator;
 use RecursiveIterator;
+use Traversable;
 
 /**
  * Consolidates implementation of SPL array_* functions
@@ -81,6 +83,10 @@ class Tree implements RecursiveIterator, Countable
                 fn\fail('Implementation $inner::getIterator returns same instance');
             }
             $this->inner = $inner;
+        }
+
+        if ($this->inner instanceof Traversable && !$this->inner instanceof Iterator) {
+            return $this->inner = new IteratorIterator($this->inner);
         }
 
         $this->inner instanceof Iterator || fn\fail('Property $inner must be iterable');

@@ -15,6 +15,7 @@ use PHPUnit_Framework_TestCase;
 use RecursiveArrayIterator;
 use RecursiveIteratorIterator as Rec;
 use RuntimeException;
+use SimpleXMLElement;
 
 /**
  * @covers Tree
@@ -90,12 +91,17 @@ class TreeTest extends PHPUnit_Framework_TestCase
     {
         $ref = null;
         return [
+            'intern traversable classes are wrapped around IteratorIterator' => [
+                'expected' => [],
+                'inner' => new Lazy(function() {
+                    return new SimpleXMLElement('<root/>');
+                }),
+            ],
             '$inner::getIterator returns same instance' => [
                 'expected' => new RuntimeException('Implementation $inner::getIterator returns same instance'),
                 'inner' => $ref = new Lazy(function() use(&$ref) {
                     return $ref;
                 }),
-                'mapper' => null,
             ],
             '$inner::getIterator is too deep' => [
                 'expected' => new RuntimeException('$inner::getIterator is too deep'),
@@ -123,7 +129,6 @@ class TreeTest extends PHPUnit_Framework_TestCase
                         });
                     });
                 }),
-                'mapper' => null,
             ],
             '$inner depth = 3' => [
                 'expected' => ['depth' => 3],
@@ -134,7 +139,6 @@ class TreeTest extends PHPUnit_Framework_TestCase
                         });
                     });
                 }),
-                'mapper' => null,
             ],
             'combine map, skip and stop' => [
                 'expected' => ['directly-key' => 'directly-value', 'map-key' => 'map-value', 3 => 'd'],
@@ -207,22 +211,18 @@ class TreeTest extends PHPUnit_Framework_TestCase
             'simple iterator' => [
                 'expected' => ['a' => 'a', 'b' => ['c' => 'd']],
                 'inner' => new ArrayIterator(['a' => 'a', 'b' => ['c' => 'd']]),
-                'mapper' => null,
             ],
             'simple array' => [
                 'expected' => ['a', 'b', 'c'],
                 'inner' => ['a', 'b', 'c'],
-                'mapper' => null,
             ],
             'empty array' => [
                 'expected' => [],
                 'inner' => [],
-                'mapper' => null,
             ],
             'null => exception' => [
                 'expected' => new RuntimeException('Property $inner must be iterable'),
                 'inner' => null,
-                'mapper' => null,
             ],
         ];
     }
@@ -241,7 +241,7 @@ class TreeTest extends PHPUnit_Framework_TestCase
      * @param iterable|\Traversable $inner
      * @param callable|null $mapper
      */
-    public function testSimpleIteration($expected, $inner, $mapper)
+    public function testSimpleIteration($expected, $inner, $mapper = null)
     {
         assert\equals\trial($expected, function ($iterator) {
             return fn\traverse($iterator);
