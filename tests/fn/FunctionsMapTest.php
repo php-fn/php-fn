@@ -350,6 +350,10 @@ class FunctionsMapTest extends MapTest
         })), 'args > 1, with mapper');
 
         assert\equals([10], keys([10 => 'numeric']));
+        assert\equals([10], keys([10 => 'numeric'], function($key) {
+            return $key;
+        }));
+        assert\equals([0, 1], keys([10 => 'numeric'], [20 => 'numeric']));
     }
 
     /**

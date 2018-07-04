@@ -185,8 +185,10 @@ function merge(...$iterable)
  */
 function keys(...$iterable)
 {
+    $callable  = _\lastCallable($iterable);
     $functions = count($iterable) > 1 ? ['array_merge' => true, 'array_keys'] : ['array_keys' => true];
-    return _\chainIterables($functions, ...$iterable);
+    _\chainIterables($functions, ...$iterable, ...$iterable);
+    return _\chainIterables($functions, ...$iterable, ...(array)$callable);
 }
 
 /**
