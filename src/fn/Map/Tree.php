@@ -14,7 +14,9 @@ use fn;
 use Iterator;
 use IteratorAggregate;
 use IteratorIterator;
+use RecursiveArrayIterator;
 use RecursiveIterator;
+use RecursiveIteratorIterator;
 use Traversable;
 
 /**
@@ -55,15 +57,6 @@ class Tree implements RecursiveIterator, Countable
     }
 
     /**
-     * @inheritdoc
-     */
-    public function hasChildren()
-    {
-        $iter = $this->getInnerIterator();
-        return ($iter instanceof RecursiveIterator && $iter->hasChildren()) || $this->getChildrenIterator();
-    }
-
-    /**
      * @return Iterator
      */
     public function getInnerIterator()
@@ -73,7 +66,7 @@ class Tree implements RecursiveIterator, Countable
         }
 
         if (is_array($this->inner)) {
-            return $this->inner = new ArrayIterator($this->inner);
+            return $this->inner = new RecursiveArrayIterator($this->inner);
         }
 
         $counter = 0;
@@ -250,14 +243,26 @@ class Tree implements RecursiveIterator, Countable
     /**
      * @inheritdoc
      */
+    public function hasChildren()
+    {
+        if ($this->getChildrenIterator()) {
+            return true;
+        }
+        $inner = $this->getInnerIterator();
+        return $inner->valid() && fn\_\isTraversable($inner->current());
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getChildren()
     {
-        $iter = $this->getInnerIterator();
-        if ($iter instanceof RecursiveIterator) {
-            return $iter->getChildren();
-        }
         if ($childrenIterator = $this->getChildrenIterator()) {
             return $childrenIterator;
+        }
+        $inner = $this->getInnerIterator();
+        if ($inner->valid() && fn\_\isTraversable($current = $inner->current())) {
+            return new static($current);
         }
         static $empty;
         if (!$empty) {
@@ -287,5 +292,29 @@ class Tree implements RecursiveIterator, Countable
             return $this->doMap();
         }
         return $this->getInnerIterator()->valid();
+    }
+
+    /**
+     * @param callable $mapper
+     * @param int $mode
+     *
+     * @return static
+     */
+    public function recursive(callable $mapper = null, $mode = RecursiveIteratorIterator::SELF_FIRST)
+    {
+        $it = new RecursiveIteratorIterator($this, $mode);
+        return $mapper ? new static($it, function($value, $key) use($it, $mapper) {
+            return $mapper($value, $key, $it);
+        }) : new static($it);
+    }
+
+    /**
+     * @param callable $mapper
+     *
+     * @return static
+     */
+    public function flatten(callable $mapper = null)
+    {
+        return $this->recursive($mapper, RecursiveIteratorIterator::LEAVES_ONLY);
     }
 }
