@@ -12,11 +12,14 @@ use ArrayAccess;
 use Countable;
 use fn\Map\Sort;
 use IteratorAggregate;
+use RecursiveIteratorIterator;
 
 /**
  * @property-read array $keys
  * @property-read array $map
  * @property-read array $values
+ * @property-read array $tree
+ * @property-read array $leaves
  */
 class Map implements IteratorAggregate, Countable, ArrayAccess
 {
@@ -52,6 +55,10 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
                 return $this();
             case 'values':
                 return _\toValues($this());
+            case 'tree':
+                return _\toValues(new RecursiveIteratorIterator($this, RecursiveIteratorIterator::SELF_FIRST));
+            case 'leaves':
+                return _\toValues(new RecursiveIteratorIterator($this, RecursiveIteratorIterator::LEAVES_ONLY));
             default:
                 fail\logic($property);
         }
@@ -275,5 +282,29 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     public function search($needle, $strict = true)
     {
         return array_search($needle, $this(), $strict);
+    }
+
+    /**
+     * @param callable $mapper
+     * @param int $mode
+     *
+     * @return static
+     */
+    public function tree(callable $mapper = null, $mode = RecursiveIteratorIterator::SELF_FIRST)
+    {
+        $it = new RecursiveIteratorIterator($this, $mode);
+        return $mapper ? new static($it, function($value, $key) use($it, $mapper) {
+            return $mapper($value, $key, $it);
+        }) : new static($it);
+    }
+
+    /**
+     * @param callable $mapper
+     *
+     * @return static
+     */
+    public function leaves(callable $mapper = null)
+    {
+        return $this->tree($mapper, RecursiveIteratorIterator::LEAVES_ONLY);
     }
 }

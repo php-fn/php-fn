@@ -11,6 +11,8 @@ namespace fn;
 use fn\Map\Sort;
 use fn\test\assert;
 use LogicException;
+use RecursiveArrayIterator;
+use RecursiveIteratorIterator;
 use Traversable;
 
 /**
@@ -285,5 +287,73 @@ class MapTest extends \PHPUnit_Framework_TestCase
         assert\same(1, $map->search(1, false));
         assert\same(false, $map->search('A'));
         assert\same(false, $map->search('A', false));
+    }
+
+    /**
+     * @covers Map::tree
+     * @covers Map::leaves
+     */
+    public function testTree()
+    {
+        $map = new Map(['k0' => 'a', 'k1' => ['k2' => 'b', 'k3' => 'c']]);
+        assert\type(Map::class, $map->tree());
+        assert\not\same($map, $map->tree());
+
+        assert\same(
+            ['k0' => 'a', 'k1' => ['k2' => 'b', 'k3' => 'c'], 'k2' => 'b', 'k3' => 'c'],
+            traverse($map->tree())
+        );
+        assert\same(
+            ['k0' => ['a', 0], 'k1' => [['k2' => 'b', 'k3' => 'c'], 0], 'k3' => ['c', 1]],
+            traverse($map->tree(function($value, $key, RecursiveIteratorIterator $it) {
+                return $value === 'b' ? null : mapValue([$value, $it->getDepth()]);
+            }))
+        );
+        assert\same(
+            ['k0' => ['a', 0], 'k3' => ['c', 1]],
+            traverse($map->leaves(function($value, $key, RecursiveIteratorIterator $it) {
+                return $value === 'b' ? null : mapValue([$value, $it->getDepth()]);
+            }))
+        );
+
+        $mapper = function($value) {
+            return mapChildren(['k2' => 'b', 'k3' => 'c'])->andValue(strtoupper($value));
+        };
+
+        $map = map(['a'], $mapper);
+        assert\same(['A'], $map->values);
+        assert\same(['A'], $map->tree);
+        assert\same(['A'], $map->leaves);
+
+        assert\same(['A', 'b', 'c'], map(['a'], $mapper)->tree);
+        assert\same(['b', 'c'], map(['a'], $mapper)->leaves);
+
+        $map = map(['a'], $mapper);
+        assert\same(['A'], traverse($map->values()));
+        assert\same(
+            ['A' => 0, 'b' => 1, 'c' => 1],
+            traverse($map->tree(function($value, $key, RecursiveIteratorIterator $it) {
+                return mapKey($value)->andValue($it->getDepth());
+            }))
+        );
+        assert\same(
+            ['b' => 1, 'c' => 1],
+            traverse($map->leaves(function($value, $key, RecursiveIteratorIterator $it) {
+                return mapKey($value)->andValue($it->getDepth());
+            }))
+        );
+
+        $map = map(['k1' => 'a', 'k2' => map(['k3' => 'b', 'k4' => map(['k5' => 'c'])])]);
+        assert\same(
+            ['k1' => 'a', 'k3' => 'b', 'k5' => 'c'],
+            traverse($map->leaves())
+        );
+        assert\same(
+            [0, 0, 1, 1, 2],
+            traverse($map->tree(function($value, $key, RecursiveIteratorIterator $it) {
+                static $count = 0;
+                return mapValue($it->getDepth())->andKey($count++);
+            }))
+        );
     }
 }
