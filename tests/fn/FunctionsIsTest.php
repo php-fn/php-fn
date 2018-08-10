@@ -15,7 +15,7 @@ use fn\test\assert;
 class FunctionsIsTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers \fn\isCallable()
+     * @covers ::isCallable
      * @dataProvider providerIsCallable
      * @param bool $expected
      * @param array $args

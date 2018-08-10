@@ -11,7 +11,7 @@ namespace fn;
 use fn\test\assert;
 
 /**
- * @covers sub()
+ * @covers ::sub
  */
 class FunctionsSubTest extends \PHPUnit_Framework_TestCase
 {
@@ -61,8 +61,8 @@ class FunctionsSubTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider providerSubWithIterable
      *
-     * @covers       sub()
-     * @covers       Map::sub()
+     * @covers       ::sub
+     * @covers       Map::sub
      *
      * @param array $expected
      * @param array $candidate
