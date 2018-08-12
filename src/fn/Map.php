@@ -43,7 +43,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
 
     /**
      * @param string $property
-     * @return array
+     * @return mixed
      */
     public function __get($property)
     {
@@ -51,13 +51,13 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
             case 'keys':
                 return traverse($this->keys());
             case 'map':
-                return $this();
+                return is_array($this->data) ? $this->data : traverse($this);
             case 'values':
-                return _\toValues($this());
+                return _\toValues(is_array($this->data) ? $this->data : $this);
             case 'tree':
-                return _\toValues(_\recursive($this, false));
+                return _\toValues($this->tree());
             case 'leaves':
-                return _\toValues(_\recursive($this, true));
+                return _\toValues($this->leaves());
             default:
                 fail\logic($property);
         }
@@ -108,7 +108,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     /**
      * @return array
      */
-    public function __invoke()
+    private function getData()
     {
         return is_array($this->data) ? $this->data : $this->data = traverse($this);
     }
@@ -120,7 +120,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function has($value, $strict = true)
     {
-        return hasValue($value, $this(), $strict);
+        return hasValue($value, $this->getData(), $strict);
     }
 
     /**
@@ -138,7 +138,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function offsetExists($offset)
     {
-        return hasKey($offset, $this());
+        return hasKey($offset, $this->getData());
     }
 
     /**
@@ -155,7 +155,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function offsetSet($offset, $value)
     {
-        $this();
+        $this->getData();
         $this->data[$offset] = $value;
     }
 
@@ -164,7 +164,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function offsetUnset($offset)
     {
-        $this();
+        $this->getData();
         unset($this->data[$offset]);
     }
 
@@ -280,7 +280,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function search($needle, $strict = true)
     {
-        return array_search($needle, $this(), $strict);
+        return array_search($needle, $this->getData(), $strict);
     }
 
     /**

@@ -296,7 +296,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
      */
     public function testTree()
     {
-        $map = new Map(['k0' => 'a', 'k1' => ['k2' => 'b', 'k3' => 'c']]);
+        $map = $this->map(['k0' => 'a', 'k1' => ['k2' => 'b', 'k3' => 'c']]);
         assert\type(Map::class, $map->tree());
         assert\not\same($map, $map->tree());
 
@@ -321,15 +321,15 @@ class MapTest extends \PHPUnit_Framework_TestCase
             return mapChildren(['k2' => 'b', 'k3' => 'c'])->andValue(strtoupper($value));
         };
 
-        $map = map(['a'], $mapper);
+        $map = $this->map(['a'], $mapper);
         assert\same(['A'], $map->values);
-        assert\same(['A'], $map->tree);
-        assert\same(['A'], $map->leaves);
+        assert\same(['A', 'b', 'c'], $map->tree);
+        assert\same(['b', 'c'], $map->leaves);
 
-        assert\same(['A', 'b', 'c'], map(['a'], $mapper)->tree);
-        assert\same(['b', 'c'], map(['a'], $mapper)->leaves);
+        assert\same(['A', 'b', 'c'], $this->map(['a'], $mapper)->tree);
+        assert\same(['b', 'c'], $this->map(['a'], $mapper)->leaves);
 
-        $map = map(['a'], $mapper);
+        $map = $this->map(['a'], $mapper);
         assert\same(['A'], traverse($map->values()));
         assert\same(
             ['A' => 0, 'b' => 1, 'c' => 1],
@@ -344,7 +344,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
             }))
         );
 
-        $map = map(['k1' => 'a', 'k2' => map(['k3' => 'b', 'k4' => map(['k5' => 'c'])])]);
+        $map = $this->map(['k1' => 'a', 'k2' => $this->map(['k3' => 'b', 'k4' => $this->map(['k5' => 'c'])])]);
         assert\same(
             ['k1' => 'a', 'k3' => 'b', 'k5' => 'c'],
             traverse($map->leaves())
