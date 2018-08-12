@@ -384,6 +384,68 @@ EOF;
         }));
 
         assert\same("aRb\nR", $this->map(['a{0}b', '{0}'])->string(['R']));
-        assert\same("aR1b | R2", $this->map(['a%sb', '%s'])->string(' | ', 'R1', 'R2'));
+        assert\same('aR1b | R2', $this->map(['a%sb', '%s'])->string(' | ', 'R1', 'R2'));
+    }
+
+    /**
+     * @covers Map::every
+     */
+    public function testEvery()
+    {
+        assert\true($this->map()->every);
+        assert\false($this->map([''])->every);
+        assert\false($this->map([0])->every);
+        assert\false($this->map([false])->every);
+        assert\false($this->map([[]])->every);
+        assert\false($this->map([null])->every);
+
+
+        $odd = function($value) {
+            return $value % 2;
+        };
+
+        assert\true($this->map()->every($odd));
+        assert\true($this->map([1, 3, 5])->every($odd));
+        assert\same('true', $this->map([1, 3, 5])->every($odd, 'true'));
+        assert\same(3, $this->map([1, 3, 5])->every($odd, function(Map $map) {
+            return $map->count();
+        }));
+
+        assert\false($this->map([1, 3, 5, 2])->every($odd));
+        assert\same('false', $this->map([1, 3, 5, 2])->every($odd, null, 'false'));
+        assert\same('1352', $this->map([1, 3, 5, 2])->every($odd, null, function(Map $map) {
+            return $map->string('');
+        }));
+    }
+
+    /**
+     * @covers Map::some
+     */
+    public function testSome()
+    {
+        assert\false($this->map()->some);
+        assert\false($this->map([''])->some);
+        assert\false($this->map([0])->some);
+        assert\false($this->map([false])->some);
+        assert\false($this->map([[]])->some);
+        assert\false($this->map([null])->some);
+        assert\true($this->map([' '])->some);
+
+        $odd = function($value) {
+            return $value % 2;
+        };
+
+        assert\false($this->map()->some($odd));
+        assert\true($this->map([1, 3, 2])->some($odd));
+        assert\same('true', $this->map([1, 3, 2])->some($odd, 'true'));
+        assert\same(3, $this->map([1, 3, 2])->some($odd, function(Map $map) {
+            return $map->count();
+        }));
+
+        assert\false($this->map([2, 4, 6])->some($odd));
+        assert\same('false', $this->map([2, 4, 6])->some($odd, null, 'false'));
+        assert\same('246', $this->map([2, 4, 6])->some($odd, null, function(Map $map) {
+            return $map->string('');
+        }));
     }
 }

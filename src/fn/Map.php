@@ -20,6 +20,8 @@ use IteratorAggregate;
  * @property-read array $tree
  * @property-read array $leaves
  * @property-read string $string
+ * @property-read bool $every
+ * @property-read bool $some
  */
 class Map implements IteratorAggregate, Countable, ArrayAccess
 {
@@ -61,6 +63,10 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
                 return _\toValues($this->leaves());
             case 'string':
                 return $this->string();
+            case 'every':
+                return $this->every(function($value) {return $value;});
+            case 'some':
+                return $this->some(function($value) {return $value;});
             default:
                 fail\logic($property);
         }
@@ -108,7 +114,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function __isset($property)
     {
-        return hasValue($property, ['keys', 'map', 'values', 'tree', 'leaves', 'string']);
+        return hasValue($property, ['keys', 'map', 'values', 'tree', 'leaves', 'string', 'every', 'some']);
     }
 
     /**
@@ -339,5 +345,39 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     public function leaves(callable $mapper = null)
     {
         return _\recursive($this, true, $mapper);
+    }
+
+    /**
+     * @param callable       $check
+     * @param callable|mixed $true
+     * @param callable|mixed $false
+     *
+     * @return bool|mixed
+     */
+    public function every(callable $check, $true = true, $false = false)
+    {
+        foreach ($this as $key => $value) {
+            if (!$check($value, $key, $this)) {
+                return isCallable($false, true) ? $false($this) : $false;
+            }
+        }
+        return isCallable($true, true) ? $true($this) : $true;
+    }
+
+    /**
+     * @param callable       $check
+     * @param callable|mixed $true
+     * @param callable|mixed $false
+     *
+     * @return bool|mixed
+     */
+    public function some(callable $check, $true = true, $false = false)
+    {
+        foreach ($this as $key => $value) {
+            if ($check($value, $key, $this)) {
+                return isCallable($true, true) ? $true($this) : $true;
+            }
+        }
+        return isCallable($false, true) ? $false($this) : $false;
     }
 }
