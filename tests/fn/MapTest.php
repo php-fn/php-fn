@@ -357,4 +357,34 @@ class MapTest extends \PHPUnit_Framework_TestCase
             }))
         );
     }
+
+    /**
+     * @covers Map::string
+     * @covers Map::__toString
+     */
+    public function testString()
+    {
+        $map = $this->map([['a'], 'b', [$this->map(['c']), ['d', ['e']]], 'f']);
+
+        assert\same("a\nb\nc\nd\ne\nf", $map->string());
+        assert\same("a\nb\nc\nd\ne\nf", $map->string);
+        assert\same("a\nb\nc\nd\ne\nf", (string)$map);
+        assert\same('a b c d e f', $map->string(' '));
+        assert\same('abcdef', $map->string(''));
+
+        $expected = <<<EOF
+0. -a
+1. b
+2. --c
+3. --d
+4. ---e
+5. f
+EOF;
+        assert\same($expected, $map->string(function($counter, $depth) {
+            return ($counter ? PHP_EOL : null) . $counter . '. ' . str_repeat('-', $depth);
+        }));
+
+        assert\same("aRb\nR", $this->map(['a{0}b', '{0}'])->string(['R']));
+        assert\same("aR1b | R2", $this->map(['a%sb', '%s'])->string(' | ', 'R1', 'R2'));
+    }
 }

@@ -19,6 +19,7 @@ use IteratorAggregate;
  * @property-read array $values
  * @property-read array $tree
  * @property-read array $leaves
+ * @property-read string $string
  */
 class Map implements IteratorAggregate, Countable, ArrayAccess
 {
@@ -58,10 +59,47 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
                 return _\toValues($this->tree());
             case 'leaves':
                 return _\toValues($this->leaves());
+            case 'string':
+                return $this->string();
             default:
                 fail\logic($property);
         }
         return null;
+    }
+
+    /**
+     * @param string|callable|array $delimiter
+     *
+     * @param array $replacements
+     *
+     * @return string
+     */
+    public function string($delimiter = PHP_EOL, ...$replacements)
+    {
+        $string = '';
+        if (!isCallable($delimiter, true)) {
+            if (is_array($delimiter)) {
+                array_unshift($replacements, $delimiter);
+                $delimiter = PHP_EOL;
+            }
+            $delimiter = function($counter, $depth, \RecursiveIteratorIterator $iterator) use($delimiter) {
+                return $counter ? $delimiter : '';
+            };
+        }
+        traverse($this->leaves(function($value, \RecursiveIteratorIterator $iterator) use ($delimiter, &$string) {
+            static $counter = 0;
+            $string .= $delimiter($counter++, $iterator->getDepth(), $iterator) . $value;
+
+        }));
+        return $replacements ? _\toString($string, ...$replacements) : $string;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function __toString()
+    {
+        return $this->string();
     }
 
     /**
@@ -70,7 +108,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function __isset($property)
     {
-        return hasValue($property, ['keys', 'map', 'values', 'tree', 'leaves']);
+        return hasValue($property, ['keys', 'map', 'values', 'tree', 'leaves', 'string']);
     }
 
     /**
