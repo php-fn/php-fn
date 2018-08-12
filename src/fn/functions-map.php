@@ -9,8 +9,11 @@
 namespace fn;
 
 use ArrayAccess;
+use function fn\_\isTraversable;
+use fn\Map\Tree;
 use Iterator;
 use IteratorIterator;
+use RecursiveIteratorIterator;
 use stdClass;
 use Traversable;
 
@@ -93,8 +96,11 @@ function traverse($traversable, callable $callable = null, $reset = true)
         $traversable instanceof Traversable ?: fail\argument('argument $traversable must be traversable');
         $traversable = new IteratorIterator($traversable);
     }
-    $null = mapNull();
-    $break = mapBreak();
+    static $break, $null;
+    if (!$break) {
+        $null = mapNull();
+        $break = mapBreak();
+    }
     $map = [];
     if ($reset) {
         $isArray ? reset($traversable) : $traversable->rewind();
@@ -202,6 +208,34 @@ function keys(...$iterable)
 function mixin(...$iterable)
 {
     return _\chainIterables(['array_replace' => true], ...$iterable);
+}
+
+function every(...$iterable)
+{
+}
+
+
+/**
+ * flatten|map -> merge
+ * @param mixed ...$iterable
+ */
+function flatten(...$iterable)
+{
+    $callable = _\lastCallable($iterable);
+    $result   = [];
+    foreach ($iterable as $candidate) {
+        if (!$candidate instanceof Traversable) {
+            $candidate = new Tree($candidate);
+        }
+//        iterator_to_array()
+//        $inner = $candidate instanceof Traversable ? $candidate : new RecursiveArrayIterator(_\toArray($candidate), RecursiveArrayIterator::CHILD_ARRAYS_ONLY);
+        $it = new RecursiveIteratorIterator($candidate, RecursiveIteratorIterator::SELF_FIRST);
+
+        $result[] = traverse($it, $callable ? function($value, $key) use($it, $callable) {
+            return call_user_func($callable, $value, $key, $it);
+        } : null);
+    }
+    return merge(...$result);
 }
 
 /**

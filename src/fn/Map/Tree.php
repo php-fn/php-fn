@@ -296,25 +296,21 @@ class Tree implements RecursiveIterator, Countable
 
     /**
      * @param callable $mapper
-     * @param int $mode
      *
-     * @return static
+     * @return static|\Traversable
      */
-    public function recursive(callable $mapper = null, $mode = RecursiveIteratorIterator::SELF_FIRST)
+    public function recursive(callable $mapper = null)
     {
-        $it = new RecursiveIteratorIterator($this, $mode);
-        return $mapper ? new static($it, function($value, $key) use($it, $mapper) {
-            return $mapper($value, $key, $it);
-        }) : new static($it);
+        return fn\_\recursive($this, false, $mapper);
     }
 
     /**
      * @param callable $mapper
      *
-     * @return static
+     * @return static|\Traversable
      */
     public function flatten(callable $mapper = null)
     {
-        return $this->recursive($mapper, RecursiveIteratorIterator::LEAVES_ONLY);
+        return fn\_\recursive($this, true, $mapper);
     }
 }

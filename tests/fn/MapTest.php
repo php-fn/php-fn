@@ -292,6 +292,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers Map::tree
      * @covers Map::leaves
+     * @covers ::recursive
      */
     public function testTree()
     {
@@ -311,7 +312,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
         );
         assert\same(
             ['k0' => ['a', 0], 'k3' => ['c', 1]],
-            traverse($map->leaves(function($value, $key, RecursiveIteratorIterator $it) {
+            traverse($map->leaves(function($value, RecursiveIteratorIterator $it) {
                 return $value === 'b' ? null : mapValue([$value, $it->getDepth()]);
             }))
         );
@@ -332,7 +333,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
         assert\same(['A'], traverse($map->values()));
         assert\same(
             ['A' => 0, 'b' => 1, 'c' => 1],
-            traverse($map->tree(function($value, $key, RecursiveIteratorIterator $it) {
+            traverse($map->tree(function(RecursiveIteratorIterator $it, $value) {
                 return mapKey($value)->andValue($it->getDepth());
             }))
         );
@@ -350,7 +351,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
         );
         assert\same(
             [0, 0, 1, 1, 2],
-            traverse($map->tree(function($value, $key, RecursiveIteratorIterator $it) {
+            traverse($map->tree(function(RecursiveIteratorIterator $it) {
                 static $count = 0;
                 return mapValue($it->getDepth())->andKey($count++);
             }))

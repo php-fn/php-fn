@@ -9,6 +9,9 @@
 namespace fn\_;
 
 use fn;
+use RecursiveIteratorIterator;
+use ReflectionFunction;
+use Traversable;
 
 /**
  * @param array $args
@@ -145,6 +148,38 @@ function toString($subject, ...$replacements)
         return str_replace(array_keys($replacements), $replacements, $subject);
     }
     return vsprintf($subject, $replacements);
+}
+
+/** @noinspection PhpDocMissingThrowsInspection */
+/**
+ * @param Traversable   $inner
+ * @param bool          $leavesOnly
+ * @param callable|null $mapper
+ *
+ * @return Traversable
+ */
+function recursive(Traversable $inner, $leavesOnly, callable $mapper = null)
+{
+    $mode  = $leavesOnly ? RecursiveIteratorIterator::LEAVES_ONLY : RecursiveIteratorIterator::SELF_FIRST;
+    $it    = new RecursiveIteratorIterator($inner, $mode);
+    $class = get_class($inner);
+
+    if (!$mapper) {
+        return new $class($it);
+    }
+
+    foreach ((new ReflectionFunction($mapper))->getParameters() as $parameter) {
+        if (($parClass = $parameter->getClass()) && $parClass->getName() === RecursiveIteratorIterator::class) {
+            $pos = $parameter->getPosition();
+            return new $class($it, function(...$args) use($it, $mapper, $pos) {
+                return $mapper(...fn\merge(fn\sub($args, 0, $pos) , [$it], fn\sub($args, $pos)));
+            });
+        }
+    }
+
+    return new $class($it, function(...$args) use($mapper) {
+        return $mapper(...$args);
+    });
 }
 
 /**

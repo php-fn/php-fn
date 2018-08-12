@@ -12,7 +12,6 @@ use ArrayAccess;
 use Countable;
 use fn\Map\Sort;
 use IteratorAggregate;
-use RecursiveIteratorIterator;
 
 /**
  * @property-read array $keys
@@ -56,9 +55,9 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
             case 'values':
                 return _\toValues($this());
             case 'tree':
-                return _\toValues(new RecursiveIteratorIterator($this, RecursiveIteratorIterator::SELF_FIRST));
+                return _\toValues(_\recursive($this, false));
             case 'leaves':
-                return _\toValues(new RecursiveIteratorIterator($this, RecursiveIteratorIterator::LEAVES_ONLY));
+                return _\toValues(_\recursive($this, true));
             default:
                 fail\logic($property);
         }
@@ -71,7 +70,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function __isset($property)
     {
-        return hasValue($property, ['keys', 'map', 'values']);
+        return hasValue($property, ['keys', 'map', 'values', 'tree', 'leaves']);
     }
 
     /**
@@ -286,25 +285,21 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
 
     /**
      * @param callable $mapper
-     * @param int $mode
      *
-     * @return static
+     * @return static|\Traversable
      */
-    public function tree(callable $mapper = null, $mode = RecursiveIteratorIterator::SELF_FIRST)
+    public function tree(callable $mapper = null)
     {
-        $it = new RecursiveIteratorIterator($this, $mode);
-        return $mapper ? new static($it, function($value, $key) use($it, $mapper) {
-            return $mapper($value, $key, $it);
-        }) : new static($it);
+        return _\recursive($this, false, $mapper);
     }
 
     /**
      * @param callable $mapper
      *
-     * @return static
+     * @return static|\Traversable
      */
     public function leaves(callable $mapper = null)
     {
-        return $this->tree($mapper, RecursiveIteratorIterator::LEAVES_ONLY);
+        return _\recursive($this, true, $mapper);
     }
 }
