@@ -11,7 +11,6 @@ namespace fn;
 use fn\Map\Sort;
 use fn\test\assert;
 use LogicException;
-use RecursiveArrayIterator;
 use RecursiveIteratorIterator;
 use Traversable;
 
