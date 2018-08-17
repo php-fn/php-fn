@@ -9,11 +9,8 @@
 namespace fn;
 
 use ArrayAccess;
-use function fn\_\isTraversable;
-use fn\Map\Tree;
 use Iterator;
 use IteratorIterator;
-use RecursiveIteratorIterator;
 use stdClass;
 use Traversable;
 
@@ -210,32 +207,52 @@ function mixin(...$iterable)
     return _\chainIterables(['array_replace' => true], ...$iterable);
 }
 
+/**
+ * @param iterable|callable ...$iterable
+ *
+ * @return bool
+ */
 function every(...$iterable)
 {
+    return map(...$iterable)->every;
 }
 
+/**
+ * @param iterable|callable ...$iterable
+ *
+ * @return bool
+ */
+function some(...$iterable)
+{
+    return map(...$iterable)->some;
+}
 
 /**
- * flatten|map -> merge
- * @param mixed ...$iterable
+ * Flatten the given iterable recursively from root to leaves (@see RecursiveIteratorIterator::LEAVES_ONLY).
+ * The last argument can be a callable, in that case it will be applied to each element of the merged result.
+ *
+ * @param iterable|callable ...$iterable If more than one iterable argument is passed they will be merged
+ *
+ * @return array
  */
-function flatten(...$iterable)
+function leaves(...$iterable)
 {
-    $callable = _\lastCallable($iterable);
-    $result   = [];
-    foreach ($iterable as $candidate) {
-        if (!$candidate instanceof Traversable) {
-            $candidate = new Tree($candidate);
-        }
-//        iterator_to_array()
-//        $inner = $candidate instanceof Traversable ? $candidate : new RecursiveArrayIterator(_\toArray($candidate), RecursiveArrayIterator::CHILD_ARRAYS_ONLY);
-        $it = new RecursiveIteratorIterator($candidate, RecursiveIteratorIterator::SELF_FIRST);
+    $callable  = _\lastCallable($iterable);
+    return $callable ? map(...$iterable)->leaves($callable)->traverse : map(...$iterable)->leaves;
+}
 
-        $result[] = traverse($it, $callable ? function($value, $key) use($it, $callable) {
-            return call_user_func($callable, $value, $key, $it);
-        } : null);
-    }
-    return merge(...$result);
+/**
+ * Traverse the given iterable recursively from root to leaves (@see RecursiveIteratorIterator::SELF_FIRST).
+ * The last argument can be a callable, in that case it will be applied to each element of the merged result.
+ *
+ * @param iterable|callable ...$iterable If more than one iterable argument is passed they will be merged
+ *
+ * @return array
+ */
+function tree(...$iterable)
+{
+    $callable  = _\lastCallable($iterable);
+    return $callable ? map(...$iterable)->tree($callable)->traverse : map(...$iterable)->tree;
 }
 
 /**

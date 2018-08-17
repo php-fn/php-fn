@@ -378,6 +378,57 @@ class FunctionsMapTest extends MapTest
     }
 
     /**
+     * @covers ::every
+     */
+    public function testEveryFunction()
+    {
+        assert\true(every());
+        assert\true(every([]));
+        assert\true(every([], []));
+        assert\true(every([' ']));
+        assert\false(every(['']));
+        assert\true(every([''], [0], function() {return true;}));
+    }
+
+    /**
+     * @covers ::some
+     */
+    public function testSomeFunction()
+    {
+        assert\false(some());
+        assert\false(some([]));
+        assert\false(some([''], [0, null], [[]]));
+        assert\true(some([''], [0, null], [false, []], [' ']));
+        assert\false(some([1, true], [' '], function() {return false;}));
+    }
+
+    /**
+     * @covers ::tree
+     */
+    public function testTreeFunction()
+    {
+        assert\same([], tree());
+        assert\same([], tree([], []));
+        assert\same(['a', 'b', ['c'], 'c'], tree(['a'], ['b', ['c']]));
+        assert\same(['C', 'B', 0], tree(['a'], ['b', ['c']], function($value, \RecursiveIteratorIterator $it) {
+            return is_string($value) ? strtoupper($value) : $it->getDepth();
+        }));
+    }
+
+    /**
+     * @covers ::leaves
+     */
+    public function testLeavesFunction()
+    {
+        assert\same([], leaves());
+        assert\same([], leaves([], []));
+        assert\same(['a', 'b', 'c'], leaves(['a'], ['b', ['c']]));
+        assert\same(['C', 'B'], leaves(['a'], ['b', ['c']], function($value, \RecursiveIteratorIterator $it) {
+            return is_string($value) ? strtoupper($value) : $it->getDepth();
+        }));
+    }
+
+    /**
      * @param mixed $value
      * @param mixed $key
      * @return string
