@@ -79,7 +79,7 @@ class FunctionsSubTest extends \PHPUnit_Framework_TestCase
             'candidate as iterator'
         );
         if (!$encodingOrCallable) {
-            assert\same($expected, map($candidate)->sub($start, $lengthOrCallable)->map);
+            assert\same($expected, map($candidate)->sub($start, $lengthOrCallable)->traverse);
         }
         assert\same([], sub([], $start, $lengthOrCallable, $encodingOrCallable), 'empty candidate');
     }

@@ -14,8 +14,10 @@ use fn\Map\Sort;
 use IteratorAggregate;
 
 /**
+ * @mixin MapDeprecated
+ *
  * @property-read array $keys
- * @property-read array $map
+ * @property-read array $traverse
  * @property-read array $values
  * @property-read array $tree
  * @property-read array $leaves
@@ -53,6 +55,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
         switch($property) {
             case 'keys':
                 return traverse($this->keys());
+            case 'traverse':
             case 'map':
                 return is_array($this->data) ? $this->data : traverse($this);
             case 'values':
@@ -114,7 +117,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function __isset($property)
     {
-        return hasValue($property, ['keys', 'map', 'values', 'tree', 'leaves', 'string', 'every', 'some']);
+        return hasValue($property, ['keys', 'traverse', 'map', 'values', 'tree', 'leaves', 'string', 'every', 'some']);
     }
 
     /**

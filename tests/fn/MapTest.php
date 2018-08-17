@@ -214,7 +214,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
     {
         $map = $this->map(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c'])->sub(1, -1);
         assert\type(Map::class, $map);
-        assert\same(['a' => 'a', 'b' => 'b'], $map->map);
+        assert\same(['a' => 'a', 'b' => 'b'], $map->traverse);
     }
 
     /**
@@ -242,11 +242,11 @@ class MapTest extends \PHPUnit_Framework_TestCase
         });
 
         assert\false(isset($map->unknown));
-        assert\true(isset($map->map));
+        assert\true(isset($map->traverse));
         assert\true(isset($map->values));
         assert\true(isset($map->keys));
 
-        assert\same($data, $map->map);
+        assert\same($data, $map->traverse);
         assert\same(array_values($data), $map->values);
         assert\same(array_keys($data), $map->keys);
 
@@ -255,7 +255,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
         $map['d'] = 'D';
 
         $expected = ['a' => '-', 'c' => 'C', 'd' => 'D'];
-        assert\same($expected, $map->map);
+        assert\same($expected, $map->traverse);
         assert\same(array_values($expected), $map->values);
         assert\same(array_keys($expected), $map->keys);
     }

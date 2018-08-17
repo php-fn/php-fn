@@ -214,7 +214,7 @@ class FunctionsMapTest extends MapTest
      */
     public function testSameBehaviourMap($expected, $iterable, ...$mapper)
     {
-        assert\same($expected, map($iterable, ...$mapper)->map);
+        assert\same($expected, map($iterable, ...$mapper)->traverse);
     }
 
     /**
@@ -280,15 +280,15 @@ class FunctionsMapTest extends MapTest
     public function testMap()
     {
         assert\type(Map::class, map());
-        assert\equals([], map()->map, 'args = 0');
+        assert\equals([], map()->traverse, 'args = 0');
         assert\equals(
             ['a', 'b', 'c', 'd', 'e'],
-            map(['a', 'b'], ['c'], ['d', 'e'])->map,
+            map(['a', 'b'], ['c'], ['d', 'e'])->traverse,
             'args > 1, no mapper'
         );
         assert\equals(
             ['a', 'k' => 'e', 'c', 'd'],
-            map(['a', 'k' => 'b'], ['c'], ['d', 'k' => 'e'])->map,
+            map(['a', 'k' => 'b'], ['c'], ['d', 'k' => 'e'])->traverse,
             'args > 1, no mapper, with assoc key'
         );
         assert\equals(['A', 'C', 'D', 'E'], map(['a', 'b'], ['c'], ['d', 'e'], function ($value) {
