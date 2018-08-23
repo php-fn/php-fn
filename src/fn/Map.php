@@ -47,7 +47,6 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     private $inner;
 
-
     /**
      * @param iterable $iterable
      * @param callable ...$mappers
@@ -179,6 +178,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
         if (!is_array($this->compiled)) {
             $this->compiled = traverse($this);
             $this->inner = null;
+            $this->mappers = [];
         }
         return $this->compiled;
     }
@@ -244,14 +244,10 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function map(callable ...$mappers)
     {
-        if (!$mappers) {
-            return $this;
-        }
-        $new = $this;
-        foreach ($mappers as $mapper) {
-            $new = new static($new, $mapper);
-        }
-        return $new;
+        return new static(
+            is_array($this->compiled) ? $this->compiled : $this->iterable,
+            ...$this->mappers, ...$mappers
+        );
     }
 
     /**
@@ -270,11 +266,10 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function keys(callable ...$mappers)
     {
-        $counter = 0;
-        $mapped = new static($this->getIterator(), function ($value, $key) use (&$counter) {
+        return $this->map(function ($value, $key)  {
+            static $counter = 0;
             return mapValue($key)->andKey($counter++);
-        });
-        return $mappers ? $mapped->map(...$mappers) : $mapped;
+        }, ...$mappers);
     }
 
     /**
@@ -283,11 +278,10 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function values(callable ...$mappers)
     {
-        $counter = 0;
-        $mapped = new static($this->getIterator(), function ($value) use (&$counter) {
+        return $this->map(function ($value)  {
+            static $counter = 0;
             return mapValue($value)->andKey($counter++);
-        });
-        return $mappers ? $mapped->map(...$mappers) : $mapped;
+        }, ...$mappers);
     }
 
     /**
