@@ -136,7 +136,7 @@ function traverse($traversable, callable $callable = null, $reset = true)
         }
 
         if ($mapped->value !== null) {
-            $current = $mapped->value;
+            $current = $mapped->value === $null ? null : $mapped->value;
         }
 
         $groups = &$map;

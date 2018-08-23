@@ -110,6 +110,14 @@ class FunctionsMapTest extends MapTest
         $toGroup = [['a', 'a'], ['a', 'b'], ['b', 'b'], ['b', 'a']];
 
         return [
+            'mapValue(mapNull())' => [
+                [null],
+                ['v'],
+                function() {
+                    return mapValue(mapNull());
+                }
+            ],
+
             'fn\map should not merge single iterable' => [
                 [2 => 'numeric-key'],
                 [2 => 'numeric-key']
