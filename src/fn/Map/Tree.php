@@ -24,9 +24,9 @@ use Traversable;
 class Tree implements RecursiveIterator, Countable
 {
     /**
-     * @var callable
+     * @var callable[]
      */
-    protected $mapper;
+    protected $mappers;
 
     private $inner;
     private $needsRewind = true;
@@ -39,12 +39,12 @@ class Tree implements RecursiveIterator, Countable
 
     /**
      * @param iterable|\Traversable $inner
-     * @param callable|null $mapper
+     * @param callable ...$mappers
      */
-    public function __construct($inner, callable $mapper = null)
+    public function __construct($inner, callable ...$mappers)
     {
-        $this->inner = $inner;
-        $this->mapper = $mapper;
+        $this->inner   = $inner;
+        $this->mappers = $mappers;
     }
 
     /**
@@ -90,7 +90,7 @@ class Tree implements RecursiveIterator, Countable
      */
     private function getChildrenIterator()
     {
-        if ($this->mapper && $this->doMap() && $this->children) {
+        if ($this->mappers && $this->doMap() && $this->children) {
             if (fn\isCallable($this->children, true)) {
                 $this->children = call_user_func($this->children, $this->current(), $this->key(), $this);
             }
@@ -110,7 +110,7 @@ class Tree implements RecursiveIterator, Countable
         static $break, $null;
         if (!$break) {
             $break = fn\mapBreak();
-            $null  = fn\mapNull();
+            $null = fn\mapNull();
         }
         if ($this->currentValid === $break) {
             return false;
@@ -142,43 +142,44 @@ class Tree implements RecursiveIterator, Countable
             $value = $curValue = $iter->current();
             $curKey = $iter->key();
 
-            $curValue = call_user_func_array($this->mapper, [$curValue, &$curKey, $this]);
-
-            if ($curValue === null) {
-                $this->needsNext = true;
-                continue;
-            }
-
-            if ($curValue === $break) {
-                $this->validateInner($iter);
-                $this->currentValid = $break;
-                return false;
-            }
-
-            if ($curValue instanceof Value) {
-                /**
-                 * if there is at least one group instruction, we have to traverse the inner iterator completely
-                 * from the current position (inclusive)
-                 * @todo in this case the remaining children information is lost, fix it ASAP
-                 */
-                if ($curValue->group) {
-                    $iter = $this->inner = new ArrayIterator(fn\traverse($iter, $this->mapper, false));
-                    $iter->rewind();
-                    $this->needsMap = true;
-                    $this->mapper   = function() {
-                        return new Value;
-                    };
-                    continue;
+            foreach ($this->mappers as $mapper) {
+                $curValue = call_user_func_array($mapper, [$curValue === $null ? null : $curValue, &$curKey, $this]);
+                if ($curValue === null) {
+                    $this->needsNext = true;
+                    continue 2;
+                }
+                if ($curValue === $break) {
+                    $this->validateInner($iter);
+                    $this->currentValid = $break;
+                    return false;
                 }
 
-                $curKey         = $curValue->key !== null ? $curValue->key : $curKey;
-                $this->children = $curValue->children;
-                $curValue       = $curValue->value !== null ? $curValue->value : $value;
-            }
+                if ($curValue instanceof Value) {
+                    /**
+                     * if there is at least one group instruction, we have to traverse the inner iterator completely
+                     * from the current position (inclusive)
+                     * @todo in this case the remaining children information is lost, fix it ASAP
+                     */
+                    if ($curValue->group) {
+                        $iter = $this->inner = new ArrayIterator(fn\traverse($iter, $mapper, false));
+                        $iter->rewind();
+                        $this->needsMap = true;
+                        $this->mappers = [function() {
+                            return new Value;
+                        }];
+                        continue;
+                    }
+                    // @todo only children of the last value are handled
+                    $this->children = $curValue->children;
 
-            $this->currentKey   = $curKey;
-            $this->currentValue = $curValue === $null ? null : $curValue;
-            break;
+                    $curKey = $curValue->key !== null ? $curValue->key : $curKey;
+                    $curValue = $curValue->value !== null ? $curValue->value : $value;
+
+                }
+
+            }
+            $this->currentKey = $curKey;
+            $this->currentValue = $curValue === $null ? null : $curValue;            break;
         }
         return true;
     }
@@ -188,7 +189,7 @@ class Tree implements RecursiveIterator, Countable
      */
     public function rewind()
     {
-        if ($this->mapper) {
+        if ($this->mappers) {
             $this->needsRewind = false;
             $this->needsNext = false;
             $this->needsMap = true;
@@ -222,7 +223,7 @@ class Tree implements RecursiveIterator, Countable
      */
     public function current()
     {
-        if ($this->mapper) {
+        if ($this->mappers) {
             return $this->doMap() ? $this->currentValue : null;
         }
         return $this->getInnerIterator()->current();
@@ -233,7 +234,7 @@ class Tree implements RecursiveIterator, Countable
      */
     public function key()
     {
-        if ($this->mapper) {
+        if ($this->mappers) {
             return $this->doMap() ? $this->currentKey : null;
         }
         return $this->getInnerIterator()->key();
@@ -275,7 +276,7 @@ class Tree implements RecursiveIterator, Countable
      */
     public function next()
     {
-        if ($this->mapper) {
+        if ($this->mappers) {
             $this->needsNext = false;
             $this->needsMap = true;
         }
@@ -287,7 +288,7 @@ class Tree implements RecursiveIterator, Countable
      */
     public function valid()
     {
-        if ($this->mapper) {
+        if ($this->mappers) {
             return $this->doMap();
         }
         return $this->getInnerIterator()->valid();

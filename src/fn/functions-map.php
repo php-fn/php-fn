@@ -159,7 +159,7 @@ function map(...$iterable)
 {
     $callable = _\lastCallable($iterable);
     if (count($iterable) === 1) {
-        return new Map($iterable[0], $callable);
+        return new Map($iterable[0], ...($callable ? [$callable] : []));
     }
     $merged = (new Map)->merge(...$iterable);
     return $callable ? $merged->map($callable) : $merged;

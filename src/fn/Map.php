@@ -28,22 +28,34 @@ use IteratorAggregate;
 class Map implements IteratorAggregate, Countable, ArrayAccess
 {
     /**
-     * @var Map\Tree
+     * @var iterable
      */
-    private $iter;
+    private $iterable;
+
+    /**
+     * @var callable
+     */
+    private $mappers = [];
 
     /**
      * @var array
      */
-    private $data;
+    private $compiled;
 
     /**
-     * @param iterable ...$iterable
-     * @param callable $mapper
+     * @var Map\Tree
      */
-    public function __construct($iterable = null, callable $mapper = null)
+    private $inner;
+
+
+    /**
+     * @param iterable $iterable
+     * @param callable ...$mappers
+     */
+    public function __construct($iterable = null, callable ...$mappers)
     {
-        $this->iter = new Map\Tree($iterable ?: [], $mapper);
+        $this->iterable = $iterable;
+        $this->mappers  = $mappers;
     }
 
     /**
@@ -57,9 +69,9 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
                 return traverse($this->keys());
             case 'traverse':
             case 'map':
-                return is_array($this->data) ? $this->data : traverse($this);
+                return is_array($this->compiled) ? $this->compiled : traverse($this);
             case 'values':
-                return _\toValues(is_array($this->data) ? $this->data : $this);
+                return _\toValues(is_array($this->compiled) ? $this->compiled : $this);
             case 'tree':
                 return _\toValues($this->tree());
             case 'leaves':
@@ -91,13 +103,13 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
                 array_unshift($replacements, $delimiter);
                 $delimiter = PHP_EOL;
             }
-            $delimiter = function($counter, $depth, \RecursiveIteratorIterator $iterator) use($delimiter) {
+            $delimiter = function($counter) use($delimiter) {
                 return $counter ? $delimiter : '';
             };
         }
         traverse($this->leaves(function($value, \RecursiveIteratorIterator $iterator) use ($delimiter, &$string) {
             static $counter = 0;
-            $string .= $delimiter($counter++, $iterator->getDepth(), $iterator) . $value;
+            $string .= $delimiter(...[$counter++, $iterator->getDepth(), $iterator]) . $value;
 
         }));
         return $replacements ? _\toString($string, ...$replacements) : $string;
@@ -141,7 +153,14 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function getIterator()
     {
-        return is_array($this->data) ? new Map\Tree($this->data) : $this->iter;
+        if (!$this->inner) {
+            if (is_array($this->compiled)) {
+                $this->inner = new Map\Tree($this->compiled);
+            } else {
+                $this->inner = new Map\Tree($this->iterable ?: [], ...$this->mappers);
+            }
+        }
+        return $this->inner;
     }
 
     /**
@@ -155,9 +174,13 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     /**
      * @return array
      */
-    private function getData()
+    private function compile()
     {
-        return is_array($this->data) ? $this->data : $this->data = traverse($this);
+        if (!is_array($this->compiled)) {
+            $this->compiled = traverse($this);
+            $this->inner = null;
+        }
+        return $this->compiled;
     }
 
     /**
@@ -167,7 +190,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function has($value, $strict = true)
     {
-        return hasValue($value, $this->getData(), $strict);
+        return hasValue($value, $this->compile(), $strict);
     }
 
     /**
@@ -185,7 +208,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function offsetExists($offset)
     {
-        return hasKey($offset, $this->getData());
+        return hasKey($offset, $this->compile());
     }
 
     /**
@@ -194,7 +217,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     public function offsetGet($offset)
     {
         $this->offsetExists($offset) ?: fail\argument($offset);
-        return $this->data[$offset];
+        return $this->compiled[$offset];
     }
 
     /**
@@ -202,8 +225,8 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function offsetSet($offset, $value)
     {
-        $this->getData();
-        $this->data[$offset] = $value;
+        $this->compile();
+        $this->compiled[$offset] = $value;
     }
 
     /**
@@ -211,8 +234,8 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function offsetUnset($offset)
     {
-        $this->getData();
-        unset($this->data[$offset]);
+        $this->compile();
+        unset($this->compiled[$offset]);
     }
 
     /**
@@ -327,7 +350,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function search($needle, $strict = true)
     {
-        return array_search($needle, $this->getData(), $strict);
+        return array_search($needle, $this->compile(), $strict);
     }
 
     /**

@@ -91,10 +91,10 @@ class TreeTest extends PHPUnit_Framework_TestCase
      */
     public function testRecursiveIteration($expected, $inner, $mapper, $mode = Rec::SELF_FIRST)
     {
-        assert\equals($expected, fn\_\toValues(new Rec(new Tree($inner, $mapper), $mode)));
+        assert\equals($expected, fn\_\toValues(new Rec(new Tree($inner, ...(array)$mapper), $mode)));
         assert\equals($expected, fn\_\toValues(new Rec(new Tree(new Lazy(function () use ($inner) {
             return is_array($inner) ? new RecursiveArrayIterator($inner) : $inner;
-        }), $mapper), $mode)));
+        }), ...(array)$mapper), $mode)));
     }
 
     /**
@@ -258,13 +258,13 @@ class TreeTest extends PHPUnit_Framework_TestCase
     {
         assert\equals\trial($expected, function ($iterator) {
             return fn\traverse($iterator);
-        }, new Tree($inner, $mapper));
+        }, new Tree($inner, ...(array)$mapper));
 
         assert\equals\trial($expected, function ($iterator) {
             return fn\traverse($iterator);
         }, new Tree(new Lazy(function () use ($inner) {
             return $inner;
-        }), $mapper));
+        }), ...(array)$mapper));
     }
 
     /**
@@ -300,5 +300,29 @@ class TreeTest extends PHPUnit_Framework_TestCase
             static $count = 0;
             return fn\mapValue($it->getDepth())->andKey($count++);
         })));
+    }
+
+    /**
+     */
+    public function testMultipleMappers()
+    {
+        $tree = new Tree(
+            ['k1' => 'v1', 'k2' => 'v2'],
+            function($value, &$key) {
+                $key = strtoupper($key);
+                return $value === 'v1' ? fn\mapNull() : $value;
+            },
+            function($value, $key) {
+                return fn\mapValue($value === null ? '-' : $value)->andKey($key === 'K1' ? 'k1' : $key);
+            },
+            function($value) {
+                return $value . $value;
+            }
+        );
+
+        assert\same([
+            'k1' => '--',
+            'K2' => 'v2v2',
+        ], fn\traverse($tree));
     }
 }
