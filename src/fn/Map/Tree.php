@@ -16,7 +16,6 @@ use IteratorAggregate;
 use IteratorIterator;
 use RecursiveArrayIterator;
 use RecursiveIterator;
-use RecursiveIteratorIterator;
 use Traversable;
 
 /**
