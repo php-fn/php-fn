@@ -152,7 +152,7 @@ function traverse($traversable, callable $callable = null, $reset = true)
 }
 
 /**
- * @param iterable|callable ...$iterable If more than one iterable argument is passed, they will be merged
+ * @param iterable|callable ...$iterable If more than one iterable argument is passed, then they will be merged
  * @return Map
  */
 function map(...$iterable)
@@ -190,8 +190,25 @@ function keys(...$iterable)
 {
     $callable  = _\lastCallable($iterable);
     $functions = count($iterable) > 1 ? ['array_merge' => true, 'array_keys'] : ['array_keys' => true];
-    _\chainIterables($functions, ...$iterable, ...$iterable);
+    _\chainIterables($functions, ...$iterable);
     return _\chainIterables($functions, ...$iterable, ...(array)$callable);
+}
+
+/**
+ * Return values (@see array_values) from the iterable.
+ * If multiple iterables are passed they will be merged after conversion.
+ * The last argument can be a callable, in that case it will be applied to all merged values.
+ *
+ * @param iterable|callable ...$iterable
+ *
+ * @return array
+ */
+function values(...$iterable)
+{
+    $callable  = _\lastCallable($iterable);
+    return merge(...traverse($iterable, function($candidate) {
+        return _\toValues($candidate);
+    }), ...(array)$callable);
 }
 
 /**

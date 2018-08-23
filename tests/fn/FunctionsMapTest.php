@@ -333,8 +333,30 @@ class FunctionsMapTest extends MapTest
             return $value === 'b' ? null : strtoupper($value);
         })), 'args > 1, with mapper');
 
-        // array_merge(['a' => 'A'], ['b' => 'B'])['b']
         assert\same('B', merge(['a' => 'A'], ['b' => 'B'])['b']);
+    }
+
+    /**
+     * @covers ::values
+     */
+    public function testValues()
+    {
+        assert\same([], values(), 'args = 0');
+        assert\same([], values([]));
+        assert\same([], values([], new Map));
+        assert\same(['a', 'b', 'c', 'd', 'e'], merge(['a', 'b'], ['c'], ['d', 'e']), 'args > 1, no mapper');
+
+        assert\same(
+            ['a', 'b', 'c', 'd', 'e'],
+            values(['a', 'k' => 'b'], ['c'], ['d', 'k' => 'e']),
+            'args > 1, no mapper, with assoc key'
+        );
+
+        assert\same(['A', 2 => 'C', 'D', 'E'], values(['a', 'b'], ['c'], ['d', 'e'], function ($value) {
+            return $value === 'b' ? null : strtoupper($value);
+        }), 'args > 1, with mapper');
+
+        assert\same('B', values(['a' => 'A'], ['b' => 'B'])[1]);
     }
 
     /**

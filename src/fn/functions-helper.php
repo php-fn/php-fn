@@ -52,7 +52,7 @@ function chainIterables(array $functions, ...$args)
             $function = $variadic;
             $variadic = false;
         }
-        $result = $variadic ? call_user_func($function, ...$result) : call_user_func($function, $result);
+        $result = $variadic ? $function(...$result) : $function($result);
     }
     return $callable ? fn\traverse($result, $callable) : $result;
 }
