@@ -20,7 +20,7 @@ trait ReadWriteTrait
      */
     public function __construct(array $properties = null)
     {
-        property_exists($this, 'properties') ?: fn\fail('missing property $properties in %s', get_class($this));
+        property_exists($this, 'properties') ?: fn\fail('missing property $properties in %s', static::class);
         if ($properties !== null) {
             if ($diff = implode(', ', array_diff(array_keys($properties), array_keys($this->properties)))) {
                 fn\fail\value($diff);
@@ -34,7 +34,7 @@ trait ReadWriteTrait
      */
     private function assertProperty($name)
     {
-        fn\hasKey($name, $this->properties) ?: fn\fail\bounds('missing magic-property %s in %s', $name, get_class($this));
+        fn\hasKey($name, $this->properties) ?: fn\fail\bounds('missing magic-property %s in %s', $name, static::class);
     }
 
     /**

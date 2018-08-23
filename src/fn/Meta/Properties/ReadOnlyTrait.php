@@ -21,7 +21,7 @@ trait ReadOnlyTrait
      */
     public function __set($property, $value)
     {
-        fn\fail('class %s has read-only access for magic-properties: %s', get_class($this), $property);
+        fn\fail('class %s has read-only access for magic-properties: %s', static::class, $property);
     }
 
     /**
@@ -29,6 +29,6 @@ trait ReadOnlyTrait
      */
     public function __unset($property)
     {
-        fn\fail('class %s has read-only access for magic-properties: %s', get_class($this), $property);
+        fn\fail('class %s has read-only access for magic-properties: %s', static::class, $property);
     }
 }
