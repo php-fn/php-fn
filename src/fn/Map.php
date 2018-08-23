@@ -239,10 +239,18 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     }
 
     /**
+     * @deprecated use method ::then instead
+     */
+    public function map(callable ...$mappers)
+    {
+        return $this->then(...$mappers);
+    }
+
+    /**
      * @param callable ...$mappers
      * @return static
      */
-    public function map(callable ...$mappers)
+    public function then(callable ...$mappers)
     {
         return new static(
             is_array($this->compiled) ? $this->compiled : $this->iterable,
@@ -266,7 +274,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function keys(callable ...$mappers)
     {
-        return $this->map(function ($value, $key)  {
+        return $this->then(function ($value, $key)  {
             static $counter = 0;
             return mapValue($key)->andKey($counter++);
         }, ...$mappers);
@@ -278,7 +286,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function values(callable ...$mappers)
     {
-        return $this->map(function ($value)  {
+        return $this->then(function ($value)  {
             static $counter = 0;
             return mapValue($value)->andKey($counter++);
         }, ...$mappers);

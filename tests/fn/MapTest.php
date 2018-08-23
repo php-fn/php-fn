@@ -72,25 +72,25 @@ class MapTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Map::map
+     * @covers Map::then
      */
-    public function testMap()
+    public function testThen()
     {
         $duplicate = function($value) {
             return "$value$value";
         };
 
         $m1 = $this->map(['a-'], $duplicate);
-        $m2 = $m1->map($duplicate);
-        $m3 = $m2->map($duplicate);
+        $m2 = $m1->then($duplicate);
+        $m3 = $m2->then($duplicate);
         assert\same(['a-a-'], $m1->traverse);
         assert\same(['a-a-a-a-'], $m2->traverse);
         assert\same(['a-a-a-a-a-a-a-a-'], $m3->traverse);
 
-        $map = $this->map(['a-'])->map($duplicate, $duplicate, $duplicate);
+        $map = $this->map(['a-'])->then($duplicate, $duplicate, $duplicate);
         assert\type(Map::class, $map);
         assert\equals(['a-a-a-a-a-a-a-a-'], traverse($map));
-        assert\equals(['a-a-a-a-a-a-a-a-'], traverse($map->map()));
+        assert\equals(['a-a-a-a-a-a-a-a-'], traverse($map->then()));
     }
 
     /**

@@ -162,7 +162,7 @@ function map(...$iterable)
         return new Map($iterable[0], ...($callable ? [$callable] : []));
     }
     $merged = (new Map)->merge(...$iterable);
-    return $callable ? $merged->map($callable) : $merged;
+    return $callable ? $merged->then($callable) : $merged;
 }
 
 /**
