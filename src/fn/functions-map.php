@@ -159,10 +159,10 @@ function map(...$iterable)
 {
     $callable = _\lastCallable($iterable);
     if (count($iterable) === 1) {
-        return new Map($iterable[0], ...($callable ? [$callable] : []));
+        return new Map($iterable[0], ...$callable);
     }
     $merged = (new Map)->merge(...$iterable);
-    return $callable ? $merged->then($callable) : $merged;
+    return $callable ? $merged->then(...$callable) : $merged;
 }
 
 /**
@@ -191,7 +191,7 @@ function keys(...$iterable)
     $callable  = _\lastCallable($iterable);
     $functions = count($iterable) > 1 ? ['array_merge' => true, 'array_keys'] : ['array_keys' => true];
     _\chainIterables($functions, ...$iterable);
-    return _\chainIterables($functions, ...$iterable, ...(array)$callable);
+    return _\chainIterables($functions, ...$iterable, ...$callable);
 }
 
 /**
@@ -208,7 +208,7 @@ function values(...$iterable)
     $callable  = _\lastCallable($iterable);
     return merge(...traverse($iterable, function($candidate) {
         return _\toValues($candidate);
-    }), ...(array)$callable);
+    }), ...$callable);
 }
 
 /**
@@ -255,7 +255,7 @@ function some(...$iterable)
 function leaves(...$iterable)
 {
     $callable  = _\lastCallable($iterable);
-    return $callable ? map(...$iterable)->leaves($callable)->traverse : map(...$iterable)->leaves;
+    return $callable ? map(...$iterable)->leaves(...$callable)->traverse : map(...$iterable)->leaves;
 }
 
 /**
@@ -269,7 +269,7 @@ function leaves(...$iterable)
 function tree(...$iterable)
 {
     $callable  = _\lastCallable($iterable);
-    return $callable ? map(...$iterable)->tree($callable)->traverse : map(...$iterable)->tree;
+    return $callable ? map(...$iterable)->tree(...$callable)->traverse : map(...$iterable)->tree;
 }
 
 /**
