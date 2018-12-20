@@ -8,15 +8,10 @@
 
 namespace fn\Map;
 
-use ArrayIterator;
 use Countable;
 use fn;
 use Iterator;
-use IteratorAggregate;
-use IteratorIterator;
-use RecursiveArrayIterator;
 use RecursiveIterator;
-use Traversable;
 
 /**
  * Consolidates implementation of SPL array_* functions
@@ -56,32 +51,13 @@ class Tree implements RecursiveIterator, Countable
     }
 
     /**
-     * @return Iterator
+     * @return Inner
      */
     public function getInnerIterator()
     {
-        if ($this->inner instanceof Iterator) {
-            return $this->inner;
+        if (!$this->inner instanceof Inner) {
+            $this->inner = new Inner($this->inner);
         }
-
-        if (is_array($this->inner)) {
-            return $this->inner = new RecursiveArrayIterator($this->inner);
-        }
-
-        $counter = 0;
-        while ($this->inner instanceof IteratorAggregate) {
-            $counter++ > 10 && fn\fail('$inner::getIterator is too deep');
-            if (($inner = $this->inner->getIterator()) === $this->inner) {
-                fn\fail('Implementation $inner::getIterator returns same instance');
-            }
-            $this->inner = $inner;
-        }
-
-        if ($this->inner instanceof Traversable && !$this->inner instanceof Iterator) {
-            return $this->inner = new IteratorIterator($this->inner);
-        }
-
-        $this->inner instanceof Iterator || fn\fail('Property $inner must be iterable');
         return $this->inner;
     }
 
@@ -161,7 +137,7 @@ class Tree implements RecursiveIterator, Countable
                      * @todo in this case the remaining children information is lost, fix it ASAP
                      */
                     if ($curValue->group) {
-                        $iter = $this->inner = new ArrayIterator(fn\traverse($iter, $mapper, false));
+                        $iter = $this->inner = new Inner(fn\traverse($iter, $mapper, false));
                         $iter->rewind();
                         $this->needsMap = true;
                         $this->mappers = [function() {

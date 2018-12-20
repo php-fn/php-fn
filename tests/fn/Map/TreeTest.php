@@ -102,57 +102,7 @@ class TreeTest extends PHPUnit_Framework_TestCase
      */
     public function providerSimpleIteration()
     {
-        $ref = null;
         return [
-            'intern traversable classes are wrapped around IteratorIterator' => [
-                'expected' => [],
-                'inner' => new Lazy(function() {
-                    return new SimpleXMLElement('<root/>');
-                }),
-            ],
-            '$inner::getIterator returns same instance' => [
-                'expected' => new RuntimeException('Implementation $inner::getIterator returns same instance'),
-                'inner' => $ref = new Lazy(function() use(&$ref) {
-                    return $ref;
-                }),
-            ],
-            '$inner::getIterator is too deep' => [
-                'expected' => new RuntimeException('$inner::getIterator is too deep'),
-                'inner' => new Lazy(function() {
-                    return new Lazy(function() {
-                        return new Lazy(function() {
-                            return new Lazy(function() {
-                                return new Lazy(function() {
-                                    return new Lazy(function() {
-                                        return new Lazy(function() {
-                                            return new Lazy(function() {
-                                                return new Lazy(function() {
-                                                    return new Lazy(function() {
-                                                        return new Lazy(function() {
-                                                            return new Lazy(function() {
-                                                            });
-                                                        });
-                                                    });
-                                                });
-                                            });
-                                        });
-                                    });
-                                });
-                            });
-                        });
-                    });
-                }),
-            ],
-            '$inner depth = 3' => [
-                'expected' => ['depth' => 3],
-                'inner' => new Lazy(function() {
-                    return new Lazy(function() {
-                        return new Lazy(function() {
-                            return ['depth' => 3];
-                        });
-                    });
-                }),
-            ],
             'combine map, skip and stop' => [
                 'expected' => ['directly-key' => 'directly-value', 'map-key' => 'map-value', 3 => 'd'],
                 'inner' => ['a', 'b', 'c', 'd', 'e', 'f'],
@@ -220,23 +170,7 @@ class TreeTest extends PHPUnit_Framework_TestCase
                     assert\type(Tree::class, $iterator);
                     return "$key-$value";
                 },
-            ],
-            'simple iterator' => [
-                'expected' => ['a' => 'a', 'b' => ['c' => 'd']],
-                'inner' => new ArrayIterator(['a' => 'a', 'b' => ['c' => 'd']]),
-            ],
-            'simple array' => [
-                'expected' => ['a', 'b', 'c'],
-                'inner' => ['a', 'b', 'c'],
-            ],
-            'empty array' => [
-                'expected' => [],
-                'inner' => [],
-            ],
-            'null => exception' => [
-                'expected' => new RuntimeException('Property $inner must be iterable'),
-                'inner' => null,
-            ],
+            ]
         ];
     }
 
@@ -252,9 +186,9 @@ class TreeTest extends PHPUnit_Framework_TestCase
      *
      * @param array|\Exception $expected
      * @param iterable|\Traversable $inner
-     * @param callable|null $mapper
+     * @param callable $mapper
      */
-    public function testSimpleIteration($expected, $inner, $mapper = null)
+    public function testSimpleIteration($expected, $inner, callable $mapper)
     {
         assert\equals\trial($expected, function ($iterator) {
             return fn\traverse($iterator);
