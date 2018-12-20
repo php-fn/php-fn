@@ -105,15 +105,17 @@ function traverse($traversable, callable $callable = null, $reset = true)
     while ($isArray ? key($traversable) !== null : $traversable->valid()) {
         if ($isArray) {
             $current = current($traversable);
-            $key = key($traversable);
+            $key     = key($traversable);
+            $mapped  = $callable($current, $key);
             next($traversable);
         } else {
             $current = $traversable->current();
-            $key = $traversable->key();
+            $key     = $traversable->key();
+            $mapped  = $callable($current, $key);
             $traversable->next();
         }
 
-        if (null === $mapped = $callable($current, $key)) {
+        if (null === $mapped) {
             continue;
         }
 
