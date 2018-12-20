@@ -4,11 +4,6 @@
 # http://php-pds.com/
 
 ## dirs
-!/bin/
-!/config/
-!/docs/
-!/public/
-!/resources/
 !/src/
 !/tests/
 
@@ -16,7 +11,7 @@
 !/.editorconfig
 !/.gitattributes
 !/.gitignore
-!/composer*
+!/composer.json
 !/LICENSE*
 !/phpunit.xml.dist
 !/README*
