@@ -259,4 +259,17 @@ class TreeTest extends PHPUnit_Framework_TestCase
             'K2' => 'v2v2',
         ], fn\traverse($tree));
     }
+
+    /**
+     * @covers Tree::isLast
+     */
+    public function testIsLast()
+    {
+        assert\same(
+            ['a' => false, 'b' => false, 'c' => true],
+            fn\traverse(new Tree(['a', 'b', 'c'], function($value, $key, Tree $it) {
+                return fn\mapKey($value)->andValue($it->isLast());
+            }))
+        );
+    }
 }

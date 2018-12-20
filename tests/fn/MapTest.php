@@ -456,4 +456,18 @@ EOF;
             return $map->string('');
         }));
     }
+
+    /**
+     * @covers Map::isLast
+     */
+    public function testIsLast()
+    {
+        assert\same(
+            ['a' => false, 'b' => false, 'c' => true],
+            traverse($map = new Map(['a', 'b', 'c'], function($value) use(&$map) {
+                /** @var Map $map */
+                return mapKey($value)->andValue($map->isLast());
+            }))
+        );
+    }
 }

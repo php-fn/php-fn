@@ -81,6 +81,14 @@ class Tree implements RecursiveIterator, Countable
     /**
      * @return bool
      */
+    public function isLast()
+    {
+        return $this->getInnerIterator()->isLast();
+    }
+
+    /**
+     * @return bool
+     */
     private function doMap()
     {
         static $break, $null;

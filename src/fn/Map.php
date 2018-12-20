@@ -171,6 +171,14 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     }
 
     /**
+     * @return bool
+     */
+    public function isLast()
+    {
+        return $this->getIterator()->isLast();
+    }
+
+    /**
      * @return array
      */
     private function compile()
