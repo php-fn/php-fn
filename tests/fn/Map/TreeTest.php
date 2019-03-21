@@ -240,7 +240,7 @@ class TreeTest extends \PHPUnit\Framework\TestCase
                 return $value === 'v1' ? fn\mapNull() : $value;
             },
             function($value, $key) {
-                return fn\mapValue($value === null ? '-' : $value)->andKey($key === 'K1' ? 'k1' : $key);
+                return fn\mapValue($value ?? '-')->andKey($key === 'K1' ? 'k1' : $key);
             },
             function($value) {
                 return $value . $value;

@@ -106,7 +106,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
             $string .= $delimiter(...[$counter++, $iterator->getDepth(), $iterator]) . $value;
 
         }));
-        return $replacements ? _\toString($string, ...$replacements) : $string;
+        return $replacements ? str($string, ...$replacements) : $string;
     }
 
     /**

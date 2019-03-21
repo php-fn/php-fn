@@ -6,7 +6,6 @@
 namespace fn;
 
 use function fn\_\toArray;
-use function fn\_\toString;
 use function fn\_\toTraversable;
 use function fn\_\toValues;
 use fn\test\assert;
@@ -61,21 +60,21 @@ class FunctionsHelperTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider providerToString
-     * @covers ::toString
+     * @dataProvider providerStr
+     * @covers ::str
      * @param string $expected
      * @param string $subject
      * @param array $replacements
      */
-    public function testToString($expected, $subject, ...$replacements): void
+    public function testStr($expected, $subject, ...$replacements): void
     {
-        assert\same($expected, toString($subject, ...$replacements));
+        assert\same($expected, str($subject, ...$replacements));
     }
 
     /**
      * @return array[]
      */
-    public function providerToString(): array
+    public function providerStr(): array
     {
         return [
             '{0 %s %d  | format' => [
