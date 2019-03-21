@@ -3,13 +3,7 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-foreach ([
-    '\fn\_\toArray' => 'functions-helper.php',
-    '\fn\fail'      => 'functions-fail.php',
-    '\fn\sub'       => 'functions.php',
-    '\fn\traverse'  => 'functions-map.php',
-] as $fnc => $file) {
-    if (!function_exists($fnc)) {
-        require_once __DIR__ . "/fn/$file" ;
-    }
-}
+require_once __DIR__ . '/functions-helper.php';
+require_once __DIR__ . '/functions-fail.php';
+require_once __DIR__ . '/functions.php';
+require_once __DIR__ . '/functions-map.php';
