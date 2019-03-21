@@ -166,6 +166,14 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     }
 
     /**
+     * @return bool
+     */
+    public function isLast()
+    {
+        return $this->getIterator()->isLast();
+    }
+
+    /**
      * @return array
      */
     private function compile(): array
@@ -394,5 +402,27 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
             }
         }
         return isCallable($false, true) ? $false($this) : $false;
+    }
+
+    /**
+     * @param int $limit
+     * @param int $offset
+     *
+     * @return static
+     */
+    public function limit($limit, $offset = 0)
+    {
+        $from = max($offset, 0);
+        $to   = $from + max($limit, 0);
+        return $this->then(function($value) use($from, $to) {
+            static $count = 0;
+            if ($count < $from) {
+                $value = null;
+            } else if ($to > 0 && $count >= $to) {
+                $value = mapBreak();
+            }
+            $count++;
+            return $value;
+        });
     }
 }

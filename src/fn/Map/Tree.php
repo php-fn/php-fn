@@ -1,19 +1,17 @@
 <?php
 /**
- * Copyright (C) php-fn. See LICENSE file for license details.
+ * (c) php-fn
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace fn\Map;
 
-use ArrayIterator;
 use Countable;
 use fn;
 use Iterator;
-use IteratorAggregate;
-use IteratorIterator;
-use RecursiveArrayIterator;
 use RecursiveIterator;
-use Traversable;
 
 /**
  * Consolidates implementation of SPL array_* functions
@@ -47,38 +45,19 @@ class Tree implements RecursiveIterator, Countable
     /**
      * @inheritdoc
      */
-    public function count(): int
+    public function count()
     {
         return iterator_count($this);
     }
 
     /**
-     * @return Iterator
+     * @return Inner
      */
-    public function getInnerIterator(): Iterator
+    public function getInnerIterator()
     {
-        if ($this->inner instanceof Iterator) {
-            return $this->inner;
+        if (!$this->inner instanceof Inner) {
+            $this->inner = new Inner($this->inner);
         }
-
-        if (is_array($this->inner)) {
-            return $this->inner = new RecursiveArrayIterator($this->inner);
-        }
-
-        $counter = 0;
-        while ($this->inner instanceof IteratorAggregate) {
-            $counter++ > 10 && fn\fail('$inner::getIterator is too deep');
-            if (($inner = $this->inner->getIterator()) === $this->inner) {
-                fn\fail('Implementation $inner::getIterator returns same instance');
-            }
-            $this->inner = $inner;
-        }
-
-        if ($this->inner instanceof Traversable && !$this->inner instanceof Iterator) {
-            return $this->inner = new IteratorIterator($this->inner);
-        }
-
-        $this->inner instanceof Iterator || fn\fail('Property $inner must be iterable');
         return $this->inner;
     }
 
@@ -102,7 +81,15 @@ class Tree implements RecursiveIterator, Countable
     /**
      * @return bool
      */
-    private function doMap(): bool
+    public function isLast()
+    {
+        return $this->getInnerIterator()->isLast();
+    }
+
+    /**
+     * @return bool
+     */
+    private function doMap()
     {
         static $break, $null;
         if (!$break) {
@@ -158,7 +145,7 @@ class Tree implements RecursiveIterator, Countable
                      * @todo in this case the remaining children information is lost, fix it ASAP
                      */
                     if ($curValue->group) {
-                        $iter = $this->inner = new ArrayIterator(fn\traverse($iter, $mapper, false));
+                        $iter = $this->inner = new Inner(fn\traverse($iter, $mapper, false));
                         $iter->rewind();
                         $this->needsMap = true;
                         $this->mappers = [function() {
@@ -184,7 +171,7 @@ class Tree implements RecursiveIterator, Countable
     /**
      * @inheritdoc
      */
-    public function rewind(): void
+    public function rewind()
     {
         if ($this->mappers) {
             $this->needsRewind = false;
@@ -205,7 +192,7 @@ class Tree implements RecursiveIterator, Countable
      *
      * @return bool
      */
-    private function validateInner(Iterator $inner): bool
+    private function validateInner(Iterator $inner)
     {
         if (!($this->currentValid = $inner->valid())) {
             $this->currentKey = null;
@@ -240,25 +227,25 @@ class Tree implements RecursiveIterator, Countable
     /**
      * @inheritdoc
      */
-    public function hasChildren(): bool
+    public function hasChildren()
     {
         if ($this->getChildrenIterator()) {
             return true;
         }
         $inner = $this->getInnerIterator();
-        return $inner->valid() && is_iterable($inner->current());
+        return $inner->valid() && fn\_\isTraversable($inner->current());
     }
 
     /**
      * @inheritdoc
      */
-    public function getChildren(): RecursiveIterator
+    public function getChildren()
     {
         if ($childrenIterator = $this->getChildrenIterator()) {
             return $childrenIterator;
         }
         $inner = $this->getInnerIterator();
-        if ($inner->valid() && is_iterable($current = $inner->current())) {
+        if ($inner->valid() && fn\_\isTraversable($current = $inner->current())) {
             return new static($current);
         }
         static $empty;
@@ -271,7 +258,7 @@ class Tree implements RecursiveIterator, Countable
     /**
      * @inheritdoc
      */
-    public function next(): void
+    public function next()
     {
         if ($this->mappers) {
             $this->needsNext = false;
@@ -283,7 +270,7 @@ class Tree implements RecursiveIterator, Countable
     /**
      * @inheritdoc
      */
-    public function valid(): bool
+    public function valid()
     {
         if ($this->mappers) {
             return $this->doMap();
@@ -296,7 +283,7 @@ class Tree implements RecursiveIterator, Countable
      *
      * @return static|\Traversable
      */
-    public function recursive(callable $mapper = null): self
+    public function recursive(callable $mapper = null)
     {
         return fn\_\recursive($this, false, $mapper);
     }
@@ -306,7 +293,7 @@ class Tree implements RecursiveIterator, Countable
      *
      * @return static|\Traversable
      */
-    public function flatten(callable $mapper = null): self
+    public function flatten(callable $mapper = null)
     {
         return fn\_\recursive($this, true, $mapper);
     }

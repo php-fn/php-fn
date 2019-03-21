@@ -12,19 +12,19 @@ use Traversable;
 
 /**
  * @param array $args
- * @return callable|null
+ * @return callable[]
  */
 function lastCallable(array &$args)
 {
     if (!$args) {
-        return null;
+        return [];
     }
     if (!is_iterable($last = array_pop($args)) && fn\isCallable($last, true)) {
         $args ?: fn\fail\argument('single argument should not be a callable');
-        return $last;
+        return [$last];
     }
     $args[] = $last;
-    return null;
+    return [];
 }
 
 /**
@@ -51,7 +51,7 @@ function chainIterables(array $functions, ...$args)
         }
         $result = $variadic ? $function(...$result) : $function($result);
     }
-    return $callable ? fn\traverse($result, $callable) : $result;
+    return $callable ? fn\traverse($result, ...$callable) : $result;
 }
 
 /**

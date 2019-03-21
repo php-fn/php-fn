@@ -6,10 +6,11 @@
   "license": "MIT",
   "prefer-stable": true,
   "require": {
-    "php": ">=7.1"
+    "php": ">=5.6"
   },
   "require-dev": {
-    "php-fn/test": "^1"
+    "php-fn/test": "^1.0",
+    "ext-simplexml": "*"
   },
   "autoload": {
     "psr-4": {

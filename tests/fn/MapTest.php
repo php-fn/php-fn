@@ -453,4 +453,43 @@ EOF;
             return $map->string('');
         }));
     }
+
+    /**
+     * @covers Map::isLast
+     */
+    public function testIsLast()
+    {
+        assert\same(
+            ['a' => false, 'b' => false, 'c' => true],
+            traverse($map = new Map(['a', 'b', 'c'], function($value) use(&$map) {
+                /** @var Map $map */
+                return mapKey($value)->andValue($map->isLast());
+            }))
+        );
+    }
+
+    /**
+     * @covers Map::limit
+     */
+    public function testLimit()
+    {
+        $map = $this->map(['a', 'b', 'c', 'd'], function($value) {
+            return $value === 'b' ? null : strtoupper($value);
+        });
+
+        assert\type(Map::class, $map->limit(0));
+        assert\same($all = ['A', 2 => 'C', 'D'], traverse($map->limit(0)));
+        assert\same($all, traverse($map->limit(-1)));
+        assert\same($all, traverse($map->limit(0, -1)));
+        assert\same($all, traverse($map->limit(3)));
+
+        assert\same(['A'], traverse($map->limit(1)));
+        assert\same([2 => 'C'], traverse($map->limit(1, 1)));
+        assert\same([3 => 'D'], traverse($map->limit(1, 2)));
+        assert\same([], traverse($map->limit(1, 3)));
+
+        assert\same(['A', 2 => 'C'], traverse($map->limit(2)));
+        assert\same([2 => 'C', 'D'], traverse($map->limit(2, 1)));
+        assert\same([3 => 'D'], traverse($map->limit(2, 2)));
+    }
 }

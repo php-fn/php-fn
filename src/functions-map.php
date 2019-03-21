@@ -105,15 +105,17 @@ function traverse($traversable, callable $callable = null, $reset = true): array
     while ($isArray ? key($traversable) !== null : $traversable->valid()) {
         if ($isArray) {
             $current = current($traversable);
-            $key = key($traversable);
+            $key     = key($traversable);
+            $mapped  = $callable($current, $key);
             next($traversable);
         } else {
             $current = $traversable->current();
-            $key = $traversable->key();
+            $key     = $traversable->key();
+            $mapped  = $callable($current, $key);
             $traversable->next();
         }
 
-        if (null === $mapped = $callable($current, $key)) {
+        if (null === $mapped) {
             continue;
         }
 
@@ -159,10 +161,10 @@ function map(...$iterable): Map
 {
     $callable = _\lastCallable($iterable);
     if (count($iterable) === 1) {
-        return new Map($iterable[0], ...($callable ? [$callable] : []));
+        return new Map($iterable[0], ...$callable);
     }
     $merged = (new Map)->merge(...$iterable);
-    return $callable ? $merged->then($callable) : $merged;
+    return $callable ? $merged->then(...$callable) : $merged;
 }
 
 /**
@@ -191,7 +193,7 @@ function keys(...$iterable): array
     $callable  = _\lastCallable($iterable);
     $functions = count($iterable) > 1 ? ['array_merge' => true, 'array_keys'] : ['array_keys' => true];
     _\chainIterables($functions, ...$iterable);
-    return _\chainIterables($functions, ...$iterable, ...(array)$callable);
+    return _\chainIterables($functions, ...$iterable, ...$callable);
 }
 
 /**
@@ -208,7 +210,7 @@ function values(...$iterable): array
     $callable = _\lastCallable($iterable);
     return merge(...traverse($iterable, function($candidate) {
         return _\toValues($candidate);
-    }), ...(array)$callable);
+    }), ...$callable);
 }
 
 /**
@@ -255,7 +257,7 @@ function some(...$iterable): bool
 function leaves(...$iterable): array
 {
     $callable  = _\lastCallable($iterable);
-    return $callable ? map(...$iterable)->leaves($callable)->traverse : map(...$iterable)->leaves;
+    return $callable ? map(...$iterable)->leaves(...$callable)->traverse : map(...$iterable)->leaves;
 }
 
 /**
@@ -269,7 +271,7 @@ function leaves(...$iterable): array
 function tree(...$iterable): array
 {
     $callable  = _\lastCallable($iterable);
-    return $callable ? map(...$iterable)->tree($callable)->traverse : map(...$iterable)->tree;
+    return $callable ? map(...$iterable)->tree(...$callable)->traverse : map(...$iterable)->tree;
 }
 
 /**

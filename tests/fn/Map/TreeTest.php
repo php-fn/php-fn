@@ -1,6 +1,9 @@
 <?php
 /**
- * Copyright (C) php-fn. See LICENSE file for license details.
+ * (c) php-fn
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace fn\Map;
@@ -8,6 +11,7 @@ namespace fn\Map;
 use ArrayIterator;
 use fn;
 use fn\test\assert;
+use PHPUnit_Framework_TestCase;
 use RecursiveArrayIterator;
 use RecursiveIteratorIterator as Rec;
 use RuntimeException;
@@ -16,12 +20,12 @@ use SimpleXMLElement;
 /**
  * @covers Tree
  */
-class TreeTest extends \PHPUnit\Framework\TestCase
+class TreeTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @return array
      */
-    public function providerRecursiveIteration(): array
+    public function providerRecursiveIteration()
     {
         return [
             'mapper is only available on the first level' => [
@@ -81,12 +85,11 @@ class TreeTest extends \PHPUnit\Framework\TestCase
      * @covers       Tree::hasChildren
      * @covers       Tree::doMap
      *
-     * @param array                 $expected
+     * @param array $expected
      * @param iterable|\Traversable $inner
-     * @param callable|null         $mapper
-     * @param int                   $mode
+     * @param callable|null $mapper
      */
-    public function testRecursiveIteration($expected, $inner, $mapper, $mode = Rec::SELF_FIRST): void
+    public function testRecursiveIteration($expected, $inner, $mapper, $mode = Rec::SELF_FIRST)
     {
         assert\equals($expected, fn\_\toValues(new Rec(new Tree($inner, ...(array)$mapper), $mode)));
         assert\equals($expected, fn\_\toValues(new Rec(new Tree(new Lazy(function () use ($inner) {
@@ -97,59 +100,9 @@ class TreeTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function providerSimpleIteration(): array
+    public function providerSimpleIteration()
     {
-        $ref = null;
         return [
-            'intern traversable classes are wrapped around IteratorIterator' => [
-                'expected' => [],
-                'inner' => new Lazy(function() {
-                    return new SimpleXMLElement('<root/>');
-                }),
-            ],
-            '$inner::getIterator returns same instance' => [
-                'expected' => new RuntimeException('Implementation $inner::getIterator returns same instance'),
-                'inner' => $ref = new Lazy(function() use(&$ref) {
-                    return $ref;
-                }),
-            ],
-            '$inner::getIterator is too deep' => [
-                'expected' => new RuntimeException('$inner::getIterator is too deep'),
-                'inner' => new Lazy(function() {
-                    return new Lazy(function() {
-                        return new Lazy(function() {
-                            return new Lazy(function() {
-                                return new Lazy(function() {
-                                    return new Lazy(function() {
-                                        return new Lazy(function() {
-                                            return new Lazy(function() {
-                                                return new Lazy(function() {
-                                                    return new Lazy(function() {
-                                                        return new Lazy(function() {
-                                                            return new Lazy(function() {
-                                                            });
-                                                        });
-                                                    });
-                                                });
-                                            });
-                                        });
-                                    });
-                                });
-                            });
-                        });
-                    });
-                }),
-            ],
-            '$inner depth = 3' => [
-                'expected' => ['depth' => 3],
-                'inner' => new Lazy(function() {
-                    return new Lazy(function() {
-                        return new Lazy(function() {
-                            return ['depth' => 3];
-                        });
-                    });
-                }),
-            ],
             'combine map, skip and stop' => [
                 'expected' => ['directly-key' => 'directly-value', 'map-key' => 'map-value', 3 => 'd'],
                 'inner' => ['a', 'b', 'c', 'd', 'e', 'f'],
@@ -217,23 +170,7 @@ class TreeTest extends \PHPUnit\Framework\TestCase
                     assert\type(Tree::class, $iterator);
                     return "$key-$value";
                 },
-            ],
-            'simple iterator' => [
-                'expected' => ['a' => 'a', 'b' => ['c' => 'd']],
-                'inner' => new ArrayIterator(['a' => 'a', 'b' => ['c' => 'd']]),
-            ],
-            'simple array' => [
-                'expected' => ['a', 'b', 'c'],
-                'inner' => ['a', 'b', 'c'],
-            ],
-            'empty array' => [
-                'expected' => [],
-                'inner' => [],
-            ],
-            'null => exception' => [
-                'expected' => new RuntimeException('Property $inner must be iterable'),
-                'inner' => null,
-            ],
+            ]
         ];
     }
 
@@ -249,9 +186,9 @@ class TreeTest extends \PHPUnit\Framework\TestCase
      *
      * @param array|\Exception $expected
      * @param iterable|\Traversable $inner
-     * @param callable|null $mapper
+     * @param callable $mapper
      */
-    public function testSimpleIteration($expected, $inner, $mapper = null): void
+    public function testSimpleIteration($expected, $inner, callable $mapper)
     {
         assert\equals\trial($expected, function ($iterator) {
             return fn\traverse($iterator);
@@ -268,7 +205,7 @@ class TreeTest extends \PHPUnit\Framework\TestCase
      * @covers Tree::recursive
      * @covers Tree::flatten
      */
-    public function testRecursive(): void
+    public function testRecursive()
     {
         $tree = new Tree(['k0' => 'a', 'k1' => ['k2' => 'b', 'k3' => 'c']]);
         assert\type(Tree::class, $tree->recursive());
@@ -301,7 +238,7 @@ class TreeTest extends \PHPUnit\Framework\TestCase
 
     /**
      */
-    public function testMultipleMappers(): void
+    public function testMultipleMappers()
     {
         $tree = new Tree(
             ['k1' => 'v1', 'k2' => 'v2'],
@@ -321,5 +258,18 @@ class TreeTest extends \PHPUnit\Framework\TestCase
             'k1' => '--',
             'K2' => 'v2v2',
         ], fn\traverse($tree));
+    }
+
+    /**
+     * @covers Tree::isLast
+     */
+    public function testIsLast()
+    {
+        assert\same(
+            ['a' => false, 'b' => false, 'c' => true],
+            fn\traverse(new Tree(['a', 'b', 'c'], function($value, $key, Tree $it) {
+                return fn\mapKey($value)->andValue($it->isLast());
+            }))
+        );
     }
 }
