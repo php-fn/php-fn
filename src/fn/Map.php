@@ -92,7 +92,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     public function string($delimiter = PHP_EOL, ...$replacements): string
     {
         $string = '';
-        if (!isCallable($delimiter, true)) {
+        if (!isCallable($delimiter)) {
             if (is_array($delimiter)) {
                 array_unshift($replacements, $delimiter);
                 $delimiter = PHP_EOL;
@@ -381,10 +381,10 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     {
         foreach ($this as $key => $value) {
             if (!$check($value, $key, $this)) {
-                return isCallable($false, true) ? $false($this) : $false;
+                return isCallable($false) ? $false($this) : $false;
             }
         }
-        return isCallable($true, true) ? $true($this) : $true;
+        return isCallable($true) ? $true($this) : $true;
     }
 
     /**
@@ -398,10 +398,10 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     {
         foreach ($this as $key => $value) {
             if ($check($value, $key, $this)) {
-                return isCallable($true, true) ? $true($this) : $true;
+                return isCallable($true) ? $true($this) : $true;
             }
         }
-        return isCallable($false, true) ? $false($this) : $false;
+        return isCallable($false) ? $false($this) : $false;
     }
 
     /**

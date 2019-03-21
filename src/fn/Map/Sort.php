@@ -56,7 +56,7 @@ class Sort implements IteratorAggregate
     public function __construct($iterable, $strategy = null, $flags = null)
     {
         $this->iterable = $iterable;
-        if (isCallable($strategy, true)) {
+        if (isCallable($strategy)) {
             $this->strategy = $strategy;
         } else {
             $flags = $strategy | $flags;

@@ -19,7 +19,7 @@ function lastCallable(array &$args): array
     if (!$args) {
         return [];
     }
-    if (!is_iterable($last = array_pop($args)) && fn\isCallable($last, true)) {
+    if (!is_iterable($last = array_pop($args)) && fn\isCallable($last)) {
         $args ?: fn\fail\argument('single argument should not be a callable');
         return [$last];
     }
