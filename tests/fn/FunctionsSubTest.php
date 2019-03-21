@@ -10,7 +10,7 @@ use fn\test\assert;
 /**
  * @covers ::sub
  */
-class FunctionsSubTest extends \PHPUnit_Framework_TestCase
+class FunctionsSubTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * for iterable:

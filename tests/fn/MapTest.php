@@ -14,7 +14,7 @@ use Traversable;
 /**
  * @covers Map
  */
-class MapTest extends \PHPUnit_Framework_TestCase
+class MapTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @param array $arguments

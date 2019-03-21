@@ -14,7 +14,7 @@ use fn\test\assert;
 /**
  * @covers \fn\_\
  */
-class FunctionsHelperTest extends \PHPUnit_Framework_TestCase
+class FunctionsHelperTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @covers ::toTraversable

@@ -9,7 +9,7 @@ use fn\test\assert;
 
 /**
  */
-class FunctionsIsTest extends \PHPUnit_Framework_TestCase
+class FunctionsIsTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @covers ::isCallable

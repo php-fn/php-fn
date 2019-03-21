@@ -13,7 +13,7 @@ use OutOfRangeException;
 /**
  * @covers RowMapper
  */
-class RowMapperTest extends \PHPUnit_Framework_TestCase
+class RowMapperTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @return array

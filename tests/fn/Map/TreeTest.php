@@ -8,7 +8,6 @@ namespace fn\Map;
 use ArrayIterator;
 use fn;
 use fn\test\assert;
-use PHPUnit_Framework_TestCase;
 use RecursiveArrayIterator;
 use RecursiveIteratorIterator as Rec;
 use RuntimeException;
@@ -17,7 +16,7 @@ use SimpleXMLElement;
 /**
  * @covers Tree
  */
-class TreeTest extends PHPUnit_Framework_TestCase
+class TreeTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @return array
