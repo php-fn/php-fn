@@ -19,7 +19,7 @@ class FunctionsHelperTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers ::toTraversable
      */
-    public function testToTraversable()
+    public function testToTraversable(): void
     {
         $ar = [true];
         $it = new \ArrayObject($ar);
@@ -37,7 +37,7 @@ class FunctionsHelperTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers ::toArray
      */
-    public function testToArray()
+    public function testToArray(): void
     {
         assert\equals(['key' => 'value'], toArray(['key' => 'value']));
         assert\equals(['key' => 'value'], toArray(new \ArrayObject(['key' => 'value'])));
@@ -50,7 +50,7 @@ class FunctionsHelperTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers ::toValues
      */
-    public function testToValues()
+    public function testToValues(): void
     {
         assert\equals(['value'], toValues(['key' => 'value']));
         assert\equals(['value'], toValues(new \ArrayObject(['key' => 'value'])));
@@ -67,7 +67,7 @@ class FunctionsHelperTest extends \PHPUnit\Framework\TestCase
      * @param string $subject
      * @param array $replacements
      */
-    public function testToString($expected, $subject, ...$replacements)
+    public function testToString($expected, $subject, ...$replacements): void
     {
         assert\same($expected, toString($subject, ...$replacements));
     }
@@ -75,7 +75,7 @@ class FunctionsHelperTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array[]
      */
-    public function providerToString()
+    public function providerToString(): array
     {
         return [
             '{0 %s %d  | format' => [

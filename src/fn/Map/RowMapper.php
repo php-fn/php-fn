@@ -34,10 +34,10 @@ class RowMapper
      *
      * @return Value
      */
-    public function __invoke($row, $key)
+    public function __invoke($row, $key): Value
     {
         if (!(is_array($row) || $row instanceof ArrayAccess)) {
-            fn\_\isTraversable($row) ?: fn\fail\domain('row should be of type: array|ArrayAccess|iterable');
+            is_iterable($row) ?: fn\fail\domain('row should be of type: array|ArrayAccess|iterable');
             $row = fn\_\toArray($row);
         }
 
@@ -47,7 +47,7 @@ class RowMapper
         if (null !== $valueColumns = $this->config->value) {
             if ($valueColumns instanceof Closure) {
                 $mappedValue = $valueColumns($row, $key, $mapped);
-            } else if (fn\_\isTraversable($valueColumns)) {
+            } else if (is_iterable($valueColumns)) {
                 $mappedValue = [];
                 foreach ($valueColumns as $toColumn => $fromColumn) {
                     if (is_numeric($toColumn)) {

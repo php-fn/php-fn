@@ -19,7 +19,7 @@ function lastCallable(array &$args)
     if (!$args) {
         return null;
     }
-    if (!isTraversable($last = array_pop($args)) && fn\isCallable($last, true)) {
+    if (!is_iterable($last = array_pop($args)) && fn\isCallable($last, true)) {
         $args ?: fn\fail\argument('single argument should not be a callable');
         return $last;
     }
@@ -55,26 +55,15 @@ function chainIterables(array $functions, ...$args)
 }
 
 /**
- * Check if the given candidate is iterable
- *
- * @param mixed $candidate
- * @return bool
- */
-function isTraversable($candidate)
-{
-    return is_array($candidate) || $candidate instanceof \Traversable;
-}
-
-/**
  * Convert the given candidate to an iterable entity
  *
  * @param iterable|mixed $candidate
  * @param bool $cast
- * @return array|iterable|\Traversable
+ * @return iterable
  */
-function toTraversable($candidate, $cast = false)
+function toTraversable($candidate, $cast = false): iterable
 {
-    if (isTraversable($candidate)) {
+    if (is_iterable($candidate)) {
         return $candidate;
     }
     $cast ?: fn\fail\argument('argument $candidate must be traversable');
@@ -88,7 +77,7 @@ function toTraversable($candidate, $cast = false)
  * @param bool $cast
  * @return array
  */
-function toArray($candidate, $cast = false)
+function toArray($candidate, $cast = false): array
 {
     if (is_array($candidate = toTraversable($candidate, $cast))) {
         return $candidate;
@@ -103,7 +92,7 @@ function toArray($candidate, $cast = false)
  * @param bool $cast
  * @return array
  */
-function toValues($candidate, $cast = false)
+function toValues($candidate, $cast = false): array
 {
     if (is_array($candidate = toTraversable($candidate, $cast))) {
         return array_values($candidate);
@@ -122,7 +111,7 @@ function toValues($candidate, $cast = false)
  *
  * @return string
  */
-function toString($subject, ...$replacements)
+function toString($subject, ...$replacements): string
 {
     $subject = (string)$subject;
     if (!$replacements) {
@@ -131,7 +120,7 @@ function toString($subject, ...$replacements)
     if (strpos($subject, '{') !== false && strpos($subject, '}') !== false) {
         $toMerge = [0 => []];
         foreach ($replacements as $key => $replacement) {
-            if (isTraversable($replacement)) {
+            if (is_iterable($replacement)) {
                 $toMerge[] = $replacement;
             } else {
                 $toMerge[0][$key] = $replacement;
@@ -155,7 +144,7 @@ function toString($subject, ...$replacements)
  *
  * @return Traversable
  */
-function recursive(Traversable $inner, $leavesOnly, callable $mapper = null)
+function recursive(Traversable $inner, $leavesOnly, callable $mapper = null): Traversable
 {
     $mode  = $leavesOnly ? RecursiveIteratorIterator::LEAVES_ONLY : RecursiveIteratorIterator::SELF_FIRST;
     $it    = new RecursiveIteratorIterator($inner, $mode);
@@ -184,7 +173,7 @@ function recursive(Traversable $inner, $leavesOnly, callable $mapper = null)
  * @param string $message
  * @param mixed ...$replacements
  */
-function fail($class, $message, ...$replacements)
+function fail($class, $message, ...$replacements): void
 {
     throw new $class(toString($message, ...$replacements));
 }

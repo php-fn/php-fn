@@ -17,7 +17,7 @@ class FunctionsIsTest extends \PHPUnit\Framework\TestCase
      * @param bool $expected
      * @param array $args
      */
-    public function testIsCallable($expected, ...$args)
+    public function testIsCallable($expected, ...$args): void
     {
         assert\same($expected, isCallable(...$args));
     }
@@ -25,7 +25,7 @@ class FunctionsIsTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function providerIsCallable()
+    public function providerIsCallable(): array
     {
         return [
             'closure' => [true, function () {}],
@@ -55,14 +55,14 @@ class FunctionsIsTest extends \PHPUnit\Framework\TestCase
     /**
      * ignore
      */
-    public static function staticPublic()
+    public static function staticPublic(): void
     {
     }
 
     /**
      * ignore
      */
-    public function __invoke()
+    public function __invoke(): void
     {
     }
 }

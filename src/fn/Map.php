@@ -89,7 +89,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      *
      * @return string
      */
-    public function string($delimiter = PHP_EOL, ...$replacements)
+    public function string($delimiter = PHP_EOL, ...$replacements): string
     {
         $string = '';
         if (!isCallable($delimiter, true)) {
@@ -112,7 +112,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     /**
      * @inheritdoc
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->string();
     }
@@ -121,7 +121,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      * @param string $property
      * @return bool
      */
-    public function __isset($property)
+    public function __isset($property): bool
     {
         return hasValue($property, ['keys', 'traverse', 'map', 'values', 'tree', 'leaves', 'string', 'every', 'some']);
     }
@@ -129,7 +129,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     /**
      * @inheritdoc
      */
-    public function __set($property, $value)
+    public function __set($property, $value): void
     {
         fail\logic($property);
     }
@@ -137,7 +137,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     /**
      * @inheritdoc
      */
-    public function __unset($property)
+    public function __unset($property): void
     {
         fail\logic($property);
     }
@@ -145,7 +145,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     /**
      * @inheritdoc
      */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         if (!$this->inner) {
             if (is_array($this->compiled)) {
@@ -160,7 +160,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     /**
      * @inheritdoc
      */
-    public function count()
+    public function count(): int
     {
         return $this->getIterator()->count();
     }
@@ -168,7 +168,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     /**
      * @return array
      */
-    private function compile()
+    private function compile(): array
     {
         if (!is_array($this->compiled)) {
             $this->compiled = traverse($this);
@@ -183,7 +183,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      * @param bool $strict
      * @return bool
      */
-    public function has($value, $strict = true)
+    public function has($value, $strict = true): bool
     {
         return hasValue($value, $this->compile(), $strict);
     }
@@ -201,7 +201,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     /**
      * @inheritdoc
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return hasKey($offset, $this->compile());
     }
@@ -218,7 +218,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     /**
      * @inheritdoc
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->compile();
         $this->compiled[$offset] = $value;
@@ -227,7 +227,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     /**
      * @inheritdoc
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         $this->compile();
         unset($this->compiled[$offset]);
@@ -237,7 +237,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      * @param callable ...$mappers
      * @return static
      */
-    public function then(callable ...$mappers)
+    public function then(callable ...$mappers): self
     {
         return new static(
             is_array($this->compiled) ? $this->compiled : $this->iterable,
@@ -250,7 +250,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      * @param int $flags SORT_ constants
      * @return static
      */
-    public function sort($strategy = null, $flags = null)
+    public function sort($strategy = null, $flags = null): self
     {
         return new static(new Sort($this, $strategy, $flags));
     }
@@ -259,7 +259,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      * @param callable ...$mappers
      * @return static
      */
-    public function keys(callable ...$mappers)
+    public function keys(callable ...$mappers): self
     {
         return $this->then(function ($value, $key)  {
             static $counter = 0;
@@ -271,7 +271,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      * @param callable ...$mappers
      * @return static
      */
-    public function values(callable ...$mappers)
+    public function values(callable ...$mappers): self
     {
         return $this->then(function ($value)  {
             static $counter = 0;
@@ -284,7 +284,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      * @param array ...$iterables
      * @return \Closure
      */
-    private static function variadic($function, ...$iterables)
+    private static function variadic($function, ...$iterables): \Closure
     {
         return function () use ($function, $iterables) {
             return $function(...traverse($iterables, function ($iterable) {
@@ -297,7 +297,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      * @param iterable ...$iterables
      * @return static
      */
-    public function merge(...$iterables)
+    public function merge(...$iterables): self
     {
         return new static(new Map\Lazy(self::variadic('array_merge', $this, ...$iterables)));
     }
@@ -306,7 +306,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      * @param iterable ...$iterables
      * @return static
      */
-    public function replace(...$iterables)
+    public function replace(...$iterables): self
     {
         return new static(new Map\Lazy(self::variadic('array_replace', $this, ...$iterables)));
     }
@@ -315,7 +315,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      * @param iterable ...$iterables
      * @return static
      */
-    public function diff(...$iterables)
+    public function diff(...$iterables): self
     {
         return new static(new Map\Lazy(self::variadic('array_diff', $this, ...$iterables)));
     }
@@ -325,7 +325,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      * @param int $length
      * @return static
      */
-    public function sub($start, $length = null)
+    public function sub($start, $length = null): self
     {
         return new static(new Map\Lazy(function () use($start, $length) {
             return sub($this, $start, $length);
@@ -347,7 +347,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      *
      * @return static|\Traversable
      */
-    public function tree(callable $mapper = null)
+    public function tree(callable $mapper = null): self
     {
         return _\recursive($this, false, $mapper);
     }
@@ -357,7 +357,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      *
      * @return static|\Traversable
      */
-    public function leaves(callable $mapper = null)
+    public function leaves(callable $mapper = null): self
     {
         return _\recursive($this, true, $mapper);
     }

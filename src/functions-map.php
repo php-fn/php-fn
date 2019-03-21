@@ -20,7 +20,7 @@ use Traversable;
  *
  * @return bool
  */
-function hasKey($key, $in)
+function hasKey($key, $in): bool
 {
     if ((is_array($in) || $in instanceof ArrayAccess || is_scalar($in)) && isset($in[$key])) {
         return true;
@@ -28,7 +28,7 @@ function hasKey($key, $in)
     if ($in instanceof ArrayAccess) {
         return false;
     }
-    return _\isTraversable($in) && array_key_exists($key, _\toArray($in));
+    return is_iterable($in) && array_key_exists($key, _\toArray($in));
 }
 
 /**
@@ -42,7 +42,7 @@ function at($index, $in, $default = null)
     if ((is_array($in) || $in instanceof ArrayAccess || is_scalar($in)) && isset($in[$index])) {
         return $in[$index];
     }
-    if (_\isTraversable($in) && array_key_exists($index, $map = _\toArray($in))) {
+    if (is_iterable($in) && array_key_exists($index, $map = _\toArray($in))) {
         return $map[$index];
     }
     func_num_args() > 2 ?: fail\range('undefined index: %s', $index);
@@ -55,9 +55,9 @@ function at($index, $in, $default = null)
  * @param bool $strict
  * @return bool
  */
-function hasValue($value, $in, $strict = true)
+function hasValue($value, $in, $strict = true): bool
 {
-    return _\isTraversable($in) && in_array($value, _\toArray($in), $strict);
+    return is_iterable($in) && in_array($value, _\toArray($in), $strict);
 }
 
 /**
@@ -84,7 +84,7 @@ function hasValue($value, $in, $strict = true)
  * @param bool $reset Should the iterable be reset before traversing?
  * @return array
  */
-function traverse($traversable, callable $callable = null, $reset = true)
+function traverse($traversable, callable $callable = null, $reset = true): array
 {
     if (!$callable) {
         return _\toArray($traversable);
@@ -155,7 +155,7 @@ function traverse($traversable, callable $callable = null, $reset = true)
  * @param iterable|callable ...$iterable If more than one iterable argument is passed, then they will be merged
  * @return Map
  */
-function map(...$iterable)
+function map(...$iterable): Map
 {
     $callable = _\lastCallable($iterable);
     if (count($iterable) === 1) {
@@ -173,7 +173,7 @@ function map(...$iterable)
  *
  * @return array
  */
-function merge(...$iterable)
+function merge(...$iterable): array
 {
     return _\chainIterables(['array_merge' => true], ...$iterable);
 }
@@ -186,7 +186,7 @@ function merge(...$iterable)
  *
  * @return array
  */
-function keys(...$iterable)
+function keys(...$iterable): array
 {
     $callable  = _\lastCallable($iterable);
     $functions = count($iterable) > 1 ? ['array_merge' => true, 'array_keys'] : ['array_keys' => true];
@@ -203,7 +203,7 @@ function keys(...$iterable)
  *
  * @return array
  */
-function values(...$iterable)
+function values(...$iterable): array
 {
     $callable = _\lastCallable($iterable);
     return merge(...traverse($iterable, function($candidate) {
@@ -219,7 +219,7 @@ function values(...$iterable)
  *
  * @return array
  */
-function mixin(...$iterable)
+function mixin(...$iterable): array
 {
     return _\chainIterables(['array_replace' => true], ...$iterable);
 }
@@ -229,7 +229,7 @@ function mixin(...$iterable)
  *
  * @return bool
  */
-function every(...$iterable)
+function every(...$iterable): bool
 {
     return map(...$iterable)->every;
 }
@@ -239,7 +239,7 @@ function every(...$iterable)
  *
  * @return bool
  */
-function some(...$iterable)
+function some(...$iterable): bool
 {
     return map(...$iterable)->some;
 }
@@ -252,7 +252,7 @@ function some(...$iterable)
  *
  * @return array
  */
-function leaves(...$iterable)
+function leaves(...$iterable): array
 {
     $callable  = _\lastCallable($iterable);
     return $callable ? map(...$iterable)->leaves($callable)->traverse : map(...$iterable)->leaves;
@@ -266,7 +266,7 @@ function leaves(...$iterable)
  *
  * @return array
  */
-function tree(...$iterable)
+function tree(...$iterable): array
 {
     $callable  = _\lastCallable($iterable);
     return $callable ? map(...$iterable)->tree($callable)->traverse : map(...$iterable)->tree;
@@ -277,7 +277,7 @@ function tree(...$iterable)
  * @param string $key column to
  * @return Map\RowMapper
  */
-function mapRow($value, $key = null, ...$group)
+function mapRow($value, $key = null, ...$group): Map\RowMapper
 {
     return new Map\RowMapper($key, $value, ...$group);
 }
@@ -289,7 +289,7 @@ function mapRow($value, $key = null, ...$group)
  * @param mixed $children
  * @return Map\Value
  */
-function mapValue(...$args)
+function mapValue(...$args): Map\Value
 {
     return new Map\Value(...$args);
 }
@@ -298,7 +298,7 @@ function mapValue(...$args)
  * @param mixed $key
  * @return Map\Value
  */
-function mapKey($key)
+function mapKey($key): Map\Value
 {
     return mapValue()->andKey($key);
 }
@@ -307,7 +307,7 @@ function mapKey($key)
  * @param mixed $group
  * @return Map\Value
  */
-function mapGroup($group)
+function mapGroup($group): Map\Value
 {
     return mapValue()->andGroup($group);
 }
@@ -316,7 +316,7 @@ function mapGroup($group)
  * @param iterable|callable $children
  * @return Map\Value
  */
-function mapChildren($children)
+function mapChildren($children): Map\Value
 {
     return mapValue()->andChildren($children);
 }
@@ -327,7 +327,7 @@ function mapChildren($children)
  *
  * @return stdClass
  */
-function mapNull()
+function mapNull(): stdClass
 {
     static $null;
     if (!$null) {
@@ -341,7 +341,7 @@ function mapNull()
  *
  * @return stdClass
  */
-function mapBreak()
+function mapBreak(): stdClass
 {
     static $break;
     if (!$break) {

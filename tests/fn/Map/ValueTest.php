@@ -20,7 +20,7 @@ class ValueTest extends \PHPUnit\Framework\TestCase
      * @covers Value::andGroup
      * @covers Value::andChildren
      */
-    public function testProperties()
+    public function testProperties(): void
     {
         $val = new Value;
         assert\equals([null, null, null, null], [$val->value, $val->key, $val->group, $val->children]);

@@ -69,7 +69,7 @@ class Sort implements IteratorAggregate
     /**
      * @return array
      */
-    private function sortCallable()
+    private function sortCallable(): array
     {
         $compare = $this->reverse ? function($left, $right) {
             return call_user_func($this->strategy, $right, $left);
@@ -82,7 +82,7 @@ class Sort implements IteratorAggregate
     /**
      * @return array
      */
-    private function sortFlags()
+    private function sortFlags(): array
     {
         $array = traverse($this->iterable);
         if ($this->reverse) {
@@ -96,7 +96,7 @@ class Sort implements IteratorAggregate
     /**
      * @inheritdoc
      */
-    public function getIterator()
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->strategy ? $this->sortCallable() : $this->sortFlags());
     }

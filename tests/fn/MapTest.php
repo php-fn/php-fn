@@ -20,7 +20,7 @@ class MapTest extends \PHPUnit\Framework\TestCase
      * @param array $arguments
      * @return Map
      */
-    protected function map(...$arguments)
+    protected function map(...$arguments): Map
     {
         return new Map(...$arguments);
     }
@@ -28,7 +28,7 @@ class MapTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers Map::getIterator
      */
-    public function testGetIterator()
+    public function testGetIterator(): void
     {
         assert\type(Traversable::class, $this->map()->getIterator());
     }
@@ -36,7 +36,7 @@ class MapTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers Map::count
      */
-    public function testCount()
+    public function testCount(): void
     {
         assert\equals(0, count($this->map()));
         assert\equals(1, count($this->map([null])));
@@ -51,7 +51,7 @@ class MapTest extends \PHPUnit\Framework\TestCase
      * @covers Map::offsetSet
      * @covers Map::offsetUnset
      */
-    public function testArrayAccess()
+    public function testArrayAccess(): void
     {
         $map = $this->map(['a' => 'A']);
         assert\true(isset($map['a']));
@@ -71,7 +71,7 @@ class MapTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers Map::then
      */
-    public function testThen()
+    public function testThen(): void
     {
         $duplicate = function($value) {
             return "$value$value";
@@ -93,7 +93,7 @@ class MapTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array[]
      */
-    public function providerSort()
+    public function providerSort(): array
     {
         $map = ['C' => 'C', 'A' => 'a', 'b' => 'B'];
         $compare = function($left, $right) {
@@ -137,7 +137,7 @@ class MapTest extends \PHPUnit\Framework\TestCase
      * @param callable|int $strategy
      * @param int $flags
      */
-    public function testSort(array $expected, array $map, $strategy = null, $flags = null)
+    public function testSort(array $expected, array $map, $strategy = null, $flags = null): void
     {
         $result = $this->map($map)->sort($strategy, $flags);
         assert\type(Map::class, $result);
@@ -147,7 +147,7 @@ class MapTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers Map::keys
      */
-    public function testKeys()
+    public function testKeys(): void
     {
         $map = $this->map(['a' => null, 'b' => null, 'c' => null, 10 => null]);
         assert\type(Map::class, $map->keys());
@@ -160,7 +160,7 @@ class MapTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers Map::values
      */
-    public function testValues()
+    public function testValues(): void
     {
         $map = $this->map(['a' => 'A', 'b' => 'B', 'c' => 'C']);
         assert\type(Map::class, $map->values());
@@ -173,7 +173,7 @@ class MapTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers Map::merge
      */
-    public function testMerge()
+    public function testMerge(): void
     {
         $map = $this->map(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c'])->merge(
             ['d' => 'd', 'a' => 'A'],
@@ -187,7 +187,7 @@ class MapTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers Map::replace
      */
-    public function testReplace()
+    public function testReplace(): void
     {
         $map = $this->map(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c'])->replace(
             ['d' => 'd', 'a' => 'A'],
@@ -201,7 +201,7 @@ class MapTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers Map::diff
      */
-    public function testDiff()
+    public function testDiff(): void
     {
         $map = $this->map(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c'])->diff(
             ['d' => 'd', 'a' => 'A'],
@@ -215,7 +215,7 @@ class MapTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers Map::sub
      */
-    public function testSub()
+    public function testSub(): void
     {
         $map = $this->map(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c'])->sub(1, -1);
         assert\type(Map::class, $map);
@@ -228,7 +228,7 @@ class MapTest extends \PHPUnit\Framework\TestCase
      * @covers Map::__set
      * @covers Map::__unset
      */
-    public function testProperties()
+    public function testProperties(): void
     {
         $data = ['a' => 'A', 'b' => 'B', 'c' => 'C'];
         $map = $this->map($data);
@@ -268,7 +268,7 @@ class MapTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers Map::has
      */
-    public function testHas()
+    public function testHas(): void
     {
         $map = $this->map(['a', '1']);
         assert\true($map->has('a'));
@@ -282,7 +282,7 @@ class MapTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers Map::search
      */
-    public function testSearch()
+    public function testSearch(): void
     {
         $map = $this->map(['a', '1']);
         assert\same(0, $map->search('a'));
@@ -298,7 +298,7 @@ class MapTest extends \PHPUnit\Framework\TestCase
      * @covers Map::leaves
      * @covers ::recursive
      */
-    public function testTree()
+    public function testTree(): void
     {
         $map = $this->map(['k0' => 'a', 'k1' => ['k2' => 'b', 'k3' => 'c']]);
         assert\type(Map::class, $map->tree());
@@ -366,7 +366,7 @@ class MapTest extends \PHPUnit\Framework\TestCase
      * @covers Map::string
      * @covers Map::__toString
      */
-    public function testString()
+    public function testString(): void
     {
         $map = $this->map([['a'], 'b', [$this->map(['c']), ['d', ['e']]], 'f']);
 
@@ -395,7 +395,7 @@ EOF;
     /**
      * @covers Map::every
      */
-    public function testEvery()
+    public function testEvery(): void
     {
         assert\true($this->map()->every);
         assert\false($this->map([''])->every);
@@ -426,7 +426,7 @@ EOF;
     /**
      * @covers Map::some
      */
-    public function testSome()
+    public function testSome(): void
     {
         assert\false($this->map()->some);
         assert\false($this->map([''])->some);

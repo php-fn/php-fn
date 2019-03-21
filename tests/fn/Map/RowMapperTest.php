@@ -18,7 +18,7 @@ class RowMapperTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function providerInvoke()
+    public function providerInvoke(): array
     {
         $undefined = new OutOfRangeException('undefined index: foo');
         $useKey = function($row, $key, Value $mapped) {
@@ -68,7 +68,7 @@ class RowMapperTest extends \PHPUnit\Framework\TestCase
      * @param mixed $row
      * @param mixed $key
      */
-    public function testInvoke($expected, RowMapper $mapper, $row, $key = null)
+    public function testInvoke($expected, RowMapper $mapper, $row, $key = null): void
     {
         assert\equals\trial($expected, function(RowMapper $mapper, $row, $key) {
             return $mapper($row, $key);
@@ -76,9 +76,8 @@ class RowMapperTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @covers fn\mapRow()
      */
-    public function testFunctionMapRow()
+    public function testFunctionMapRow(): void
     {
         assert\equals([
             'g1' => ['a' => 'A', 'c' => 'C'],

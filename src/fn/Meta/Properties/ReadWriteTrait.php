@@ -29,7 +29,7 @@ trait ReadWriteTrait
     /**
      * @param string $name
      */
-    private function assertProperty($name)
+    private function assertProperty($name): void
     {
         fn\hasKey($name, $this->properties) ?: fn\fail\bounds('missing magic-property %s in %s', $name, static::class);
     }
@@ -39,7 +39,7 @@ trait ReadWriteTrait
      *
      * @return bool
      */
-    public function __isset($name)
+    public function __isset($name): bool
     {
         return fn\hasKey($name, $this->properties);
     }
@@ -59,7 +59,7 @@ trait ReadWriteTrait
      * @param string $name
      * @param mixed  $value
      */
-    public function __set($name, $value)
+    public function __set($name, $value): void
     {
         $this->assertProperty($name);
         $this->properties[$name] = $value;
@@ -68,7 +68,7 @@ trait ReadWriteTrait
     /**
      * @param string $name
      */
-    public function __unset($name)
+    public function __unset($name): void
     {
         $this->__set($name, null);
     }

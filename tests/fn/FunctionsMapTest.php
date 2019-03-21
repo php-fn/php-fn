@@ -15,7 +15,7 @@ class FunctionsMapTest extends MapTest
     /**
      * @inheritdoc
      */
-    protected function map(...$arguments)
+    protected function map(...$arguments): Map
     {
         return map(...$arguments);
     }
@@ -23,7 +23,7 @@ class FunctionsMapTest extends MapTest
     /**
      * @covers ::hasKey
      */
-    public function testHasKey()
+    public function testHasKey(): void
     {
         assert\false(hasKey('key', null));
         assert\false(hasKey('key', (object)[]));
@@ -47,7 +47,7 @@ class FunctionsMapTest extends MapTest
     /**
      * @covers ::hasValue
      */
-    public function testHasValue()
+    public function testHasValue(): void
     {
         assert\false(hasValue('value', null));
         assert\false(hasValue('value', []));
@@ -65,7 +65,7 @@ class FunctionsMapTest extends MapTest
     /**
      * @covers ::map
      */
-    public function testMapReplace()
+    public function testMapReplace(): void
     {
         assert\same(
             ['a' => 'A', 'b' => 'b', 'c' => 'C'],
@@ -102,7 +102,7 @@ class FunctionsMapTest extends MapTest
     /**
      * @return array[]
      */
-    public function providerSameBehaviourTraverseAndMap()
+    public function providerSameBehaviourTraverseAndMap(): array
     {
         $toGroup = [['a', 'a'], ['a', 'b'], ['b', 'b'], ['b', 'a']];
 
@@ -203,7 +203,7 @@ class FunctionsMapTest extends MapTest
      * @param mixed $iterable
      * @param mixed $mapper
      */
-    public function testSameBehaviourTraverse($expected, $iterable, ...$mapper)
+    public function testSameBehaviourTraverse($expected, $iterable, ...$mapper): void
     {
         assert\same($expected, traverse($iterable, ...$mapper));
     }
@@ -217,7 +217,7 @@ class FunctionsMapTest extends MapTest
      * @param mixed $iterable
      * @param mixed $mapper
      */
-    public function testSameBehaviourMap($expected, $iterable, ...$mapper)
+    public function testSameBehaviourMap($expected, $iterable, ...$mapper): void
     {
         assert\same($expected, map($iterable, ...$mapper)->traverse);
     }
@@ -248,7 +248,7 @@ class FunctionsMapTest extends MapTest
      * @covers ::mapNull
      * @covers ::mapBreak
      */
-    public function testNullBreak()
+    public function testNullBreak(): void
     {
         assert\equals((object)[], mapNull());
         assert\same(mapNull(), mapNull());
@@ -266,7 +266,7 @@ class FunctionsMapTest extends MapTest
      * @covers ::mapGroup
      * @covers ::mapChildren
      */
-    public function testValueFunctions()
+    public function testValueFunctions(): void
     {
         assert\equals(new Map\Value, mapValue());
         assert\equals(new Map\Value('v'), mapValue('v'));
@@ -282,7 +282,7 @@ class FunctionsMapTest extends MapTest
     /**
      * @covers ::map
      */
-    public function testMap()
+    public function testMap(): void
     {
         assert\type(Map::class, map());
         assert\equals([], map()->traverse, 'args = 0');
@@ -313,7 +313,7 @@ class FunctionsMapTest extends MapTest
     /**
      * @covers ::merge
      */
-    public function testMerge()
+    public function testMerge(): void
     {
         assert\same([], merge(), 'args = 0');
         assert\same([], merge([]));
@@ -336,7 +336,7 @@ class FunctionsMapTest extends MapTest
     /**
      * @covers ::values
      */
-    public function testValues()
+    public function testValues(): void
     {
         assert\same([], values(), 'args = 0');
         assert\same([], values([]));
@@ -359,7 +359,7 @@ class FunctionsMapTest extends MapTest
     /**
      * @covers ::keys
      */
-    public function testKeys()
+    public function testKeys(): void
     {
         assert\same([], keys(), 'args = 0');
         assert\same([], keys([]));
@@ -386,7 +386,7 @@ class FunctionsMapTest extends MapTest
     /**
      * @covers ::mixin
      */
-    public function testMixin()
+    public function testMixin(): void
     {
         assert\same([], mixin(), 'args = 0');
         assert\same([], mixin([]));
@@ -407,7 +407,7 @@ class FunctionsMapTest extends MapTest
     /**
      * @covers ::every
      */
-    public function testEveryFunction()
+    public function testEveryFunction(): void
     {
         assert\true(every());
         assert\true(every([]));
@@ -420,7 +420,7 @@ class FunctionsMapTest extends MapTest
     /**
      * @covers ::some
      */
-    public function testSomeFunction()
+    public function testSomeFunction(): void
     {
         assert\false(some());
         assert\false(some([]));
@@ -432,7 +432,7 @@ class FunctionsMapTest extends MapTest
     /**
      * @covers ::tree
      */
-    public function testTreeFunction()
+    public function testTreeFunction(): void
     {
         assert\same([], tree());
         assert\same([], tree([], []));
@@ -445,7 +445,7 @@ class FunctionsMapTest extends MapTest
     /**
      * @covers ::leaves
      */
-    public function testLeavesFunction()
+    public function testLeavesFunction(): void
     {
         assert\same([], leaves());
         assert\same([], leaves([], []));

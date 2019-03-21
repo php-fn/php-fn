@@ -43,7 +43,7 @@ function sub($candidate, $start, $lengthOrCallable = null, $encodingOrCallable =
         }
     }
 
-    if (_\isTraversable($candidate)) {
+    if (is_iterable($candidate)) {
         return traverse(array_slice(traverse($candidate), $start, $length, true), $callable);
     }
 
@@ -61,7 +61,7 @@ function sub($candidate, $start, $lengthOrCallable = null, $encodingOrCallable =
  * @param bool $strict
  * @return bool
  */
-function isCallable($candidate, $strict = false)
+function isCallable($candidate, $strict = false): bool
 {
     if (!is_callable($candidate, !$strict) || ($strict && is_string($candidate) && !strpos($candidate, '::'))) {
         return false;

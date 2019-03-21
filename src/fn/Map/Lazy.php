@@ -28,7 +28,7 @@ class Lazy implements IteratorAggregate
     /**
      * @inheritdoc
      */
-    public function getIterator()
+    public function getIterator(): ?\Traversable
     {
         $iter = call_user_func($this->factory);
         return is_array($iter) ? new ArrayIterator($iter) : $iter;

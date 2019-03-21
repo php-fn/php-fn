@@ -20,7 +20,7 @@ class FunctionsSubTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function providerSubWithIterable()
+    public function providerSubWithIterable(): array
     {
         $candidate = ['a' => 'A', 'b' => 'B', 'c' => 'C', 'd' => 'D', 'e' => 'E'];
         $case = function ($expected, $start, $lengthOrCallable = null, $encodingOrCallable = null) use ($candidate) {
@@ -67,7 +67,7 @@ class FunctionsSubTest extends \PHPUnit\Framework\TestCase
      * @param int|callable $lengthOrCallable
      * @param callable $encodingOrCallable
      */
-    public function testSubWithIterable($expected, $candidate, $start, $lengthOrCallable, $encodingOrCallable)
+    public function testSubWithIterable($expected, $candidate, $start, $lengthOrCallable, $encodingOrCallable): void
     {
         assert\same($expected, sub($candidate, $start, $lengthOrCallable, $encodingOrCallable), 'candidate as array');
         assert\same(
@@ -90,7 +90,7 @@ class FunctionsSubTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function providerSubWithString()
+    public function providerSubWithString(): array
     {
         $case = function (
             $expected,
@@ -157,7 +157,7 @@ class FunctionsSubTest extends \PHPUnit\Framework\TestCase
         $lengthOrCallable,
         $encodingOrCallable,
         $callableOrNull
-    ) {
+    ): void {
         assert\same($expected, sub($candidate, $start, $lengthOrCallable, $encodingOrCallable, $callableOrNull));
         assert\same('', sub('', $start, $lengthOrCallable, $encodingOrCallable, $callableOrNull));
     }
