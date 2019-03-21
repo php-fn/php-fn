@@ -1,9 +1,6 @@
 <?php
 /**
- * (c) php-fn
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
 namespace fn;
@@ -14,8 +11,6 @@ use fn\Map\Sort;
 use IteratorAggregate;
 
 /**
- * @mixin MapDeprecated
- *
  * @property-read array $keys
  * @property-read array $traverse
  * @property-read array $values
@@ -236,14 +231,6 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     {
         $this->compile();
         unset($this->compiled[$offset]);
-    }
-
-    /**
-     * @deprecated use method ::then instead
-     */
-    public function map(callable ...$mappers)
-    {
-        return $this->then(...$mappers);
     }
 
     /**

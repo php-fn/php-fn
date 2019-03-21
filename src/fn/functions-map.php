@@ -205,7 +205,7 @@ function keys(...$iterable)
  */
 function values(...$iterable)
 {
-    $callable  = _\lastCallable($iterable);
+    $callable = _\lastCallable($iterable);
     return merge(...traverse($iterable, function($candidate) {
         return _\toValues($candidate);
     }), ...(array)$callable);
