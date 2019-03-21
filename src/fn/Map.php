@@ -168,7 +168,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     /**
      * @return bool
      */
-    public function isLast()
+    public function isLast(): bool
     {
         return $this->getIterator()->isLast();
     }
@@ -410,7 +410,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      *
      * @return static
      */
-    public function limit($limit, $offset = 0)
+    public function limit($limit, $offset = 0): self
     {
         $from = max($offset, 0);
         $to   = $from + max($limit, 0);

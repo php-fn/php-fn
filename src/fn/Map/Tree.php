@@ -1,9 +1,6 @@
 <?php
 /**
- * (c) php-fn
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
 namespace fn\Map;
@@ -45,7 +42,7 @@ class Tree implements RecursiveIterator, Countable
     /**
      * @inheritdoc
      */
-    public function count()
+    public function count(): int
     {
         return iterator_count($this);
     }
@@ -53,7 +50,7 @@ class Tree implements RecursiveIterator, Countable
     /**
      * @return Inner
      */
-    public function getInnerIterator()
+    public function getInnerIterator(): Inner
     {
         if (!$this->inner instanceof Inner) {
             $this->inner = new Inner($this->inner);
@@ -64,7 +61,7 @@ class Tree implements RecursiveIterator, Countable
     /**
      * @return RecursiveIterator
      */
-    private function getChildrenIterator()
+    private function getChildrenIterator(): ?RecursiveIterator
     {
         if ($this->mappers && $this->doMap() && $this->children) {
             if (fn\isCallable($this->children, true)) {
@@ -81,7 +78,7 @@ class Tree implements RecursiveIterator, Countable
     /**
      * @return bool
      */
-    public function isLast()
+    public function isLast(): bool
     {
         return $this->getInnerIterator()->isLast();
     }
@@ -89,7 +86,7 @@ class Tree implements RecursiveIterator, Countable
     /**
      * @return bool
      */
-    private function doMap()
+    private function doMap(): bool
     {
         static $break, $null;
         if (!$break) {
@@ -171,7 +168,7 @@ class Tree implements RecursiveIterator, Countable
     /**
      * @inheritdoc
      */
-    public function rewind()
+    public function rewind(): void
     {
         if ($this->mappers) {
             $this->needsRewind = false;
@@ -192,7 +189,7 @@ class Tree implements RecursiveIterator, Countable
      *
      * @return bool
      */
-    private function validateInner(Iterator $inner)
+    private function validateInner(Iterator $inner): bool
     {
         if (!($this->currentValid = $inner->valid())) {
             $this->currentKey = null;
@@ -227,25 +224,25 @@ class Tree implements RecursiveIterator, Countable
     /**
      * @inheritdoc
      */
-    public function hasChildren()
+    public function hasChildren(): bool
     {
         if ($this->getChildrenIterator()) {
             return true;
         }
         $inner = $this->getInnerIterator();
-        return $inner->valid() && fn\_\isTraversable($inner->current());
+        return $inner->valid() && is_iterable($inner->current());
     }
 
     /**
      * @inheritdoc
      */
-    public function getChildren()
+    public function getChildren(): RecursiveIterator
     {
         if ($childrenIterator = $this->getChildrenIterator()) {
             return $childrenIterator;
         }
         $inner = $this->getInnerIterator();
-        if ($inner->valid() && fn\_\isTraversable($current = $inner->current())) {
+        if ($inner->valid() && is_iterable($current = $inner->current())) {
             return new static($current);
         }
         static $empty;
@@ -258,7 +255,7 @@ class Tree implements RecursiveIterator, Countable
     /**
      * @inheritdoc
      */
-    public function next()
+    public function next(): void
     {
         if ($this->mappers) {
             $this->needsNext = false;
@@ -270,7 +267,7 @@ class Tree implements RecursiveIterator, Countable
     /**
      * @inheritdoc
      */
-    public function valid()
+    public function valid(): bool
     {
         if ($this->mappers) {
             return $this->doMap();
@@ -283,7 +280,7 @@ class Tree implements RecursiveIterator, Countable
      *
      * @return static|\Traversable
      */
-    public function recursive(callable $mapper = null)
+    public function recursive(callable $mapper = null): self
     {
         return fn\_\recursive($this, false, $mapper);
     }
@@ -293,7 +290,7 @@ class Tree implements RecursiveIterator, Countable
      *
      * @return static|\Traversable
      */
-    public function flatten(callable $mapper = null)
+    public function flatten(callable $mapper = null): self
     {
         return fn\_\recursive($this, true, $mapper);
     }

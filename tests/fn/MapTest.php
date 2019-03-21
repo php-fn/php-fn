@@ -457,7 +457,7 @@ EOF;
     /**
      * @covers Map::isLast
      */
-    public function testIsLast()
+    public function testIsLast(): void
     {
         assert\same(
             ['a' => false, 'b' => false, 'c' => true],
@@ -471,7 +471,7 @@ EOF;
     /**
      * @covers Map::limit
      */
-    public function testLimit()
+    public function testLimit(): void
     {
         $map = $this->map(['a', 'b', 'c', 'd'], function($value) {
             return $value === 'b' ? null : strtoupper($value);
