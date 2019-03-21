@@ -1,9 +1,6 @@
 <?php
 /**
- * (c) php-fn
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
 namespace fn\Map;
@@ -72,7 +69,7 @@ class Inner extends IteratorIterator
     /**
      * @return bool|null
      */
-    public function isLast()
+    public function isLast(): ?bool
     {
         if (!$this->isReset) {
             return null;
@@ -93,7 +90,7 @@ class Inner extends IteratorIterator
     /**
      * @inheritdoc
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->isReset = true;
         $this->cache   = [];
@@ -103,7 +100,7 @@ class Inner extends IteratorIterator
     /**
      * @inheritdoc
      */
-    public function valid()
+    public function valid(): bool
     {
         return $this->cache ? $this->cache['valid'] : parent::valid();
     }
@@ -127,7 +124,7 @@ class Inner extends IteratorIterator
     /**
      * @inheritdoc
      */
-    public function next()
+    public function next(): void
     {
         $this->cache ? $this->cache = [] : parent::next();
     }

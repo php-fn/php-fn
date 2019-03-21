@@ -1,9 +1,6 @@
 <?php
 /**
- * (c) php-fn
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
 namespace fn\Map;
@@ -11,19 +8,18 @@ namespace fn\Map;
 use ArrayIterator;
 use fn;
 use fn\test\assert;
-use PHPUnit_Framework_TestCase;
 use RuntimeException;
 use SimpleXMLElement;
 
 /**
  * @covers Inner
  */
-class InnerTest extends PHPUnit_Framework_TestCase
+class InnerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @return array
      */
-    public function providerUnify()
+    public function providerUnify(): array
     {
         $ref = null;
         return [
@@ -103,7 +99,7 @@ class InnerTest extends PHPUnit_Framework_TestCase
      * @param array|\Exception $expected
      * @param iterable|\Traversable $inner
      */
-    public function testUnify($expected, $inner)
+    public function testUnify($expected, $inner): void
     {
         assert\equals\trial($expected, function ($inner) {
             return fn\traverse(new Inner($inner));
@@ -121,7 +117,7 @@ class InnerTest extends PHPUnit_Framework_TestCase
     /**
      * @covers Inner::isLast
      */
-    public function testIsLastExplicitIteration()
+    public function testIsLastExplicitIteration(): void
     {
         $it = new Inner([]);
         assert\same(null, $it->isLast());
@@ -192,7 +188,7 @@ class InnerTest extends PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function providerIsLast()
+    public function providerIsLast(): array
     {
         return [
             'empty'    => [[], new Inner([])],
@@ -208,7 +204,7 @@ class InnerTest extends PHPUnit_Framework_TestCase
      * @param array $expected
      * @param Inner $it
      */
-    public function testIsLastForEach(array $expected, Inner $it)
+    public function testIsLastForEach(array $expected, Inner $it): void
     {
         $result = [];
         foreach ($it as $value) {
@@ -224,7 +220,7 @@ class InnerTest extends PHPUnit_Framework_TestCase
      * @param array $expected
      * @param Inner $it
      */
-    public function testIsLastTraverse(array $expected, Inner $it)
+    public function testIsLastTraverse(array $expected, Inner $it): void
     {
         $result = fn\traverse($it, function($value, &$key) use(&$it) {
             $key = $value;
@@ -240,7 +236,7 @@ class InnerTest extends PHPUnit_Framework_TestCase
      * @param array $expected
      * @param Inner $it
      */
-    public function testIsLastTreeDoMap(array $expected, Inner $it)
+    public function testIsLastTreeDoMap(array $expected, Inner $it): void
     {
         $result = iterator_to_array(new Tree($it, function($value, &$key) use(&$it) {
             $key = $value;

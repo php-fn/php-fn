@@ -1,31 +1,23 @@
 <?php
 /**
- * (c) php-fn
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * Copyright (C) php-fn. See LICENSE file for license details.
  */
-
 namespace fn\Map;
 
-use ArrayIterator;
 use fn;
 use fn\test\assert;
-use PHPUnit_Framework_TestCase;
 use RecursiveArrayIterator;
 use RecursiveIteratorIterator as Rec;
-use RuntimeException;
-use SimpleXMLElement;
 
 /**
  * @covers Tree
  */
-class TreeTest extends PHPUnit_Framework_TestCase
+class TreeTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @return array
      */
-    public function providerRecursiveIteration()
+    public function providerRecursiveIteration(): array
     {
         return [
             'mapper is only available on the first level' => [
@@ -85,11 +77,12 @@ class TreeTest extends PHPUnit_Framework_TestCase
      * @covers       Tree::hasChildren
      * @covers       Tree::doMap
      *
-     * @param array $expected
+     * @param array                 $expected
      * @param iterable|\Traversable $inner
-     * @param callable|null $mapper
+     * @param callable|null         $mapper
+     * @param int                   $mode
      */
-    public function testRecursiveIteration($expected, $inner, $mapper, $mode = Rec::SELF_FIRST)
+    public function testRecursiveIteration($expected, $inner, $mapper, $mode = Rec::SELF_FIRST): void
     {
         assert\equals($expected, fn\_\toValues(new Rec(new Tree($inner, ...(array)$mapper), $mode)));
         assert\equals($expected, fn\_\toValues(new Rec(new Tree(new Lazy(function () use ($inner) {
@@ -100,7 +93,7 @@ class TreeTest extends PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function providerSimpleIteration()
+    public function providerSimpleIteration(): array
     {
         return [
             'combine map, skip and stop' => [
@@ -188,7 +181,7 @@ class TreeTest extends PHPUnit_Framework_TestCase
      * @param iterable|\Traversable $inner
      * @param callable $mapper
      */
-    public function testSimpleIteration($expected, $inner, callable $mapper)
+    public function testSimpleIteration($expected, $inner, callable $mapper): void
     {
         assert\equals\trial($expected, function ($iterator) {
             return fn\traverse($iterator);
@@ -205,7 +198,7 @@ class TreeTest extends PHPUnit_Framework_TestCase
      * @covers Tree::recursive
      * @covers Tree::flatten
      */
-    public function testRecursive()
+    public function testRecursive(): void
     {
         $tree = new Tree(['k0' => 'a', 'k1' => ['k2' => 'b', 'k3' => 'c']]);
         assert\type(Tree::class, $tree->recursive());
@@ -238,7 +231,7 @@ class TreeTest extends PHPUnit_Framework_TestCase
 
     /**
      */
-    public function testMultipleMappers()
+    public function testMultipleMappers(): void
     {
         $tree = new Tree(
             ['k1' => 'v1', 'k2' => 'v2'],
@@ -263,7 +256,7 @@ class TreeTest extends PHPUnit_Framework_TestCase
     /**
      * @covers Tree::isLast
      */
-    public function testIsLast()
+    public function testIsLast(): void
     {
         assert\same(
             ['a' => false, 'b' => false, 'c' => true],

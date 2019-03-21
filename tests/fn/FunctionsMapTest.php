@@ -225,7 +225,7 @@ class FunctionsMapTest extends MapTest
     /**
      * @covers ::traverse
      */
-    public function testTraverse()
+    public function testTraverse(): void
     {
         $emptyCallable = function () {};
 
@@ -460,7 +460,7 @@ class FunctionsMapTest extends MapTest
      * @param mixed $key
      * @return string
      */
-    public function __invoke($value, &$key)
+    public function __invoke($value, &$key): string
     {
         $key = strtolower($key);
         return strtoupper($value);

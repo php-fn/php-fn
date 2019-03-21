@@ -14,7 +14,7 @@ use Traversable;
  * @param array $args
  * @return callable[]
  */
-function lastCallable(array &$args)
+function lastCallable(array &$args): array
 {
     if (!$args) {
         return [];
