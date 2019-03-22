@@ -15,12 +15,7 @@ use fn;
  */
 class Value
 {
-    use fn\Meta\Properties\ReadOnlyTrait;
-
-    /**
-     * @var array
-     */
-    protected $properties;
+    use fn\PropertiesReadOnlyTrait;
 
     /**
      * @param mixed [$value]
@@ -31,10 +26,10 @@ class Value
     public function __construct(...$args)
     {
         $this->properties = [
-            'value'    => fn\hasKey(0, $args) ? $args[0] : null,
-            'key'      => fn\hasKey(1, $args) ? $args[1] : null,
-            'group'    => fn\hasKey(2, $args) ? $args[2] : null,
-            'children' => fn\hasKey(3, $args) ? $args[3] : null,
+            'value'    => $args[0] ?? null,
+            'key'      => $args[1] ?? null,
+            'group'    => $args[2] ?? null,
+            'children' => $args[3] ?? null,
         ];
     }
 
@@ -45,8 +40,7 @@ class Value
      */
     public function andValue($value): self
     {
-        $this->properties['value'] = $value;
-        return $this;
+        return $this->property('value', true, $value);
     }
 
     /**
@@ -56,8 +50,7 @@ class Value
      */
     public function andKey($key): self
     {
-        $this->properties['key'] = $key;
-        return $this;
+        return $this->property('key', true, $key);
     }
 
     /**
@@ -67,8 +60,7 @@ class Value
      */
     public function andGroup($group): self
     {
-        $this->properties['group'] = $group;
-        return $this;
+        return $this->property('group', true, $group);
     }
 
     /**
@@ -78,7 +70,6 @@ class Value
      */
     public function andChildren($children): self
     {
-        $this->properties['children'] = $children;
-        return $this;
+        return $this->property('children', true, $children);
     }
 }
