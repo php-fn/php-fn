@@ -272,6 +272,20 @@ function tree(...$iterable): array
 }
 
 /**
+ * Flatten the given iterables.
+ * The last argument can be a callable, in that case it will be applied to each element of the merged result.
+ *
+ * @param iterable|callable ...$iterable If more than one iterable argument is passed they will be merged
+ *
+ * @return array
+ */
+function flatten(...$iterable): array
+{
+    $callable  = _\lastCallable($iterable);
+    return $callable ? map(...$iterable)->flatten(...$callable)->traverse : map(...$iterable)->flatten;
+}
+
+/**
  * @param string|iterable|\Closure $value
  * @param string $key column to
  * @return Map\RowMapper

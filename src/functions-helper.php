@@ -6,7 +6,7 @@
 namespace fn\_;
 
 use fn;
-use RecursiveIteratorIterator;
+use fn\Map\Path;
 use ReflectionFunction;
 use Traversable;
 
@@ -110,8 +110,8 @@ function toValues($candidate, $cast = false): array
  */
 function recursive(Traversable $inner, $leavesOnly, callable $mapper = null): Traversable
 {
-    $mode  = $leavesOnly ? RecursiveIteratorIterator::LEAVES_ONLY : RecursiveIteratorIterator::SELF_FIRST;
-    $it    = new RecursiveIteratorIterator($inner, $mode);
+    $mode  = $leavesOnly ? Path::LEAVES_ONLY : Path::SELF_FIRST;
+    $it    = new Path($inner, $mode);
     $class = get_class($inner);
 
     if (!$mapper) {
@@ -119,7 +119,7 @@ function recursive(Traversable $inner, $leavesOnly, callable $mapper = null): Tr
     }
 
     foreach ((new ReflectionFunction($mapper))->getParameters() as $parameter) {
-        if (($parClass = $parameter->getClass()) && $parClass->getName() === RecursiveIteratorIterator::class) {
+        if (($parClass = $parameter->getClass()) && $parClass->getName() === Path::class) {
             $pos = $parameter->getPosition();
             return new $class($it, function(...$args) use($it, $mapper, $pos) {
                 return $mapper(...fn\merge(fn\sub($args, 0, $pos) , [$it], fn\sub($args, $pos)));

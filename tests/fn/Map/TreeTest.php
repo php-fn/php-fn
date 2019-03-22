@@ -7,7 +7,6 @@ namespace fn\Map;
 use fn;
 use fn\test\assert;
 use RecursiveArrayIterator;
-use RecursiveIteratorIterator as Rec;
 
 /**
  * @covers Tree
@@ -26,7 +25,7 @@ class TreeTest extends \PHPUnit\Framework\TestCase
                 'mapper' => function($value) {
                     return is_string($value) ? strtoupper($value) : $value;
                 },
-                'mode' => Rec::LEAVES_ONLY
+                'mode' => Path::LEAVES_ONLY
             ],
             'inner iterator is recursive array' => [
                 'expected' => ['a', ['a-0'], 'a-0', 'b', ['b-0', 'b-1'], 'b-0', 'b-1'],
@@ -82,10 +81,10 @@ class TreeTest extends \PHPUnit\Framework\TestCase
      * @param callable|null         $mapper
      * @param int                   $mode
      */
-    public function testRecursiveIteration($expected, $inner, $mapper, $mode = Rec::SELF_FIRST): void
+    public function testRecursiveIteration($expected, $inner, $mapper, $mode = Path::SELF_FIRST): void
     {
-        assert\equals($expected, fn\_\toValues(new Rec(new Tree($inner, ...(array)$mapper), $mode)));
-        assert\equals($expected, fn\_\toValues(new Rec(new Tree(new Lazy(function () use ($inner) {
+        assert\equals($expected, fn\_\toValues(new Path(new Tree($inner, ...(array)$mapper), $mode)));
+        assert\equals($expected, fn\_\toValues(new Path(new Tree(new Lazy(function () use ($inner) {
             return is_array($inner) ? new RecursiveArrayIterator($inner) : $inner;
         }), ...(array)$mapper), $mode)));
     }
@@ -210,20 +209,20 @@ class TreeTest extends \PHPUnit\Framework\TestCase
         );
         assert\same(
             ['k0' => ['a', 0], 'k1' => [['k2' => 'b', 'k3' => 'c'], 0], 'k3' => ['c', 1]],
-            fn\traverse($tree->recursive(function($value, $key, Rec $it) {
+            fn\traverse($tree->recursive(function($value, $key, Path $it) {
                 return $value === 'b' ? null : fn\mapValue([$value, $it->getDepth()]);
             }))
         );
         assert\same(
             ['k0' => ['a', 0], 'k3' => ['c', 1]],
-            fn\traverse($tree->flatten(function($value, $key, Rec $it) {
+            fn\traverse($tree->flatten(function($value, $key, Path $it) {
                 return $value === 'b' ? null : fn\mapValue([$value, $it->getDepth()]);
             }))
         );
 
         $tree = new Tree(['a' => 'a', new Tree(['b' => 'b', new Tree(['c' => 'c'])])]);
         assert\same(['a' => 'a', 'b' => 'b', 'c' => 'c'], fn\traverse($tree->flatten()));
-        assert\same([0, 0, 1, 1, 2], fn\traverse($tree->recursive(function($value, $key, Rec $it) {
+        assert\same([0, 0, 1, 1, 2], fn\traverse($tree->recursive(function($value, $key, Path $it) {
             static $count = 0;
             return fn\mapValue($it->getDepth())->andKey($count++);
         })));

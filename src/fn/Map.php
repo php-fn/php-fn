@@ -16,6 +16,7 @@ use IteratorAggregate;
  * @property-read array $values
  * @property-read array $tree
  * @property-read array $leaves
+ * @property-read array $flatten
  * @property-read string $string
  * @property-read bool $every
  * @property-read bool $some
@@ -30,7 +31,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     /**
      * @var callable
      */
-    private $mappers = [];
+    private $mappers;
 
     /**
      * @var array
@@ -62,7 +63,6 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
             case 'keys':
                 return traverse($this->keys());
             case 'traverse':
-            case 'map':
                 return is_array($this->compiled) ? $this->compiled : traverse($this);
             case 'values':
                 return _\toValues(is_array($this->compiled) ? $this->compiled : $this);
@@ -70,6 +70,8 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
                 return _\toValues($this->tree());
             case 'leaves':
                 return _\toValues($this->leaves());
+            case 'flatten':
+                return traverse($this->flatten());
             case 'string':
                 return $this->string();
             case 'every':
@@ -101,7 +103,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
                 return $counter ? $delimiter : '';
             };
         }
-        traverse($this->leaves(function($value, \RecursiveIteratorIterator $iterator) use ($delimiter, &$string) {
+        traverse($this->leaves(function($value, Map\Path $iterator) use ($delimiter, &$string) {
             static $counter = 0;
             $string .= $delimiter(...[$counter++, $iterator->getDepth(), $iterator]) . $value;
 
@@ -363,11 +365,26 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     /**
      * @param callable $mapper
      *
-     * @return static|\Traversable
+     * @return static|iterable
      */
     public function leaves(callable $mapper = null): self
     {
         return _\recursive($this, true, $mapper);
+    }
+
+    /**
+     * @param callable $mapper
+     * @param string $glue
+     *
+     * @return static
+     */
+    public function flatten(callable $mapper = null, string $glue = '/'): self
+    {
+        return $this->tree(function(Map\Path $it, $value) use($glue, $mapper) {
+            $key   = implode($glue, $it->keys);
+            $value = $mapper ? $mapper(...[$value, &$key, $it]) : $value;
+            return mapKey($key)->andValue($value);
+        });
     }
 
     /**
