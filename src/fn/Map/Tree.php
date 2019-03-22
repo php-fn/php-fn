@@ -153,8 +153,8 @@ class Tree implements RecursiveIterator, Countable
                     // @todo only children of the last value are handled
                     $this->children = $curValue->children;
 
-                    $curKey = $curValue->key !== null ? $curValue->key : $curKey;
-                    $curValue = $curValue->value !== null ? $curValue->value : $value;
+                    $curKey = $curValue->key ?? $curKey;
+                    $curValue = $curValue->value ?? $value;
 
                 }
 
@@ -229,8 +229,8 @@ class Tree implements RecursiveIterator, Countable
         if ($this->getChildrenIterator()) {
             return true;
         }
-        $inner = $this->getInnerIterator();
-        return $inner->valid() && is_iterable($inner->current());
+        $in = $this->getInnerIterator();
+        return $in->valid() && is_iterable($in->current());
     }
 
     /**
@@ -241,8 +241,8 @@ class Tree implements RecursiveIterator, Countable
         if ($childrenIterator = $this->getChildrenIterator()) {
             return $childrenIterator;
         }
-        $inner = $this->getInnerIterator();
-        if ($inner->valid() && is_iterable($current = $inner->current())) {
+        $in = $this->getInnerIterator();
+        if ($in->valid() && is_iterable($current = $in->current())) {
             return new static($current);
         }
         static $empty;
