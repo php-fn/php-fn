@@ -7,7 +7,6 @@ namespace fn;
 
 use ArrayAccess;
 use Countable;
-use fn\Map\Sort;
 use IteratorAggregate;
 
 /**
@@ -262,7 +261,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function sort($strategy = null, $flags = null): self
     {
-        return new static(new Sort($this, $strategy, $flags));
+        return new static(new Map\Sort($this, $strategy, $flags));
     }
 
     /**
@@ -381,9 +380,12 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     public function flatten(callable $mapper = null, string $glue = '/'): self
     {
         return $this->tree(function(Map\Path $it, $value) use($glue, $mapper) {
-            $key   = implode($glue, $it->keys);
-            $value = $mapper ? $mapper(...[$value, &$key, $it]) : $value;
-            return mapKey($key)->andValue($value);
+            $key = implode($glue, $it->keys);
+            $mapper && $value = $mapper(...[$value, &$key, $it]);
+            if ($value instanceof Map\Value) {
+                return $value->key === null ? $value->andKey($key) : $value;
+            }
+            return $value === null ? $value : mapKey($key)->andValue($value);
         });
     }
 

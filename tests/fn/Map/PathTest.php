@@ -64,5 +64,22 @@ class PathTest extends \PHPUnit\Framework\TestCase
             '0-0' => 'a',
             '0-1' => 'b',
         ], fn\map([['a', 'b']])->flatten(null, '-')->traverse);
+
+        assert\equals([
+            'a',
+            2       => [['c', 'd']],
+            '2/0'   => ['c', 'd'],
+            '2/0/0' => 'C',
+            '-'     => 'D',
+        ], fn\flatten(['a', ['b'], [['c', 'd']]], function($value, $key, Path $it) {
+            if (strpos($key, '1') === 0) {
+                return null;
+            }
+            if ($it->getDepth() === 2) {
+                $value = fn\mapValue(strtoupper($value));
+                $key === '2/0/1' && $value->andKey('-');
+            }
+            return $value;
+        }));
     }
 }
