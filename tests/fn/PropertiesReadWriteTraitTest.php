@@ -28,13 +28,10 @@ class PropertiesReadWriteTraitTest extends \PHPUnit\Framework\TestCase
      */
     public function testTrait(): void
     {
-        $message = str(
-            'magic properties (b,c) are not defined in fn\PropertiesReadWrite::DEFAULT',
-            PropertiesReadWrite::class
+        assert\exception(
+            str('magic properties (b,c) are not defined in %s::DEFAULT',PropertiesReadWrite::class),
+            function () {new PropertiesReadWrite(['b' => 'B', 'a' => 'A', 'c' => 'C']);}
         );
-        assert\exception($message, function () {
-            new PropertiesReadWrite(['b' => 'B', 'a' => 'A', 'c' => 'C']);
-        });
 
         self::assertAB('A', null, new class(['a' => 'A', 'b' => null]) {
             use PropertiesReadWriteTrait;
