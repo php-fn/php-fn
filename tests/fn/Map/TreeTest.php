@@ -19,6 +19,13 @@ class TreeTest extends \PHPUnit\Framework\TestCase
     public function providerRecursiveIteration(): array
     {
         return [
+            'use mapped value to determinate children' => [
+                'expected' => [(object)['a', 'b'], (object)['c', 'd']],
+                'inner'    => [['a', 'b'], ['c', 'd']],
+                'mapper'   => static function ($value) {
+                    return (object)$value;
+                },
+            ],
             'mapper is only available on the first level' => [
                 'expected' => ['A', 'b', 'C', 'd', 'e'],
                 'inner' => ['a', ['b'], 'c', ['d', 'e']],

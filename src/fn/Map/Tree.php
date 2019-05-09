@@ -229,8 +229,7 @@ class Tree implements RecursiveIterator, Countable
         if ($this->getChildrenIterator()) {
             return true;
         }
-        $in = $this->getInnerIterator();
-        return $in->valid() && is_iterable($in->current());
+        return $this->valid() && is_iterable($this->current());
     }
 
     /**
@@ -241,8 +240,7 @@ class Tree implements RecursiveIterator, Countable
         if ($childrenIterator = $this->getChildrenIterator()) {
             return $childrenIterator;
         }
-        $in = $this->getInnerIterator();
-        if ($in->valid() && is_iterable($current = $in->current())) {
+        if ($this->valid() && is_iterable($current = $this->current())) {
             return new static($current);
         }
         static $empty;
