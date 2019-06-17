@@ -491,4 +491,22 @@ EOF;
         assert\same([2 => 'C', 'D'], traverse($map->limit(2, 1)));
         assert\same([3 => 'D'], traverse($map->limit(2, 2)));
     }
+
+    /**
+     * @covers Tree::doMap
+     */
+    public function testGroupByEmptyString(): void
+    {
+        assert\equals([
+            '' => ['a', 'b']
+        ], traverse(['a', 'b'], static function ($value) {
+            return mapGroup('')->andValue($value);
+        }));
+
+        assert\equals([
+            '' => ['a', 'b']
+        ], $this->map(['a', 'b'], static function ($value) {
+            return mapGroup('')->andValue($value);
+        })->traverse);
+    }
 }

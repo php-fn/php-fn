@@ -141,7 +141,7 @@ class Tree implements RecursiveIterator, Countable
                      * from the current position (inclusive)
                      * @todo in this case the remaining children information is lost, fix it ASAP
                      */
-                    if ($curValue->group) {
+                    if ($curValue->group !== null) {
                         $iter = $this->inner = new Inner(fn\traverse($iter, $mapper, false));
                         $iter->rewind();
                         $this->needsMap = true;
