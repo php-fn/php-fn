@@ -30,7 +30,7 @@ class Tree implements RecursiveIterator, Countable
     private $children;
 
     /**
-     * @param iterable|\Traversable $inner
+     * @param iterable $inner
      * @param callable ...$mappers
      */
     public function __construct($inner, callable ...$mappers)
@@ -48,12 +48,12 @@ class Tree implements RecursiveIterator, Countable
     }
 
     /**
-     * @return Inner
+     * @return Lazy
      */
-    public function getInnerIterator(): Inner
+    private function getInnerIterator(): Lazy
     {
-        if (!$this->inner instanceof Inner) {
-            $this->inner = new Inner($this->inner);
+        if (!$this->inner instanceof Lazy) {
+            $this->inner = new Lazy($this->inner);
         }
         return $this->inner;
     }
@@ -142,7 +142,7 @@ class Tree implements RecursiveIterator, Countable
                      * @todo in this case the remaining children information is lost, fix it ASAP
                      */
                     if ($curValue->group !== null) {
-                        $iter = $this->inner = new Inner(fn\traverse($iter, $mapper, false));
+                        $iter = $this->inner = new Lazy(fn\traverse($iter, $mapper, false));
                         $iter->rewind();
                         $this->needsMap = true;
                         $this->mappers = [function() {

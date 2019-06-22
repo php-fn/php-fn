@@ -6,50 +6,65 @@
 namespace fn\Map;
 
 use ArrayIterator;
+use Closure;
 use fn;
 use fn\test\assert;
+use IteratorAggregate;
 use RuntimeException;
 use SimpleXMLElement;
+use Traversable;
 
 /**
- * @covers Inner
+ * @covers Lazy
  */
-class InnerTest extends \PHPUnit\Framework\TestCase
+class LazyTest extends \PHPUnit\Framework\TestCase
 {
+    private static function proxy($traversable): IteratorAggregate
+    {
+        return new class($traversable) implements IteratorAggregate
+        {
+            private $traversable;
+
+            public function __construct($traversable)
+            {
+                $this->traversable = $traversable instanceof Closure ? $traversable($this) : $traversable;
+            }
+
+            public function getIterator()
+            {
+                return $this->traversable;
+            }
+        };
+    }
+
     /**
      * @return array
      */
     public function providerUnify(): array
     {
-        $ref = null;
         return [
             'intern traversable classes are wrapped around IteratorIterator' => [
                 'expected' => [],
-                'inner' => new Lazy(function() {
-                    return new SimpleXMLElement('<root/>');
-                }),
+                'proxy' => self::proxy(new SimpleXMLElement('<root/>')),
             ],
             '$inner::getIterator returns same instance' => [
-                'expected' => new RuntimeException('Implementation $inner::getIterator returns same instance'),
-                'inner' => $ref = new Lazy(function() use(&$ref) {
-                    return $ref;
-                }),
+                'expected' => new RuntimeException('Implementation $proxy::getIterator returns the same instance'),
+                'proxy' => self::proxy(static function($that) {return $that;}),
             ],
-            '$inner::getIterator is too deep' => [
-                'expected' => new RuntimeException('$inner::getIterator is too deep'),
-                'inner' => new Lazy(function() {
-                    return new Lazy(function() {
-                        return new Lazy(function() {
-                            return new Lazy(function() {
-                                return new Lazy(function() {
-                                    return new Lazy(function() {
-                                        return new Lazy(function() {
-                                            return new Lazy(function() {
-                                                return new Lazy(function() {
-                                                    return new Lazy(function() {
-                                                        return new Lazy(function() {
-                                                            return new Lazy(function() {
-                                                            });
+            '$proxy::getIterator is too deep' => [
+                'expected' => new RuntimeException('$proxy::getIterator is too deep'),
+                'proxy' => self::proxy(static function() {
+                    return self::proxy(static function() {
+                        return self::proxy(static function() {
+                            return self::proxy(static function() {
+                                return self::proxy(static function() {
+                                    return self::proxy(static function() {
+                                        return self::proxy(static function() {
+                                            return self::proxy(static function() {
+                                                return self::proxy(static function() {
+                                                    return self::proxy(static function() {
+                                                        return self::proxy(static function() {
+                                                            return self::proxy(static function() {});
                                                         });
                                                     });
                                                 });
@@ -60,13 +75,13 @@ class InnerTest extends \PHPUnit\Framework\TestCase
                             });
                         });
                     });
-                }),
+                })
             ],
             '$inner depth = 3' => [
                 'expected' => ['depth' => 3],
-                'inner' => new Lazy(function() {
-                    return new Lazy(function() {
-                        return new Lazy(function() {
+                'proxy' => new Lazy(static function() {
+                    return new Lazy(static function() {
+                        return new Lazy(static function() {
                             return ['depth' => 3];
                         });
                     });
@@ -74,19 +89,22 @@ class InnerTest extends \PHPUnit\Framework\TestCase
             ],
             'simple iterator' => [
                 'expected' => ['a' => 'a', 'b' => ['c' => 'd']],
-                'inner' => new ArrayIterator(['a' => 'a', 'b' => ['c' => 'd']]),
+                'proxy' => new ArrayIterator(['a' => 'a', 'b' => ['c' => 'd']]),
             ],
             'simple array' => [
                 'expected' => ['a', 'b', 'c'],
-                'inner' => ['a', 'b', 'c'],
+                'proxy' => ['a', 'b', 'c'],
             ],
             'empty array' => [
                 'expected' => [],
-                'inner' => [],
+                'proxy' => [],
             ],
             'null => exception' => [
-                'expected' => new RuntimeException('Property $inner must be iterable'),
-                'inner' => null,
+                'expected' => new RuntimeException('Property $proxy must be iterable'),
+                null
+            ],
+            '=> EmptyIterator' => [
+                'expected' => [],
             ],
         ];
     }
@@ -94,46 +112,38 @@ class InnerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider providerUnify
      *
-     * @covers       Inner::unify
+     * @covers       ::unify
      *
      * @param array|\Exception $expected
-     * @param iterable|\Traversable $inner
+     * @param callable|iterable ...$proxy
      */
-    public function testUnify($expected, $inner): void
+    public function testUnify($expected, ...$proxy): void
     {
-        assert\equals\trial($expected, function ($inner) {
-            return fn\traverse(new Inner($inner));
-        }, $inner);
-
-        assert\equals\trial($expected, function ($inner) {
-            return fn\traverse(
-                new Inner(new Lazy(function () use ($inner) {
-                    return $inner;
-                }))
-            );
-        }, $inner);
+        assert\equals\trial($expected, static function () use ($proxy) {
+            return fn\traverse(new Lazy(...$proxy));
+        });
     }
 
     /**
-     * @covers Inner::isLast
+     * @covers ::isLast
      */
     public function testIsLastExplicitIteration(): void
     {
-        $it = new Inner([]);
+        $it = new Lazy([]);
         assert\same(null, $it->isLast());
         $it->rewind();
         assert\same(null, $it->isLast());
 
-        $it = new Inner(['a', 'b', 'c']);
+        $it = new Lazy(['a', 'b', 'c']);
 
-        assert\false($it->valid());
-        assert\same(null, $it->current());
-        assert\same(null, $it->key());
-        assert\same(null, $it->isLast());
-        assert\false($it->valid());
-        assert\same(null, $it->current());
-        assert\same(null, $it->key());
-        assert\same(null, $it->isLast());
+        assert\true($it->valid());
+        assert\same('a', $it->current());
+        assert\same(0, $it->key());
+        assert\same(false, $it->isLast());
+        assert\true($it->valid());
+        assert\same('a', $it->current());
+        assert\same(0, $it->key());
+        assert\same(false, $it->isLast());
 
         $it->rewind();
         assert\same(0, $it->key());
@@ -170,7 +180,7 @@ class InnerTest extends \PHPUnit\Framework\TestCase
         assert\same(null, $it->key());
         assert\same(null, $it->isLast());
 
-        $it = new Inner(['a']);
+        $it = new Lazy(['a']);
         assert\same(null, $it->isLast());
         $it->rewind();
         assert\true($it->isLast());
@@ -191,20 +201,20 @@ class InnerTest extends \PHPUnit\Framework\TestCase
     public function providerIsLast(): array
     {
         return [
-            'empty'    => [[], new Inner([])],
-            'single'   => [['a' => true], new Inner(['a'])],
-            'multiple' => [['a' => false, 'b' => false, 'c' => true], new Inner(['a', 'b', 'c'])],
+            'empty'    => [[], new Lazy([])],
+            'single'   => [['a' => true], new Lazy(['a'])],
+            'multiple' => [['a' => false, 'b' => false, 'c' => true], new Lazy(['a', 'b', 'c'])],
         ];
     }
 
     /**
      * @dataProvider providerIsLast
-     * @covers       Inner::isLast
+     * @covers       ::isLast
      *
      * @param array $expected
-     * @param Inner $it
+     * @param Lazy $it
      */
-    public function testIsLastForEach(array $expected, Inner $it): void
+    public function testIsLastForEach(array $expected, Lazy $it): void
     {
         $result = [];
         foreach ($it as $value) {
@@ -215,14 +225,14 @@ class InnerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider providerIsLast
-     * @covers       Inner::isLast
+     * @covers       ::isLast
      *
      * @param array $expected
-     * @param Inner $it
+     * @param Lazy $it
      */
-    public function testIsLastTraverse(array $expected, Inner $it): void
+    public function testIsLastTraverse(array $expected, Lazy $it): void
     {
-        $result = fn\traverse($it, function($value, &$key) use(&$it) {
+        $result = fn\traverse($it, static function($value, &$key) use(&$it) {
             $key = $value;
             return $it->isLast();
         });
@@ -231,14 +241,14 @@ class InnerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider providerIsLast
-     * @covers       Inner::isLast
+     * @covers       ::isLast
      *
      * @param array $expected
-     * @param Inner $it
+     * @param Lazy $it
      */
-    public function testIsLastTreeDoMap(array $expected, Inner $it): void
+    public function testIsLastTreeDoMap(array $expected, Lazy $it): void
     {
-        $result = iterator_to_array(new Tree($it, function($value, &$key) use(&$it) {
+        $result = iterator_to_array(new Tree($it, static function($value, &$key) use(&$it) {
             $key = $value;
             return $it->isLast();
         }));

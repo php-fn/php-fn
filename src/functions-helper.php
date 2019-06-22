@@ -19,10 +19,12 @@ function lastCallable(array &$args): array
     if (!$args) {
         return [];
     }
-    if (!is_iterable($last = array_pop($args)) && fn\isCallable($last)) {
-        $args ?: fn\fail\argument('single argument should not be a callable');
+
+    $last = array_pop($args);
+    if ($args && !is_iterable($last) && fn\isCallable($last)) {
         return [$last];
     }
+
     $args[] = $last;
     return [];
 }
@@ -121,13 +123,13 @@ function recursive(Traversable $inner, $leavesOnly, callable $mapper = null): Tr
     foreach ((new ReflectionFunction($mapper))->getParameters() as $parameter) {
         if (($parClass = $parameter->getClass()) && $parClass->getName() === Path::class) {
             $pos = $parameter->getPosition();
-            return new $class($it, function(...$args) use($it, $mapper, $pos) {
+            return new $class($it, static function(...$args) use($it, $mapper, $pos) {
                 return $mapper(...fn\merge(fn\sub($args, 0, $pos) , [$it], fn\sub($args, $pos)));
             });
         }
     }
 
-    return new $class($it, function(...$args) use($mapper) {
+    return new $class($it, static function(...$args) use($mapper) {
         return $mapper(...$args);
     });
 }

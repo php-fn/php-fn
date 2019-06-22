@@ -8,6 +8,8 @@ namespace fn\Map;
 use fn;
 
 /**
+ * @internal
+ *
  * @property-read mixed $value
  * @property-read mixed $key
  * @property-read mixed $group

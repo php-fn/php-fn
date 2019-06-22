@@ -281,7 +281,7 @@ function tree(...$iterable): array
  */
 function flatten(...$iterable): array
 {
-    $callable  = _\lastCallable($iterable);
+    $callable = _\lastCallable($iterable);
     return $callable ? map(...$iterable)->flatten(...$callable)->traverse : map(...$iterable)->flatten;
 }
 
