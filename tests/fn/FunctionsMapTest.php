@@ -437,7 +437,7 @@ class FunctionsMapTest extends MapTest
         assert\same([], tree());
         assert\same([], tree([], []));
         assert\same(['a', 'b', ['c'], 'c'], tree(['a'], ['b', ['c']]));
-        assert\same(['C', 'B', 0], tree(['a'], ['b', ['c']], function($value, Map\Path $it) {
+        assert\same(['A', 'B', 0, 'C'], tree(['a'], ['b', ['c']], static function($value, Map\Path $it) {
             return is_string($value) ? strtoupper($value) : $it->getDepth();
         }));
     }
@@ -450,8 +450,8 @@ class FunctionsMapTest extends MapTest
         assert\same([], leaves());
         assert\same([], leaves([], []));
         assert\same(['a', 'b', 'c'], leaves(['a'], ['b', ['c']]));
-        assert\same(['C', 'B'], leaves(['a'], ['b', ['c']], function($value, Map\Path $it) {
-            return is_string($value) ? strtoupper($value) : $it->getDepth();
+        assert\same(['a', 'b', '  c'], leaves(['a'], ['b', ['c']], static function(Map\Path $it) {
+            return (string) $it;
         }));
     }
 

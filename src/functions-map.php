@@ -254,7 +254,7 @@ function some(...$iterable): bool
 function leaves(...$iterable): array
 {
     $callable  = _\lastCallable($iterable);
-    return $callable ? map(...$iterable)->leaves(...$callable)->traverse : map(...$iterable)->leaves;
+    return $callable ? map(...$iterable)->leaves(...$callable)->values : map(...$iterable)->leaves;
 }
 
 /**
@@ -268,7 +268,7 @@ function leaves(...$iterable): array
 function tree(...$iterable): array
 {
     $callable  = _\lastCallable($iterable);
-    return $callable ? map(...$iterable)->tree(...$callable)->traverse : map(...$iterable)->tree;
+    return $callable ? map(...$iterable)->tree(...$callable)->values : map(...$iterable)->tree;
 }
 
 /**
