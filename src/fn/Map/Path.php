@@ -16,19 +16,14 @@ class Path extends RecursiveIteratorIterator
     use fn\PropertiesReadOnlyTrait;
 
     /**
-     * @param string $name
-     * @param bool $assert
-     * @return mixed
+     * @var string
      */
-    protected function property(string $name, bool $assert)
-    {
-        if (!method_exists($this, $name)) {
-            return $assert && fn\fail\domain($name);
-        }
-        return $assert ? $this->$name() : true;
-    }
+    public const INDENT = '  ';
 
-    protected function keys(): array
+    /**
+     * @return array
+     */
+    protected function resolveKeys(): array
     {
         $depth = $this->getDepth();
         $keys  = [];
@@ -36,5 +31,25 @@ class Path extends RecursiveIteratorIterator
             $keys[] = $this->getSubIterator($level)->key();
         }
         return $keys;
+    }
+
+    /**
+     * @param string $indent
+     * @param mixed ...$current
+     *
+     * @return string
+     */
+    public function indent(string $indent = self::INDENT, ...$current): string
+    {
+        $current = $current[0] ?? $this->current();
+        return str_repeat($indent, $depth = $this->getDepth()) . $current;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function __toString()
+    {
+        return $this->indent();
     }
 }
