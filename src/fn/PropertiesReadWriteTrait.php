@@ -18,48 +18,63 @@ trait PropertiesReadWriteTrait
     /**
      * @var iterable
      */
-    private $properties = [];
+    protected $properties = [];
+
+    private function traitConfig(string $prop): array
+    {
+        static $cache = [];
+        if (!isset($cache[static::class])) {
+            $static = defined('static::TRAIT_PROPERTIES') ? static::TRAIT_PROPERTIES : [];
+            $self = defined('self::TRAIT_PROPERTIES') ? self::TRAIT_PROPERTIES : [];
+
+            $cache[static::class] = [
+                'resolve' => array_unique([$self['resolve'] ?? null, $static['resolve'] ?? null, 'resolve*']),
+                'compile' => array_unique([$self['compile'] ?? null, $static['compile'] ?? null, 'compile*']),
+                'defaults' => ($self['defaults'] ?? []) + ($static['defaults'] ?? []),
+            ];
+        }
+        return $cache[static::class][$prop];
+    }
 
     /**
-     * @param iterable $properties
+     * @param $properties
      */
-    private function initProperties(iterable $properties = null): void
+    private function initProperties($properties = null): void
     {
-        if (defined('static::DEFAULT')) {
+        if ($defaults = $this->traitConfig('defaults')) {
             $properties = $properties ?? [];
-            if ($diff = array_diff(keys($properties), keys(static::DEFAULT))) {
+            if ($diff = array_diff(keys($properties), keys($defaults))) {
                 $diff = implode(',', $diff);
-                fail\domain('magic properties (%s) are not defined in %s::DEFAULT', $diff, static::class);
+                fail\domain(
+                    "magic properties (%s) are not defined in %s::TRAIT_PROPERTIES['defaults']",
+                    $diff,
+                    static::class
+                );
             }
-            $properties = merge(static::DEFAULT, $properties);
+            $properties = merge($defaults, $properties);
         }
         $properties === null || $this->properties = merge($this->properties, $properties);
     }
 
     /**
      * @param string $name
-     *
-     * @return ReflectionMethod|false
+     * @return array
      */
-    private function propertyMethod(string $name)
+    private function propertyMethod(string $name): array
     {
-        static $methods = [];
-        if (!isset($methods[$name])) {
-            $method = [static::class, "resolve$name"];
-            $methods[$name] =  method_exists(...$method) ? new ReflectionMethod(...$method) : false;
+        static $cache = [];
+        if (isset($cache[static::class][$name])) {
+            return $cache[static::class][$name];
         }
-        return $methods[$name];
-    }
-
-    /**
-     * @param string $name
-     * @param mixed ...$args
-     *
-     * @return mixed
-     */
-    private function propertyMethodInvoke(string $name, ...$args)
-    {
-        return $this->{$this->propertyMethod($name)->name}(...$args);
+        $cache[static::class][$name] = [];
+        foreach (['resolve' => false, 'compile' => true] as $prop => $callOnce) {
+            foreach ($this->traitConfig($prop) as $prefix) {
+                if (method_exists(...$method = [static::class, str_replace('*', $name, $prefix)])) {
+                    $cache[static::class][$name] = [new ReflectionMethod(...$method), $callOnce];
+                }
+            }
+        }
+        return $cache[static::class][$name];
     }
 
     /**
@@ -67,36 +82,43 @@ trait PropertiesReadWriteTrait
      * @param bool   $assert
      * @param mixed  ...$args
      *
-     * @return $this|mixed
+     * @return mixed
      */
     private function property(string $name, bool $assert, ...$args)
     {
-        $has = hasKey($name, $this->properties);
-
-        if ($assert) {
-            if (!($has || $this->propertyMethod($name))) {
-                fail\domain('missing magic-property %s in %s', $name, static::class);
+        if (hasKey($name, $this->properties)) {
+            if (!$assert) {
+                return true;
             }
             if ($args) {
-                if ($method = $this->propertyMethod($name)) {
-
-                    $method->getNumberOfParameters() > 0 || fail\domain(
-                        'class %s has read-only access for the magic-property: %s',
-                        static::class,
-                        $name
-                    );
-
-                    $this->propertyMethodInvoke($name, ...$args);
-                } else {
-                    $this->properties[$name] = $args[0];
-                }
-                return $this;
+                $this->properties[$name] = $args[0];
             }
-            return $has ? $this->properties[$name] : $this->propertyMethodInvoke($name);
+            return $this->properties[$name];
         }
 
-        return $has || $this->propertyMethod($name);
+         /** @var ReflectionMethod $method */
+        [$method, $callOnce] = $this->propertyMethod($name);
+
+        if (!$assert) {
+            return (bool)$method;
+        }
+
+        if (!$method) {
+            fail\domain('missing magic-property %s in %s', $name, static::class);
+        }
+
+        ($args && !$method->getNumberOfParameters()) && fail\domain(
+            'class %s has read-only access for the magic-property: %s',
+            static::class,
+            $name
+        );
+
+        $v = ($v = $this->{$method->name}(...$args)) instanceof Map\Value ? $v->value : $v;
+        $callOnce && $this->properties[$name] = $v;
+
+        return $v;
     }
+
 
     /**
      * http://php.net/manual/language.oop5.overloading.php#object.isset

@@ -7,14 +7,60 @@ namespace fn;
 
 use fn\test\assert;
 
-class PropertiesReadWrite
+/**
+ * @property $a
+ * @property-read $foo
+ * @property-read $bar
+ * @property-read $inc
+ * @property-read $const
+ */
+class Properties
 {
     use PropertiesReadWriteTrait;
-    private const DEFAULT = ['a' => null];
 
-    public function __construct($properties)
+    protected const TRAIT_PROPERTIES = ['defaults' => ['a' => null], 'resolve' => '_*', 'compile' => '*_'];
+
+    public function __construct($properties = [])
     {
         $this->initProperties($properties);
+    }
+
+    /**
+     * @see $foo
+     * @return string
+     */
+    protected function _foo(): string
+    {
+        return 'foo';
+    }
+
+    /**
+     * @see $bar
+     * @return string
+     */
+    protected function bar_(): string
+    {
+        return 'bar';
+    }
+
+    /**
+     * @see $count
+     * @return int
+     */
+    protected function _inc(): int
+    {
+        static $count = 0;
+        return $count++;
+    }
+
+    /**
+     * @see $const
+     * @return int
+     */
+    protected function const_(): int
+    {
+        static $count = 0;
+        return $count++;
     }
 }
 
@@ -24,15 +70,15 @@ class PropertiesReadWrite
 class PropertiesReadWriteTraitTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @covers ::property
-     * @covers ::initProperties
+     * @covers PropertiesReadWriteTrait::property
+     * @covers PropertiesReadWriteTrait::initProperties
      */
     public function testTrait(): void
     {
         assert\exception(
-            str('magic properties (b,c) are not defined in %s::DEFAULT', PropertiesReadWrite::class),
+            str("magic properties (b,c) are not defined in %s::TRAIT_PROPERTIES['defaults']", Properties::class),
             static function () {
-                new PropertiesReadWrite(['b' => 'B', 'a' => 'A', 'c' => 'C']);
+                new Properties(['b' => 'B', 'a' => 'A', 'c' => 'C']);
             }
         );
 
@@ -49,7 +95,7 @@ class PropertiesReadWriteTraitTest extends \PHPUnit\Framework\TestCase
         self::assertAB('A', null, new class
         {
             use PropertiesReadWriteTrait;
-            protected const DEFAULT = ['a' => 'A', 'b' => null];
+            protected const TRAIT_PROPERTIES = ['defaults' => ['a' => 'A', 'b' => null]];
 
             public function __construct()
             {
@@ -60,13 +106,12 @@ class PropertiesReadWriteTraitTest extends \PHPUnit\Framework\TestCase
         self::assertAB('A', 'B', new class(['b' => 'B'])
         {
             use PropertiesReadWriteTrait;
+            private const TRAIT_PROPERTIES = ['defaults' => ['a' => 'A', 'b' => null]];
 
             public function __construct($properties)
             {
                 $this->initProperties($properties);
             }
-
-            private const DEFAULT = ['a' => 'A', 'b' => null];
         });
 
         self::assertAB('A', 'B', $obj = new class
@@ -85,9 +130,9 @@ class PropertiesReadWriteTraitTest extends \PHPUnit\Framework\TestCase
                 return $this->properties['b'] ?? 'B';
             }
 
-            protected function resolveD(): string
+            protected function resolveD(): Map\Value
             {
-                return 'D';
+                return mapValue('D');
             }
         });
         assert\same('D', $obj->d);
@@ -99,31 +144,49 @@ class PropertiesReadWriteTraitTest extends \PHPUnit\Framework\TestCase
             $obj
         );
 
+        $obj = new Properties;
+        assert\same('foo', $obj->foo);
+        assert\same('foo', $obj->foo);
+        assert\same('bar', $obj->bar);
+        assert\same('bar', $obj->bar);
+        assert\same(0, $obj->inc);
+        assert\same(1, $obj->inc);
+        assert\same(2, $obj->inc);
+        assert\same(0, $obj->const);
+        assert\same(0, $obj->const);
 
-        $obj = new class {
-            use PropertiesReadWriteTrait;
 
-            private $unresolved = [];
-            protected function propertyMethodInvoke(string $name, ...$args)
+        $obj = new class extends Properties {
+            protected const TRAIT_PROPERTIES = ['resolve' => '_get*', 'compile' => '*get_'];
+
+            /**
+             * @see $foo
+             * @return string
+             */
+            protected function _getFoo(): string
             {
-                if ($args) {
-                    $this->unresolved[$name] = $args;
-                    return $args[0];
-                }
-                return $this->{$this->propertyMethod($name)->name}(...$this->unresolved[$name] ?? []);
+                return 'bar';
             }
 
-            protected function resolveProp(...$args): array
+            /**
+             * @see $const
+             * @return int
+             */
+            protected function constGet_(): int
             {
-                return [$args[0] ?? 'A'];
+                static $count = 10;
+                return $count++;
             }
         };
-
-        assert\same(['A'], $obj->prop);
-        unset($obj->unknown, $obj->prop);
-        assert\same(['A'], $obj->prop);
-        $obj->prop = 'B';
-        assert\same(['B'], $obj->prop);
+        assert\same('bar', $obj->foo);
+        assert\same('bar', $obj->foo);
+        assert\same('bar', $obj->bar);
+        assert\same('bar', $obj->bar);
+        assert\same(3, $obj->inc);
+        assert\same(4, $obj->inc);
+        assert\same(5, $obj->inc);
+        assert\same(10, $obj->const);
+        assert\same(10, $obj->const);
     }
 
     private static function assertAB($a, $b, $obj): void

@@ -21,16 +21,17 @@ class Path extends RecursiveIteratorIterator
     public const INDENT = '  ';
 
     /**
-     * @return array
+     * @see $keys
+     * @return Value
      */
-    protected function resolveKeys(): array
+    protected function resolveKeys(): Value
     {
         $depth = $this->getDepth();
         $keys  = [];
         for ($level = 0; $level <= $depth; ++$level) {
             $keys[] = $this->getSubIterator($level)->key();
         }
-        return $keys;
+        return fn\mapValue($keys);
     }
 
     /**

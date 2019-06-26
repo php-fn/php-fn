@@ -42,7 +42,8 @@ class Value
      */
     public function andValue($value): self
     {
-        return $this->property('value', true, $value);
+        $this->properties['value'] = $value;
+        return $this;
     }
 
     /**
@@ -52,7 +53,8 @@ class Value
      */
     public function andKey($key): self
     {
-        return $this->property('key', true, $key);
+        $this->properties['key'] = $key;
+        return $this;
     }
 
     /**
@@ -62,7 +64,8 @@ class Value
      */
     public function andGroup($group): self
     {
-        return $this->property('group', true, $group);
+        $this->properties['group'] = $group;
+        return $this;
     }
 
     /**
@@ -72,6 +75,7 @@ class Value
      */
     public function andChildren($children): self
     {
-        return $this->property('children', true, $children);
+        $this->properties['children'] = $children;
+        return $this;
     }
 }
