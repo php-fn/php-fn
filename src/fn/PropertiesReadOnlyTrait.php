@@ -6,24 +6,18 @@
 namespace fn;
 
 /**
+ * @deprecated
  */
 trait PropertiesReadOnlyTrait
 {
-    use PropertiesReadWriteTrait;
+    use PropertiesTrait\ReadOnly;
+    use PropertiesTrait\Init;
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function __set(string $name, $value): void
+    protected function propertyMethodInvoke(string $name)
     {
-        fail('class %s has read-only access for magic-properties: %s', static::class, $name);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function __unset(string $name): void
-    {
-        fail('class %s has read-only access for magic-properties: %s', static::class, $name);
+        return $this->{$this->propertyMethod($name)->name}();
     }
 }

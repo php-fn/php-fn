@@ -13,7 +13,7 @@ use RecursiveIteratorIterator;
  */
 class Path extends RecursiveIteratorIterator
 {
-    use fn\PropertiesReadOnlyTrait;
+    use fn\PropertiesTrait\ReadOnly;
 
     /**
      * @var string
@@ -21,7 +21,6 @@ class Path extends RecursiveIteratorIterator
     public const INDENT = '  ';
 
     /**
-     * @see $keys
      * @return Value
      */
     protected function resolveKeys(): Value
@@ -31,7 +30,7 @@ class Path extends RecursiveIteratorIterator
         for ($level = 0; $level <= $depth; ++$level) {
             $keys[] = $this->getSubIterator($level)->key();
         }
-        return fn\mapValue($keys);
+        return new Value($keys);
     }
 
     /**

@@ -8,8 +8,6 @@ namespace fn\Map;
 use fn;
 
 /**
- * @internal
- *
  * @property-read mixed $value
  * @property-read mixed $key
  * @property-read mixed $group
@@ -17,7 +15,7 @@ use fn;
  */
 class Value
 {
-    use fn\PropertiesReadOnlyTrait;
+    use fn\PropertiesTrait\ReadOnly;
 
     /**
      * @param mixed [$value]
