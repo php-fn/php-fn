@@ -4,7 +4,6 @@
   "keywords": ["php", "library"],
   "homepage": "https://github.com/php-fn/php-fn",
   "license": "MIT",
-  "prefer-stable": true,
   "require": {
     "php": ">=7.1"
   },
@@ -27,5 +26,12 @@
   },
   "scripts": {
     "test": "vendor/bin/phpunit"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "extra": {
+    "branch-alias": {
+      "dev-master": "2.x-dev"
+    }
   }
 }
