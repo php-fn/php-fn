@@ -5,6 +5,7 @@
   "homepage": "https://github.com/php-fn/php-fn",
   "license": "MIT",
   "require": {
+    "ext-mbstring": "*",
     "php": ">=7.1"
   },
   "require-dev": {

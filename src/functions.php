@@ -5,6 +5,8 @@
 
 namespace fn;
 
+use Closure;
+
 /**
  * for iterable:
  *  sub($iterable, $start)
@@ -63,10 +65,53 @@ function sub($candidate, $start, $lengthOrCallable = null, $encodingOrCallable =
  */
 function isCallable($candidate, $strict = true): bool
 {
-    if (!is_callable($candidate, !$strict) || ($strict && is_string($candidate) && !strpos($candidate, '::'))) {
-        return false;
+    return !(
+        !is_callable($candidate, !$strict) ||
+        ($strict && is_string($candidate) && !strpos($candidate, '::'))
+    );
+}
+
+/**
+ * Get a type of variable (int|bool|string|array|callable|iterable|::class)
+ *
+ * @param mixed $var
+ * @param string[] ...$types validates if the variable is a type of every given entry
+ *
+ * @return string
+ */
+function type($var, ...$types): string
+{
+    if (is_object($var)) {
+        $type = $var instanceof Closure ? 'callable' : get_class($var);
+        return every($types, static function ($t) use ($type, $var) {
+            $t = (string)$t;
+            if ($t === $type || ($t === 'callable' && is_callable($var)) || ($t === 'iterable' && is_iterable($var))) {
+                return true;
+            }
+            return is_a($type, $t, true);
+        }) ? $types[0] ?? $type : '';
     }
-    return true;
+
+    if (is_bool($var)) {
+        $type = 'bool';
+    } else if (is_int($var)) {
+        $type ='int';
+    } else if (is_float($var)) {
+        $type ='float';
+    } else if (is_array($var)) {
+        $type = 'array';
+    } else if (is_string($var)) {
+        $type = 'string';
+    } else {
+        $type = '';
+    }
+
+    return every($types, static function ($t) use ($type, $var) {
+        $t = (string)$t;
+        $t === 'iterable' && $t = 'array';
+        $t === 'callable' && is_callable($var) && $t = $type;
+        return $t === $type;
+    }) ? $types[0] ?? $type : '';
 }
 
 /**
@@ -95,7 +140,7 @@ function str($subject, ...$replacements): string
                 $toMerge[0][$key] = $replacement;
             }
         }
-        $toMerge[] = function($replace, &$search) {
+        $toMerge[] = static function($replace, &$search) {
             $search = '{' . $search . '}';
             return (string)$replace;
         };
