@@ -12,7 +12,7 @@ trait ArrayAccessTrait
     /**
      * @var array
      */
-    private $data;
+    protected $data;
 
     /**
      * @return array
