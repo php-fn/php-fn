@@ -5,7 +5,10 @@
 
 namespace fn;
 
+use ArrayAccess;
+use Countable;
 use fn\test\assert;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @property $a
@@ -13,6 +16,15 @@ use fn\test\assert;
  * @property-read array $x
  * @property-read array $y
  * @property-read string $z
+ * @property string $string
+ * @property int $int
+ * @property-read float $float
+ * @property-read array $array
+ * @property-read iterable $iterable
+ * @property-read bool $bool
+ * @property-read callable $callable
+ * @property-read PropertiesReadWrite $self
+ * @property-read ArrayAccess $access
  */
 class PropertiesReadWrite
 {
@@ -20,9 +32,9 @@ class PropertiesReadWrite
     use PropertiesTrait\Init;
     private const DEFAULT = ['a' => null];
 
-    public function __construct($properties)
+    public function __construct($properties, bool $init = true)
     {
-        $this->initProperties($properties);
+        $init && $this->initProperties($properties);
     }
 
     /**
@@ -67,13 +79,110 @@ class PropertiesReadWrite
         }
         return $this->properties['_rw'] ?? mapValue($count++);
     }
+
+    /**
+     * @see $string
+     * @param mixed ...$args
+     * @return string|null
+     */
+    protected function resolveString(...$args): ?string
+    {
+        if ($args) {
+            $this->properties['string'] = $args[0];
+            return null;
+        }
+        return (string)($this->properties['string'] ?? null);
+    }
+
+    /**
+     * @see $int
+     * @param mixed ...$args
+     * @return int|null
+     */
+    protected function resolveInt(...$args): ?int
+    {
+        if ($args) {
+            $this->properties['int'] = $args[0];
+            return null;
+        }
+        $value = $this->properties['int'] ?? null;
+        return (int)(is_array($value) || $value instanceof Countable ? count($value) : $value);
+    }
+
+    protected function resolveFloat(): float
+    {
+        return .0;
+    }
+
+    protected function resolveArray(): array
+    {
+        return [];
+    }
+
+    protected function resolveIterable(): iterable
+    {
+        return [];
+    }
+
+    protected function resolveBool(): bool
+    {
+        return true;
+    }
+
+    protected function resolveCallable(): callable
+    {
+        return static function () {};
+    }
+
+    protected function resolveSelf(): self
+    {
+        return $this;
+    }
+
+    protected function resolveAccess(): ArrayAccess
+    {
+        return map();
+    }
 }
 
 /**
  * @coversDefaultClass PropertiesTrait
  */
-class PropertiesTraitTest extends \PHPUnit\Framework\TestCase
+class PropertiesTraitTest extends TestCase
 {
+    /**
+     * @covers ::propertyResolved
+     */
+    public function testPropertyResolved(): void
+    {
+        $obj = new PropertiesReadWrite([
+            'string' => null,
+            'int' => null,
+            'float' => null,
+            'array' => null,
+            'iterable' => null,
+            'bool' => null,
+            'callable' => null,
+            'self' => null,
+            'access' => null,
+        ], false);
+
+        assert\same('', $obj->string);
+        $obj->string = map(['a', 'b']);
+        assert\same("a\nb", $obj->string);
+
+        assert\same(0, $obj->int);
+        $obj->int = map(['a', 'b']);
+        assert\same(2, $obj->int);
+
+        assert\same(.0, $obj->float);
+        assert\same([], $obj->array);
+        assert\same([], $obj->iterable);
+        assert\equals(static function () {}, $obj->callable);
+        assert\same($obj, $obj->self);
+        assert\equals(map(), $obj->access);
+    }
+
     /**
      * @covers ::property
      */
@@ -125,19 +234,19 @@ class PropertiesTraitTest extends \PHPUnit\Framework\TestCase
         {
             use PropertiesTrait;
 
-            protected function resolveA(...$args): string
+            protected function resolveA(...$args)
             {
                 $args && $this->properties['a'] = $args[0];
                 return $this->properties['a'] ?? 'A';
             }
 
-            protected function resolveB(...$args): string
+            protected function resolveB(...$args)
             {
                 $args && $this->properties['b'] = $args[0];
                 return $this->properties['b'] ?? 'B';
             }
 
-            protected function resolveD(): string
+            protected function resolveD()
             {
                 return 'D';
             }

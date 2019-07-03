@@ -66,7 +66,7 @@ trait PropertiesTrait
      * @param bool $force
      * @return mixed|null
      */
-    private function propertyGetterInvoke(string $name, ReflectionMethod $method, bool $force = false)
+    protected function propertyGetterInvoke(string $name, ReflectionMethod $method, bool $force = false)
     {
         if (!$force && hasKey($name, $this->properties)) {
             return $this->properties[$name];
@@ -99,16 +99,36 @@ trait PropertiesTrait
      */
     protected function property(string $name, ...$args)
     {
-        if (!(($has = hasKey($name, $this->properties)) || $this->propertyMethod($name))) {
-            fail\domain('missing magic-property %s in %s', $name, static::class);
-        }
+        $method = $this->propertyMethod($name);
+        $has = hasKey($name, $this->properties);
+        $has || $method || fail\domain('missing magic-property %s in %s', $name, static::class);
 
         if ($args) {
             return $this->propertyMethod($name, true) ?
                 $this->propertyMethodInvoke($name, ...$args) :
                 $this->properties[$name] = $args[0];
         }
-        return $has ? $this->properties[$name] : $this->propertyMethodInvoke($name);
+
+        if ($has) {
+            $value = $this->properties[$name];
+            return $this->propertyResolved($value, $method) ? $value : $this->propertyGetterInvoke($name, $method, true);
+        }
+        return $this->propertyMethodInvoke($name);
+    }
+
+    /**
+     * @param mixed $var
+     * @param ReflectionMethod|null $method
+     *
+     * @return bool
+     */
+    protected function propertyResolved($var, $method = null): bool
+    {
+        if ($method && $method->hasReturnType()) {
+            $type = $method->getReturnType()->getName();
+            return (bool)type($var, $type === 'self' ? self::class : $type);
+        }
+        return true;
     }
 
     /**
