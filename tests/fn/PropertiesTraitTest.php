@@ -13,18 +13,19 @@ use PHPUnit\Framework\TestCase;
 /**
  * @property $a
  * @property $rw
- * @property-read array $x
- * @property-read array $y
- * @property-read string $z
- * @property string $string
- * @property int $int
- * @property-read float $float
- * @property-read array $array
- * @property-read iterable $iterable
- * @property-read bool $bool
- * @property-read callable $callable
- * @property-read PropertiesReadWrite $self
- * @property-read ArrayAccess $access
+ * @property-read $x
+ * @property-read $y
+ * @property-read $z
+ * @property-read $void
+ * @property $string
+ * @property $int
+ * @property-read $float
+ * @property-read $array
+ * @property-read $iterable
+ * @property-read $bool
+ * @property-read $callable
+ * @property-read $self
+ * @property-read $access
  */
 class PropertiesReadWrite
 {
@@ -32,9 +33,10 @@ class PropertiesReadWrite
     use PropertiesTrait\Init;
     private const DEFAULT = ['a' => null];
 
-    public function __construct($properties, bool $init = true)
+    public function __construct($properties = [])
     {
-        $init && $this->initProperties($properties);
+        $this->properties = ['void' => 'void'];
+        $this->initProperties($properties);
     }
 
     /**
@@ -92,6 +94,14 @@ class PropertiesReadWrite
             return null;
         }
         return (string)($this->properties['string'] ?? null);
+    }
+
+    /**
+     * @see $void
+     */
+    protected function resolveVoid(): void
+    {
+        fail(__METHOD__);
     }
 
     /**
@@ -155,18 +165,9 @@ class PropertiesTraitTest extends TestCase
      */
     public function testPropertyResolved(): void
     {
-        $obj = new PropertiesReadWrite([
-            'string' => null,
-            'int' => null,
-            'float' => null,
-            'array' => null,
-            'iterable' => null,
-            'bool' => null,
-            'callable' => null,
-            'self' => null,
-            'access' => null,
-        ], false);
+        $obj = new PropertiesReadWrite;
 
+        assert\same('void', $obj->void);
         assert\same('', $obj->string);
         $obj->string = map(['a', 'b']);
         assert\same("a\nb", $obj->string);
