@@ -36,7 +36,7 @@ class PropertiesReadWrite
     public function __construct($properties = [])
     {
         $this->properties = ['void' => 'void'];
-        $this->initProperties($properties);
+        $this->propsInit($properties);
     }
 
     /**
@@ -200,11 +200,6 @@ class PropertiesTraitTest extends TestCase
         {
             use PropertiesTrait;
             use PropertiesTrait\Init;
-
-            public function __construct($properties)
-            {
-                $this->initProperties($properties);
-            }
         });
 
         self::assertAB('A', null, new class
@@ -212,11 +207,6 @@ class PropertiesTraitTest extends TestCase
             use PropertiesTrait;
             use PropertiesTrait\Init;
             protected const DEFAULT = ['a' => 'A', 'b' => null];
-
-            public function __construct()
-            {
-                $this->initProperties();
-            }
         });
 
         self::assertAB('A', 'B', new class(['b' => 'B'])
@@ -224,11 +214,6 @@ class PropertiesTraitTest extends TestCase
             use PropertiesTrait;
             use PropertiesTrait\Init;
             private const DEFAULT = ['a' => 'A', 'b' => null];
-
-            public function __construct($properties)
-            {
-                $this->initProperties($properties);
-            }
         });
 
         self::assertAB('A', 'B', $obj = new class

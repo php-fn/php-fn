@@ -15,7 +15,12 @@ trait Init
     /**
      * @param iterable $properties
      */
-    protected function initProperties(iterable $properties = null): void
+    public function __construct(iterable $properties = [])
+    {
+        $this->propsInit($properties);
+    }
+
+    private function propsInit(iterable $properties = null): void
     {
         if (!defined('static::DEFAULT')) {
             $properties === null || $this->properties = fn\merge($this->properties, $properties);
