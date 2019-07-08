@@ -13,7 +13,7 @@ use Generator;
 use ReflectionMethod;
 
 /**
- * @see http://php.net/manual/language.oop5.overloading.php#language.oop5.overloading.members
+ * @see https://php.net/manual/language.oop5.overloading.php#language.oop5.overloading.members
  */
 trait PropertiesTrait
 {
@@ -132,7 +132,7 @@ trait PropertiesTrait
     }
 
     /**
-     * @see http://php.net/manual/language.oop5.overloading.php#object.get
+     * https://php.net/manual/language.oop5.overloading.php#object.get
      *
      * @param string $name
      *
@@ -144,7 +144,7 @@ trait PropertiesTrait
     }
 
     /**
-     * @see http://php.net/manual/language.oop5.overloading.php#object.set
+     * @see https://php.net/manual/language.oop5.overloading.php#object.set
      *
      * @param string $name
      * @param mixed  $value
@@ -155,7 +155,7 @@ trait PropertiesTrait
     }
 
     /**
-     * http://php.net/manual/language.oop5.overloading.php#object.isset
+     * @see https://php.net/manual/language.oop5.overloading.php#object.isset
      *
      * @param string $name
      *
@@ -167,7 +167,7 @@ trait PropertiesTrait
     }
 
     /**
-     * http://php.net/manual/language.oop5.overloading.php#object.unset
+     * @see https://php.net/manual/language.oop5.overloading.php#object.unset
      *
      * @param string $name
      */
