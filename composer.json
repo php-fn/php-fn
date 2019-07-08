@@ -9,7 +9,7 @@
     "php": ">=7.1"
   },
   "require-dev": {
-    "php-fn/test": "^1",
+    "php-fn/test": "2.x-dev",
     "ext-simplexml": "*"
   },
   "autoload": {
@@ -24,9 +24,6 @@
     "psr-4": {
       "fn\\": ["tests/fn"]
     }
-  },
-  "scripts": {
-    "test": "vendor/bin/phpunit"
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
