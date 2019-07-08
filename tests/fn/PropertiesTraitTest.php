@@ -161,9 +161,9 @@ class PropertiesReadWrite
 class PropertiesTraitTest extends TestCase
 {
     /**
-     * @covers ::propertyResolved
+     * @covers ::propResolved
      */
-    public function testPropertyResolved(): void
+    public function testPropResolved(): void
     {
         $obj = new PropertiesReadWrite;
 
@@ -185,7 +185,7 @@ class PropertiesTraitTest extends TestCase
     }
 
     /**
-     * @covers ::property
+     * @covers ::prop
      */
     public function testTrait(): void
     {
@@ -265,13 +265,13 @@ class PropertiesTraitTest extends TestCase
             use PropertiesTrait;
 
             private $unresolved = [];
-            protected function propertyMethodInvoke(string $name, ...$args)
+            protected function propResolver(string $name, ...$args)
             {
                 if ($args) {
                     $this->unresolved[$name] = $args;
                     return $args[0];
                 }
-                return $this->{$this->propertyMethod($name)->name}(...$this->unresolved[$name] ?? []);
+                return $this->{self::propMethod($name)->name}(...$this->unresolved[$name] ?? []);
             }
 
             protected function resolveProp(...$args): array

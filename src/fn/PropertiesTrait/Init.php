@@ -24,7 +24,7 @@ trait Init
         $defaults = constant('static::DEFAULT');
         $diff = [];
         $methods = fn\merge($defaults, (array)$properties, function($value, $name) use ($defaults, &$diff) {
-            $method = $this->propertyMethod($name);
+            $method = static::propMethod($name);
             if ($method || fn\hasKey($name, $defaults)) {
                 $this->properties[$name] = $value;
             } else {
@@ -40,7 +40,7 @@ trait Init
         );
 
         foreach ($methods as $name => $method) {
-            $this->propertyGetterInvoke($name, $method, true);
+            $this->propGetter($name, $method, true);
         }
     }
 }

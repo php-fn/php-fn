@@ -9,7 +9,6 @@
 namespace fn;
 
 use fn\Map\Value;
-use Generator;
 use ReflectionMethod;
 
 /**
@@ -29,7 +28,7 @@ trait PropertiesTrait
      *
      * @return ReflectionMethod|false
      */
-    protected function propertyMethod(string $name, bool $assertSetter = false, string $prefix = 'resolve')
+    private static function propMethod(string $name, bool $assertSetter = false, string $prefix = 'resolve')
     {
         static $methods = [];
         if (!isset($methods[$name][$prefix])) {
@@ -52,12 +51,12 @@ trait PropertiesTrait
      *
      * @return mixed
      */
-    protected function propertyMethodInvoke(string $name, ...$args)
+    private function propResolver(string $name, ...$args)
     {
         if ($args) {
-            return $this->{$this->propertyMethod($name)->name}(...$args);
+            return $this->{static::propMethod($name)->name}(...$args);
         }
-        return $this->propertyGetterInvoke($name, $this->propertyMethod($name));
+        return $this->propGetter($name, static::propMethod($name));
     }
 
     /**
@@ -66,29 +65,16 @@ trait PropertiesTrait
      * @param bool $force
      * @return mixed|null
      */
-    protected function propertyGetterInvoke(string $name, ReflectionMethod $method, bool $force = false)
+    private function propGetter(string $name, ReflectionMethod $method, bool $force = false)
     {
         if (!$force && hasKey($name, $this->properties)) {
             return $this->properties[$name];
         }
-        foreach ($gen = $this->propertyGenerate($name, $this->{$method->name}()) as $property => $value) {
-            $this->properties[$property] = $value;
-        }
-        return $this->properties[$name] ?? $gen->getReturn();
-    }
-
-    /**
-     * @param string $property
-     * @param $value
-     *
-     * @return Generator
-     */
-    protected function propertyGenerate(string $property, $value): Generator
-    {
-        if ($value instanceof Value) {
+        if (($value = $this->{$method->name}()) instanceof Value) {
             return $value->value;
         }
-        yield $property => $value;
+
+        return $this->properties[$name] = $value;
     }
 
     /**
@@ -97,23 +83,23 @@ trait PropertiesTrait
      *
      * @return mixed
      */
-    protected function property(string $name, ...$args)
+    private function prop(string $name, ...$args)
     {
-        $method = $this->propertyMethod($name);
+        $method = static::propMethod($name);
         $has = hasKey($name, $this->properties);
         $has || $method || fail\domain('missing magic-property %s in %s', $name, static::class);
 
         if ($args) {
-            return $this->propertyMethod($name, true) ?
-                $this->propertyMethodInvoke($name, ...$args) :
+            return static::propMethod($name, true) ?
+                $this->propResolver($name, ...$args) :
                 $this->properties[$name] = $args[0];
         }
 
         if ($has) {
             $value = $this->properties[$name];
-            return $this->propertyResolved($value, $method) ? $value : $this->propertyGetterInvoke($name, $method, true);
+            return self::propResolved($value, $method) ? $value : $this->propGetter($name, $method, true);
         }
-        return $this->propertyMethodInvoke($name);
+        return $this->propResolver($name);
     }
 
     /**
@@ -122,7 +108,7 @@ trait PropertiesTrait
      *
      * @return bool
      */
-    protected function propertyResolved($var, $method = null): bool
+    private static function propResolved($var, $method = null): bool
     {
         if ($method && $method->hasReturnType()) {
             $type = $method->getReturnType()->getName();
@@ -140,7 +126,7 @@ trait PropertiesTrait
      */
     public function __get(string $name)
     {
-        return $this->property($name);
+        return $this->prop($name);
     }
 
     /**
@@ -151,7 +137,7 @@ trait PropertiesTrait
      */
     public function __set(string $name, $value): void
     {
-        $this->property($name, $value);
+        $this->prop($name, $value);
     }
 
     /**
@@ -163,7 +149,7 @@ trait PropertiesTrait
      */
     public function __isset(string $name): bool
     {
-        return hasKey($name, $this->properties) || $this->propertyMethod($name);
+        return hasKey($name, $this->properties) || static::propMethod($name);
     }
 
     /**
