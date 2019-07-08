@@ -340,4 +340,14 @@ class PropertiesTraitTest extends TestCase
         assert\false(isset($obj->b));
         assert\same('A', $obj->a);
     }
+
+    public function testNoMemoryLeak(): void
+    {
+        $correlation = test\MemoryUsage::timeCorrelation(static function (callable $fill) {
+            $obj = new PropertiesReadWrite;
+            $obj->a = $fill(1024 * 100);
+            return $obj;
+        });
+        assert\lt(0.85, $correlation);
+    }
 }
