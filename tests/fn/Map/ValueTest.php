@@ -7,18 +7,19 @@ namespace fn\Map;
 
 use fn\test\assert;
 use fn;
+use PHPUnit\Framework\TestCase;
 
 /**
- * @covers Value
+ * @coversDefaultClass Value
  */
-class ValueTest extends \PHPUnit\Framework\TestCase
+class ValueTest extends TestCase
 {
     /**
-     * @covers Value::__construct
-     * @covers Value::andValue
-     * @covers Value::andKey
-     * @covers Value::andGroup
-     * @covers Value::andChildren
+     * @covers \fn\Map\Value::__construct
+     * @covers \fn\Map\Value::andValue
+     * @covers \fn\Map\Value::andKey
+     * @covers \fn\Map\Value::andGroup
+     * @covers \fn\Map\Value::andChildren
      */
     public function testProperties(): void
     {

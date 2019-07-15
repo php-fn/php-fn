@@ -9,11 +9,12 @@ use DomainException;
 use fn;
 use fn\test\assert;
 use OutOfRangeException;
+use PHPUnit\Framework\TestCase;
 
 /**
- * @covers RowMapper
+ * @coversDefaultClass RowMapper
  */
-class RowMapperTest extends \PHPUnit\Framework\TestCase
+class RowMapperTest extends TestCase
 {
     /**
      * @return array
@@ -21,7 +22,7 @@ class RowMapperTest extends \PHPUnit\Framework\TestCase
     public function providerInvoke(): array
     {
         $undefined = new OutOfRangeException('undefined index: foo');
-        $useKey = function($row, $key, Value $mapped) {
+        $useKey = static function ($row, $key, Value $mapped) {
             return $key;
         };
 
@@ -61,7 +62,7 @@ class RowMapperTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider providerInvoke
      *
-     * @covers RowMapper::__invoke
+     * @covers \fn\Map\RowMapper::__invoke
      *
      * @param mixed $expected
      * @param RowMapper $mapper
@@ -70,7 +71,7 @@ class RowMapperTest extends \PHPUnit\Framework\TestCase
      */
     public function testInvoke($expected, RowMapper $mapper, $row, $key = null): void
     {
-        assert\equals\trial($expected, function(RowMapper $mapper, $row, $key) {
+        assert\equals\trial($expected, static function (RowMapper $mapper, $row, $key) {
             return $mapper($row, $key);
         }, $mapper, $row, $key);
     }
@@ -95,7 +96,7 @@ class RowMapperTest extends \PHPUnit\Framework\TestCase
             'k1' => ['id' => 'a', 'name' => 'A', 'group' => 'g1'],
             'k2' => ['id' => 'b', 'name' => 'B', 'group' => 'g2'],
             'k3' => ['id' => 'c', 'name' => 'C', 'group' => 'g1'],
-        ], fn\mapRow(function(array $row, $key) {
+        ], fn\mapRow(static function (array $row, $key) {
             return fn\mapValue([$key => $row['name']]);
         }, 'id', 'group')));
 

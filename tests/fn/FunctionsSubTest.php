@@ -5,12 +5,14 @@
 
 namespace fn;
 
+use ArrayObject;
 use fn\test\assert;
+use PHPUnit\Framework\TestCase;
 
 /**
- * @covers ::sub
+ * @uses \fn\sub
  */
-class FunctionsSubTest extends \PHPUnit\Framework\TestCase
+class FunctionsSubTest extends TestCase
 {
     /**
      * for iterable:
@@ -23,7 +25,7 @@ class FunctionsSubTest extends \PHPUnit\Framework\TestCase
     public function providerSubWithIterable(): array
     {
         $candidate = ['a' => 'A', 'b' => 'B', 'c' => 'C', 'd' => 'D', 'e' => 'E'];
-        $case = function ($expected, $start, $lengthOrCallable = null, $encodingOrCallable = null) use ($candidate) {
+        $case = static function ($expected, $start, $lengthOrCallable = null, $encodingOrCallable = null) use ($candidate) {
             return [
                 'expected' => $expected,
                 'candidate' => $candidate,
@@ -37,7 +39,7 @@ class FunctionsSubTest extends \PHPUnit\Framework\TestCase
             '1 arg: start = 0' => $case($candidate, 0),
             '1 arg: start > 0' => $case(['c' => 'C', 'd' => 'D', 'e' => 'E'], 2),
             '1 arg: start < 0' => $case(['d' => 'D', 'e' => 'E'], -2),
-            '2 args: with callable' => $case(['e' => 'EE'], -1, function ($value) {
+            '2 args: with callable' => $case(['e' => 'EE'], -1, static function ($value) {
                 return $value . $value;
             }),
             '2 args: start = 0, length = 0' => $case([], 0, 0),
@@ -49,7 +51,7 @@ class FunctionsSubTest extends \PHPUnit\Framework\TestCase
             '2 args: start < 0, length = 0' => $case([], -3, 0),
             '2 args: start < 0, length > 0' => $case(['b' => 'B', 'c' => 'C'], -4, 2),
             '2 args: start < 0, length < 0' => $case(['c' => 'C'], -3, -2),
-            '3 args: with callable' => $case(['a' => 'AA', 'b' => 'BB'], 0, 2, function ($value) {
+            '3 args: with callable' => $case(['a' => 'AA', 'b' => 'BB'], 0, 2, static function ($value) {
                 return $value . $value;
             }),
         ];
@@ -58,8 +60,8 @@ class FunctionsSubTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider providerSubWithIterable
      *
-     * @covers       ::sub
-     * @covers       Map::sub
+     * @uses \fn\sub
+     * @covers \fn\Map::sub
      *
      * @param array $expected
      * @param array $candidate
@@ -72,7 +74,7 @@ class FunctionsSubTest extends \PHPUnit\Framework\TestCase
         assert\same($expected, sub($candidate, $start, $lengthOrCallable, $encodingOrCallable), 'candidate as array');
         assert\same(
             $expected,
-            sub(new \ArrayObject($candidate), $start, $lengthOrCallable, $encodingOrCallable),
+            sub(new ArrayObject($candidate), $start, $lengthOrCallable, $encodingOrCallable),
             'candidate as iterator'
         );
         if (!$encodingOrCallable) {
@@ -92,7 +94,7 @@ class FunctionsSubTest extends \PHPUnit\Framework\TestCase
      */
     public function providerSubWithString(): array
     {
-        $case = function (
+        $case = static function (
             $expected,
             $start,
             $lengthOrCallable = null,
@@ -116,7 +118,7 @@ class FunctionsSubTest extends \PHPUnit\Framework\TestCase
             '1 arg: start = 0' => $case('абвгд', 0),
             '1 arg: start > 0' => $case('вгд', 2),
             '1 arg: start < 0' => $case('гд', -2),
-            '2 args: with callable' => $case('дд', -1, function ($value) {
+            '2 args: with callable' => $case('дд', -1, static function ($value) {
                 return $value . $value;
             }),
             '2 args: start = 0, length = 0' => $case('', 0, 0),
@@ -128,11 +130,11 @@ class FunctionsSubTest extends \PHPUnit\Framework\TestCase
             '2 args: start < 0, length = 0' => $case('', -3, 0),
             '2 args: start < 0, length > 0' => $case('бв', -4, 2),
             '2 args: start < 0, length < 0' => $case('в', -3, -2),
-            '3 args: with callable' => $case('абаб', 0, 2, function ($value) {
+            '3 args: with callable' => $case('абаб', 0, 2, static function ($value) {
                 return $value . $value;
             }),
             '3 args: with encoding' => $case('&micro;', 0, 1, 'HTML-ENTITIES', null, $micro),
-            '4 args' => $case('&MICRO;', 0, 1, 'HTML-ENTITIES', function ($value) {
+            '4 args' => $case('&MICRO;', 0, 1, 'HTML-ENTITIES', static function ($value) {
                 return strtoupper($value);
             }, $micro),
         ];
@@ -141,7 +143,7 @@ class FunctionsSubTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider providerSubWithString
      *
-     * @covers       ::sub
+     * @uses \fn\sub
      *
      * @param array $expected
      * @param array $candidate

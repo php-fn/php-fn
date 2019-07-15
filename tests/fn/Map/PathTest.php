@@ -7,14 +7,14 @@ namespace fn\Map;
 
 use fn;
 use fn\test\assert;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass Path
  */
-class PathTest extends \PHPUnit\Framework\TestCase
+class PathTest extends TestCase
 {
     /**
-     * @covers ::keys
      * @covers \fn\Map::flatten
      */
     public function testFlatten(): void
@@ -54,7 +54,7 @@ class PathTest extends \PHPUnit\Framework\TestCase
             '2/1 depth=1' => ['d'],
             '2/1/0 depth=2' => 'd',
             '3 depth=0' => 'e',
-        ], fn\flatten(['a', 'b', ['c', ['d']], 'e'], function($value, &$key, Path $it) {
+        ], fn\flatten(['a', 'b', ['c', ['d']], 'e'], static function ($value, &$key, Path $it) {
             $key .= ' depth=' . $it->getDepth();
             return $value;
         }));
@@ -71,7 +71,7 @@ class PathTest extends \PHPUnit\Framework\TestCase
             '2/0'   => ['c', 'd'],
             '2/0/0' => 'C',
             '-'     => 'D',
-        ], fn\flatten(['a', ['b'], [['c', 'd']]], function($value, $key, Path $it) {
+        ], fn\flatten(['a', ['b'], [['c', 'd']]], static function ($value, $key, Path $it) {
             if (strpos($key, '1') === 0) {
                 return null;
             }

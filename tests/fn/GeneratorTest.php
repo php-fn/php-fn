@@ -6,7 +6,7 @@
 namespace fn;
 
 /**
- * @covers Map
+ * @coversDefaultClass Map
  */
 class GeneratorTest extends MapTest
 {
@@ -15,7 +15,7 @@ class GeneratorTest extends MapTest
      */
     protected function map($iterable = null, ...$args): Map
     {
-        return map(static function() use($iterable) {
+        return map(static function() use ($iterable) {
             $iterable !== null && yield from $iterable;
         }, ...$args);
     }

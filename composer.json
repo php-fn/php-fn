@@ -9,7 +9,8 @@
     "php": ">=7.1"
   },
   "require-dev": {
-    "php-fn/test": "2.x-dev",
+    "php-fn/test": "^2.0",
+    "php-coveralls/php-coveralls": "^2.1",
     "ext-simplexml": "*"
   },
   "autoload": {
@@ -31,5 +32,8 @@
     "branch-alias": {
       "dev-master": "2.x-dev"
     }
+  },
+  "scripts": {
+    "test": "php -d error_reporting=22527 vendor/bin/phpunit tests/"
   }
 }

@@ -6,6 +6,7 @@
 namespace fn;
 
 use ArrayAccess;
+use ArrayObject;
 use Closure;
 use Countable;
 use function fn\_\toArray;
@@ -21,57 +22,57 @@ use stdClass;
 use Traversable;
 
 /**
- * @covers _
  */
 class FunctionsHelperTest extends TestCase
 {
     /**
-     * @covers ::toTraversable
+     * @uses \fn\_\toTraversable
      */
     public function testToTraversable(): void
     {
         $ar = [true];
-        $it = new \ArrayObject($ar);
+        $it = new ArrayObject($ar);
         assert\same($ar, toTraversable([true]));
         assert\same($it, toTraversable($it));
-        assert\equals($it, toTraversable(new \ArrayObject($ar)));
-        assert\not\same($it, toTraversable(new \ArrayObject($ar)));
+        assert\equals($it, toTraversable(new ArrayObject($ar)));
+        assert\not\same($it, toTraversable(new ArrayObject($ar)));
         assert\same(['string'], toTraversable('string', true));
         assert\same([], toTraversable(null, true));
-        assert\exception('argument $candidate must be traversable', function () {
+        assert\exception('argument $candidate must be traversable', static function () {
             toTraversable('string');
         });
     }
 
     /**
-     * @covers ::toArray
+     * @uses \fn\_\toArray
      */
     public function testToArray(): void
     {
         assert\equals(['key' => 'value'], toArray(['key' => 'value']));
-        assert\equals(['key' => 'value'], toArray(new \ArrayObject(['key' => 'value'])));
+        assert\equals(['key' => 'value'], toArray(new ArrayObject(['key' => 'value'])));
         assert\equals([], toArray(null, true));
-        assert\exception('argument $candidate must be traversable', function () {
+        assert\exception('argument $candidate must be traversable', static function () {
             toArray(null);
         });
     }
 
     /**
-     * @covers ::toValues
+     * @uses \fn\_\toValues
      */
     public function testToValues(): void
     {
         assert\equals(['value'], toValues(['key' => 'value']));
-        assert\equals(['value'], toValues(new \ArrayObject(['key' => 'value'])));
+        assert\equals(['value'], toValues(new ArrayObject(['key' => 'value'])));
         assert\equals([], toValues(null, true));
-        assert\exception('argument $candidate must be traversable', function () {
+        assert\exception('argument $candidate must be traversable', static function () {
             toValues(null);
         });
     }
 
     /**
+     * @uses \fn\str
      * @dataProvider providerStr
-     * @covers ::str
+     *
      * @param string $expected
      * @param string $subject
      * @param array $replacements
@@ -105,7 +106,7 @@ class FunctionsHelperTest extends TestCase
     }
 
     /**
-     * @covers ::type
+     * @uses \fn\type
      * @dataProvider providerType
      *
      * @param string $expected

@@ -7,17 +7,18 @@ namespace fn\Map;
 
 use ArrayIterator;
 use Closure;
+use Exception;
 use fn;
 use fn\test\assert;
 use IteratorAggregate;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use SimpleXMLElement;
-use Traversable;
 
 /**
- * @covers Lazy
+ * @coversDefaultClass Lazy
  */
-class LazyTest extends \PHPUnit\Framework\TestCase
+class LazyTest extends TestCase
 {
     private static function proxy($traversable): IteratorAggregate
     {
@@ -112,9 +113,9 @@ class LazyTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider providerUnify
      *
-     * @covers       ::unify
+     * @covers \fn\Map\Lazy::unify
      *
-     * @param array|\Exception $expected
+     * @param array|Exception $expected
      * @param callable|iterable ...$proxy
      */
     public function testUnify($expected, ...$proxy): void
@@ -125,7 +126,7 @@ class LazyTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @covers ::isLast
+     * @covers \fn\Map\Lazy::isLast
      */
     public function testIsLastExplicitIteration(): void
     {
@@ -209,7 +210,7 @@ class LazyTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider providerIsLast
-     * @covers       ::isLast
+     * @covers \fn\Map\Lazy::isLast
      *
      * @param array $expected
      * @param Lazy $it
@@ -225,7 +226,7 @@ class LazyTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider providerIsLast
-     * @covers       ::isLast
+     * @covers \fn\Map\Lazy::isLast
      *
      * @param array $expected
      * @param Lazy $it
@@ -241,7 +242,7 @@ class LazyTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider providerIsLast
-     * @covers       ::isLast
+     * @covers \fn\Map\Lazy::isLast
      *
      * @param array $expected
      * @param Lazy $it

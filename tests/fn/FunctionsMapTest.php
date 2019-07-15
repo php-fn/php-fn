@@ -9,7 +9,6 @@ use ArrayObject;
 use fn\test\assert;
 
 /**
- * @covers \fn\*
  */
 class FunctionsMapTest extends MapTest
 {
@@ -22,7 +21,7 @@ class FunctionsMapTest extends MapTest
     }
 
     /**
-     * @covers ::hasKey
+     * @uses \fn\hasKey
      */
     public function testHasKey(): void
     {
@@ -46,7 +45,7 @@ class FunctionsMapTest extends MapTest
     }
 
     /**
-     * @covers ::hasValue
+     * @uses \fn\hasValue
      */
     public function testHasValue(): void
     {
@@ -64,7 +63,7 @@ class FunctionsMapTest extends MapTest
     }
 
     /**
-     * @covers ::map
+     * @uses \fn\map
      */
     public function testMapReplace(): void
     {
@@ -92,7 +91,7 @@ class FunctionsMapTest extends MapTest
             traverse(map(
                 ['a' => 'a', 'b' => 'b'],
                 ['c' => 'C', 'a' => 'A'],
-                function($value, $key) {
+                static function ($value, $key) {
                     return mapValue("v:$value")->andKey("k:$key");
                 }
             )),
@@ -111,7 +110,7 @@ class FunctionsMapTest extends MapTest
             'mapValue(mapNull())' => [
                 [null],
                 ['v'],
-                function() {
+                static function() {
                     return mapValue(mapNull());
                 }
             ],
@@ -123,7 +122,7 @@ class FunctionsMapTest extends MapTest
             'without Map\Value class' => [
                 ['v1' => 'k1', 'v2' => 'k2'],
                 ['k1' => 'v1', 'k2' => 'v2'],
-                function ($value, &$key) {
+                static function ($value, &$key) {
                     $tmp = $key;
                     $key = $value;
                     return $tmp;
@@ -132,7 +131,7 @@ class FunctionsMapTest extends MapTest
             'using mapBreak() and mapNull()' => [
                 [1 => null, 3 => 'd'],
                 ['a', 'b', 'c', 'd', 'e', 'f'],
-                function ($value) {
+                static function ($value) {
                     if ($value === 'e') {
                         return mapBreak();
                     }
@@ -146,7 +145,7 @@ class FunctionsMapTest extends MapTest
             'using mapValue() and mapKey()' => [
                 ['VALUE', 'KEY' => 'key', 'pair' => 'flip', 'no' => 'changes'],
                 ['value', 'key', 'flip' => 'pair', 'no' => 'changes'],
-                function ($value, $key) {
+                static function ($value, $key) {
                     if ($value === 'value') {
                         return mapValue('VALUE');
                     }
@@ -172,7 +171,7 @@ class FunctionsMapTest extends MapTest
                     ],
                 ],
                 $toGroup,
-                function ($value) {
+                static function ($value) {
                     return mapGroup($value[0]);
                 },
             ],
@@ -188,7 +187,7 @@ class FunctionsMapTest extends MapTest
                     ],
                 ],
                 $toGroup,
-                function($value, $key) {
+                static function($value, $key) {
                     return mapGroup($value)->andKey($key + 100);
                 },
             ],
@@ -198,7 +197,7 @@ class FunctionsMapTest extends MapTest
     /**
      * @dataProvider providerSameBehaviourTraverseAndMap
      *
-     * @covers ::traverse
+     * @uses \fn\traverse
      *
      * @param mixed $expected
      * @param mixed $iterable
@@ -212,7 +211,7 @@ class FunctionsMapTest extends MapTest
     /**
      * @dataProvider providerSameBehaviourTraverseAndMap
      *
-     * @covers ::map
+     * @uses \fn\map
      *
      * @param mixed $expected
      * @param mixed $iterable
@@ -224,7 +223,7 @@ class FunctionsMapTest extends MapTest
     }
 
     /**
-     * @covers ::traverse
+     * @uses \fn\traverse
      */
     public function testTraverse(): void
     {
@@ -249,8 +248,8 @@ class FunctionsMapTest extends MapTest
     }
 
     /**
-     * @covers ::mapNull
-     * @covers ::mapBreak
+     * @uses \fn\mapNull
+     * @uses \fn\mapBreak
      */
     public function testNullBreak(): void
     {
@@ -265,10 +264,10 @@ class FunctionsMapTest extends MapTest
     }
 
     /**
-     * @covers ::mapValue
-     * @covers ::mapKey
-     * @covers ::mapGroup
-     * @covers ::mapChildren
+     * @uses \fn\mapValue
+     * @uses \fn\mapKey
+     * @uses \fn\mapGroup
+     * @uses \fn\mapChildren
      */
     public function testValueFunctions(): void
     {
@@ -284,7 +283,7 @@ class FunctionsMapTest extends MapTest
     }
 
     /**
-     * @covers ::map
+     * @uses \fn\map
      */
     public function testMap(): void
     {
@@ -300,7 +299,7 @@ class FunctionsMapTest extends MapTest
             map(['a', 'k' => 'b'], ['c'], ['d', 'k' => 'e'])->traverse,
             'args > 1, no mapper, with assoc key'
         );
-        assert\equals(['A', 'C', 'D', 'E'], map(['a', 'b'], ['c'], ['d', 'e'], function ($value) {
+        assert\equals(['A', 'C', 'D', 'E'], map(['a', 'b'], ['c'], ['d', 'e'], static function ($value) {
             return $value === 'b' ? null : strtoupper($value);
         })->values, 'args > 1, with mapper');
 
@@ -315,7 +314,7 @@ class FunctionsMapTest extends MapTest
     }
 
     /**
-     * @covers ::merge
+     * @uses \fn\merge
      */
     public function testMerge(): void
     {
@@ -330,7 +329,7 @@ class FunctionsMapTest extends MapTest
             'args > 1, no mapper, with assoc key'
         );
 
-        assert\equals(['A', 'C', 'D', 'E'], _\toValues(merge(['a', 'b'], ['c'], ['d', 'e'], function ($value) {
+        assert\equals(['A', 'C', 'D', 'E'], _\toValues(merge(['a', 'b'], ['c'], ['d', 'e'], static function ($value) {
             return $value === 'b' ? null : strtoupper($value);
         })), 'args > 1, with mapper');
 
@@ -338,7 +337,7 @@ class FunctionsMapTest extends MapTest
     }
 
     /**
-     * @covers ::values
+     * @uses \fn\values
      */
     public function testValues(): void
     {
@@ -353,7 +352,7 @@ class FunctionsMapTest extends MapTest
             'args > 1, no mapper, with assoc key'
         );
 
-        assert\same(['A', 2 => 'C', 'D', 'E'], values(['a', 'b'], ['c'], ['d', 'e'], function ($value) {
+        assert\same(['A', 2 => 'C', 'D', 'E'], values(['a', 'b'], ['c'], ['d', 'e'], static function ($value) {
             return $value === 'b' ? null : strtoupper($value);
         }), 'args > 1, with mapper');
 
@@ -361,7 +360,7 @@ class FunctionsMapTest extends MapTest
     }
 
     /**
-     * @covers ::keys
+     * @uses \fn\keys
      */
     public function testKeys(): void
     {
@@ -376,19 +375,19 @@ class FunctionsMapTest extends MapTest
             'args > 1, no mapper, with assoc key'
         );
 
-        assert\equals([0, 20, 30, 40], _\toValues(keys(['a', 'b'], ['c'], ['d', 'e'], function ($value) {
+        assert\equals([0, 20, 30, 40], _\toValues(keys(['a', 'b'], ['c'], ['d', 'e'], static function ($value) {
             return $value === 1 ? null : $value * 10;
         })), 'args > 1, with mapper');
 
         assert\equals([10], keys([10 => 'numeric']));
-        assert\equals([10], keys([10 => 'numeric'], function($key) {
+        assert\equals([10], keys([10 => 'numeric'], static function ($key) {
             return $key;
         }));
         assert\equals([0, 1], keys([10 => 'numeric'], [20 => 'numeric']));
     }
 
     /**
-     * @covers ::mixin
+     * @uses \fn\mixin
      */
     public function testMixin(): void
     {
@@ -403,13 +402,13 @@ class FunctionsMapTest extends MapTest
             'args > 1, no mapper, with assoc key'
         );
 
-        assert\equals(['D'], _\toValues(mixin(['a', 'b'], ['c'], ['d'], function ($value) {
+        assert\equals(['D'], _\toValues(mixin(['a', 'b'], ['c'], ['d'], static function ($value) {
             return $value === 'b' ? null : strtoupper($value);
         })), 'args > 1, with mapper');
     }
 
     /**
-     * @covers ::every
+     * @uses \fn\every
      */
     public function testEveryFunction(): void
     {
@@ -418,11 +417,11 @@ class FunctionsMapTest extends MapTest
         assert\true(every([], []));
         assert\true(every([' ']));
         assert\false(every(['']));
-        assert\true(every([''], [0], function() {return true;}));
+        assert\true(every([''], [0], static function() {return true;}));
     }
 
     /**
-     * @covers ::some
+     * @uses \fn\some
      */
     public function testSomeFunction(): void
     {
@@ -430,11 +429,11 @@ class FunctionsMapTest extends MapTest
         assert\false(some([]));
         assert\false(some([''], [0, null], [[]]));
         assert\true(some([''], [0, null], [false, []], [' ']));
-        assert\false(some([1, true], [' '], function() {return false;}));
+        assert\false(some([1, true], [' '], static function() {return false;}));
     }
 
     /**
-     * @covers ::tree
+     * @uses \fn\tree
      */
     public function testTreeFunction(): void
     {
@@ -447,7 +446,7 @@ class FunctionsMapTest extends MapTest
     }
 
     /**
-     * @covers ::leaves
+     * @uses \fn\leaves
      */
     public function testLeavesFunction(): void
     {

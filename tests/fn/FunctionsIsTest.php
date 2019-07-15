@@ -6,14 +6,16 @@
 namespace fn;
 
 use fn\test\assert;
+use PHPUnit\Framework\TestCase;
 
 /**
  */
-class FunctionsIsTest extends \PHPUnit\Framework\TestCase
+class FunctionsIsTest extends TestCase
 {
     /**
-     * @covers ::isCallable
+     * @uses \fn\isCallable
      * @dataProvider providerIsCallable
+     *
      * @param bool $expected
      * @param array $args
      */
@@ -28,9 +30,9 @@ class FunctionsIsTest extends \PHPUnit\Framework\TestCase
     public function providerIsCallable(): array
     {
         return [
-            'closure' => [true, function () {}],
-            'closure tolerant' => [true, function () {}, false],
-            'closure strict' => [true, function () {}, true],
+            'closure' => [true, static function () {}],
+            'closure tolerant' => [true, static function () {}, false],
+            'closure strict' => [true, static function () {}, true],
             '__invoke' => [true, $this],
             '__invoke tolerant' => [true, $this, false],
             '__invoke strict' => [true, $this, true],
