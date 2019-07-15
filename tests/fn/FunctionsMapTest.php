@@ -5,6 +5,7 @@
 
 namespace fn;
 
+use ArrayObject;
 use fn\test\assert;
 
 /**
@@ -227,21 +228,24 @@ class FunctionsMapTest extends MapTest
      */
     public function testTraverse(): void
     {
-        $emptyCallable = function () {};
+        $emptyCallable = static function () {};
 
         assert\same(['key' => 'value'], traverse(['key' => 'value']));
-        assert\same(['key' => 'value'], traverse(new \ArrayObject(['key' => 'value'])));
+        assert\same(['key' => 'value'], traverse(new ArrayObject(['key' => 'value'])));
         assert\same([], traverse(_\toArray(null, true)));
         assert\same([], traverse(_\toArray(null, true), $emptyCallable));
 
-        assert\exception('argument $candidate must be traversable', function () {
+        assert\exception('argument $candidate must be traversable', static function () {
             traverse(null);
         });
-        assert\exception('argument $traversable must be traversable', function ($emptyCallable) {
+        assert\exception('argument $traversable must be traversable', static function ($emptyCallable) {
             traverse(null, $emptyCallable);
         }, $emptyCallable);
-        assert\same([1], traverse(_\toArray('value', true), 'count'));
         assert\same(['VALUE'], traverse(_\toArray('value', true), $this));
+
+        if (PHP_VERSION_ID < 70200) {
+            assert\same([1], traverse(_\toArray('value', true), 'count'));
+        }
     }
 
     /**
