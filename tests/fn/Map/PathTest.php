@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 class PathTest extends TestCase
 {
     /**
-     * @covers \fn\Map::flatten
      */
     public function testFlatten(): void
     {

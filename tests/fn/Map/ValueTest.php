@@ -14,13 +14,6 @@ use PHPUnit\Framework\TestCase;
  */
 class ValueTest extends TestCase
 {
-    /**
-     * @covers \fn\Map\Value::__construct
-     * @covers \fn\Map\Value::andValue
-     * @covers \fn\Map\Value::andKey
-     * @covers \fn\Map\Value::andGroup
-     * @covers \fn\Map\Value::andChildren
-     */
     public function testProperties(): void
     {
         $val = new Value;

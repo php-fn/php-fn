@@ -25,17 +25,11 @@ class MapTest extends TestCase
         return new Map(...$arguments);
     }
 
-    /**
-     * @covers \fn\Map::getIterator
-     */
     public function testGetIterator(): void
     {
         assert\type(Traversable::class, $this->map()->getIterator());
     }
 
-    /**
-     * @covers \fn\Map::count
-     */
     public function testCount(): void
     {
         assert\equals(0, count($this->map()));
@@ -45,12 +39,6 @@ class MapTest extends TestCase
         })));
     }
 
-    /**
-     * @covers \fn\Map::offsetExists
-     * @covers \fn\Map::offsetGet
-     * @covers \fn\Map::offsetSet
-     * @covers \fn\Map::offsetUnset
-     */
     public function testArrayAccess(): void
     {
         $map = $this->map(['a' => 'A']);
@@ -68,9 +56,6 @@ class MapTest extends TestCase
         assert\same(['b' => 'B', 'c' => 'C'], traverse($map->replace(['c' => 'C'])));
     }
 
-    /**
-     * @covers \fn\Map::then
-     */
     public function testThen(): void
     {
         $duplicate = static function ($value) {
@@ -129,8 +114,6 @@ class MapTest extends TestCase
 
     /**
      * @dataProvider providerSort
-     * @covers \fn\Map::sort
-     * @covers \fn\Map\Sort::getIterator
      *
      * @param array $expected
      * @param array $map
@@ -144,9 +127,6 @@ class MapTest extends TestCase
         assert\same($expected, traverse($result));
     }
 
-    /**
-     * @covers \fn\Map::keys
-     */
     public function testKeys(): void
     {
         $map = $this->map(['a' => null, 'b' => null, 'c' => null, 10 => null]);
@@ -157,9 +137,6 @@ class MapTest extends TestCase
         })));
     }
 
-    /**
-     * @covers \fn\Map::values
-     */
     public function testValues(): void
     {
         $map = $this->map(['a' => 'A', 'b' => 'B', 'c' => 'C']);
@@ -170,9 +147,6 @@ class MapTest extends TestCase
         assert\same(['D', 'E', 'F'], traverse($map->values($increment, $increment, $increment)));
     }
 
-    /**
-     * @covers \fn\Map::merge
-     */
     public function testMerge(): void
     {
         $map = $this->map(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c'])->merge(
@@ -184,9 +158,6 @@ class MapTest extends TestCase
         assert\equals(['z', 'a' => 'A', 'b' => 'b', 'c' => 'C', 'd' => 'd', 'z'], traverse($map));
     }
 
-    /**
-     * @covers \fn\Map::replace
-     */
     public function testReplace(): void
     {
         $map = $this->map(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c'])->replace(
@@ -198,9 +169,6 @@ class MapTest extends TestCase
         assert\equals(['z', 'a' => 'A', 'b' => 'b', 'c' => 'C', 'd' => 'd'], traverse($map));
     }
 
-    /**
-     * @covers \fn\Map::diff
-     */
     public function testDiff(): void
     {
         $map = $this->map(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c'])->diff(
@@ -212,9 +180,6 @@ class MapTest extends TestCase
         assert\equals(['a' => 'a', 'c' => 'c'], traverse($map));
     }
 
-    /**
-     * @covers \fn\Map::sub
-     */
     public function testSub(): void
     {
         $map = $this->map(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c'])->sub(1, -1);
@@ -222,12 +187,6 @@ class MapTest extends TestCase
         assert\same(['a' => 'a', 'b' => 'b'], $map->traverse);
     }
 
-    /**
-     * @covers \fn\Map::__get
-     * @covers \fn\Map::__isset
-     * @covers \fn\Map::__set
-     * @covers \fn\Map::__unset
-     */
     public function testProperties(): void
     {
         $data = ['a' => 'A', 'b' => 'B', 'c' => 'C'];
@@ -265,9 +224,6 @@ class MapTest extends TestCase
         assert\same(array_keys($expected), $map->keys);
     }
 
-    /**
-     * @covers \fn\Map::has
-     */
     public function testHas(): void
     {
         $map = $this->map(['a', '1']);
@@ -279,9 +235,6 @@ class MapTest extends TestCase
         assert\false($map->has('A', false));
     }
 
-    /**
-     * @covers \fn\Map::search
-     */
     public function testSearch(): void
     {
         $map = $this->map(['a', '1']);
@@ -293,11 +246,6 @@ class MapTest extends TestCase
         assert\same(false, $map->search('A', false));
     }
 
-    /**
-     * @covers \fn\Map::tree
-     * @covers \fn\Map::leaves
-     * @covers \fn\Map\Tree::recursive
-     */
     public function testTree(): void
     {
         $map = $this->map(['k0' => 'a', 'k1' => ['k2' => 'b', 'k3' => 'c']]);
@@ -362,10 +310,6 @@ class MapTest extends TestCase
         );
     }
 
-    /**
-     * @covers \fn\Map::string
-     * @covers \fn\Map::__toString
-     */
     public function testString(): void
     {
         $map = $this->map([['a'], 'b', [$this->map(['c']), ['d', ['e']]], 'f']);
@@ -392,9 +336,6 @@ EOF;
         assert\same('aR1b | R2', $this->map(['a%sb', '%s'])->string(' | ', 'R1', 'R2'));
     }
 
-    /**
-     * @covers \fn\Map::every
-     */
     public function testEvery(): void
     {
         assert\true($this->map()->every);
@@ -422,9 +363,6 @@ EOF;
         }));
     }
 
-    /**
-     * @covers \fn\Map::some
-     */
     public function testSome(): void
     {
         assert\false($this->map()->some);
@@ -453,9 +391,6 @@ EOF;
         }));
     }
 
-    /**
-     * @covers \fn\Map::isLast
-     */
     public function testIsLast(): void
     {
         assert\same(
@@ -467,9 +402,6 @@ EOF;
         );
     }
 
-    /**
-     * @covers \fn\Map::limit
-     */
     public function testLimit(): void
     {
         $map = $this->map(['a', 'b', 'c', 'd'], static function ($value) {
@@ -492,9 +424,6 @@ EOF;
         assert\same([3 => 'D'], traverse($map->limit(2, 2)));
     }
 
-    /**
-     * @covers \fn\Map\Tree::doMap
-     */
     public function testGroupByEmptyString(): void
     {
         assert\equals([

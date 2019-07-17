@@ -82,9 +82,6 @@ class TreeTest extends TestCase
     /**
      * @dataProvider providerRecursiveIteration
      *
-     * @covers \fn\Map\Tree::getChildren
-     * @covers \fn\Map\Tree::hasChildren
-     * @covers \fn\Map\Tree::doMap
      *
      * @param array                 $expected
      * @param iterable|Traversable $inner
@@ -179,12 +176,6 @@ class TreeTest extends TestCase
     /**
      * @dataProvider providerSimpleIteration
      *
-     * @covers \fn\Map\Tree::rewind
-     * @covers \fn\Map\Tree::valid
-     * @covers \fn\Map\Tree::key
-     * @covers \fn\Map\Tree::current
-     * @covers \fn\Map\Tree::next
-     * @covers \fn\Map\Tree::doMap
      *
      * @param array|Exception $expected
      * @param iterable|Traversable $inner
@@ -204,8 +195,6 @@ class TreeTest extends TestCase
     }
 
     /**
-     * @covers \fn\Map\Tree::recursive
-     * @covers \fn\Map\Tree::flatten
      */
     public function testRecursive(): void
     {
@@ -263,7 +252,6 @@ class TreeTest extends TestCase
     }
 
     /**
-     * @covers \fn\Map\Tree::isLast
      */
     public function testIsLast(): void
     {

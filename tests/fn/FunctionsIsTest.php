@@ -13,7 +13,6 @@ use PHPUnit\Framework\TestCase;
 class FunctionsIsTest extends TestCase
 {
     /**
-     * @uses \fn\isCallable
      * @dataProvider providerIsCallable
      *
      * @param bool $expected

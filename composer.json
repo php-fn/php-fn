@@ -34,6 +34,11 @@
     }
   },
   "scripts": {
-    "test": "php -d error_reporting=22527 vendor/bin/phpunit tests/"
+    "test": "php -d error_reporting=22527 vendor/bin/phpunit tests/",
+    "cover": [
+      "mkdir -p build/logs",
+      "xdebug -d error_reporting=22527 vendor/bin/phpunit --coverage-clover build/logs/clover.xml --whitelist src/fn/ tests/",
+      "COVERALLS_RUN_LOCALLY=1 vendor/bin/php-coveralls -v"
+    ]
   }
 }

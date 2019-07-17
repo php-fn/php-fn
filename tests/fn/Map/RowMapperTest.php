@@ -62,8 +62,6 @@ class RowMapperTest extends TestCase
     /**
      * @dataProvider providerInvoke
      *
-     * @covers \fn\Map\RowMapper::__invoke
-     *
      * @param mixed $expected
      * @param RowMapper $mapper
      * @param mixed $row

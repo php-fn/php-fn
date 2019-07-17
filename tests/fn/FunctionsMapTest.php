@@ -8,8 +8,6 @@ namespace fn;
 use ArrayObject;
 use fn\test\assert;
 
-/**
- */
 class FunctionsMapTest extends MapTest
 {
     /**
@@ -20,9 +18,6 @@ class FunctionsMapTest extends MapTest
         return map(...$arguments);
     }
 
-    /**
-     * @uses \fn\hasKey
-     */
     public function testHasKey(): void
     {
         assert\false(hasKey('key', null));
@@ -44,9 +39,6 @@ class FunctionsMapTest extends MapTest
         assert\false(hasKey(0, ''));
     }
 
-    /**
-     * @uses \fn\hasValue
-     */
     public function testHasValue(): void
     {
         assert\false(hasValue('value', null));
@@ -62,9 +54,6 @@ class FunctionsMapTest extends MapTest
         assert\true(hasValue('100', map([100]), false));
     }
 
-    /**
-     * @uses \fn\map
-     */
     public function testMapReplace(): void
     {
         assert\same(
@@ -197,7 +186,6 @@ class FunctionsMapTest extends MapTest
     /**
      * @dataProvider providerSameBehaviourTraverseAndMap
      *
-     * @uses \fn\traverse
      *
      * @param mixed $expected
      * @param mixed $iterable
@@ -211,7 +199,6 @@ class FunctionsMapTest extends MapTest
     /**
      * @dataProvider providerSameBehaviourTraverseAndMap
      *
-     * @uses \fn\map
      *
      * @param mixed $expected
      * @param mixed $iterable
@@ -222,9 +209,6 @@ class FunctionsMapTest extends MapTest
         assert\same($expected, map($iterable, ...$mapper)->traverse);
     }
 
-    /**
-     * @uses \fn\traverse
-     */
     public function testTraverse(): void
     {
         $emptyCallable = static function () {};
@@ -247,10 +231,6 @@ class FunctionsMapTest extends MapTest
         }
     }
 
-    /**
-     * @uses \fn\mapNull
-     * @uses \fn\mapBreak
-     */
     public function testNullBreak(): void
     {
         assert\equals((object)[], mapNull());
@@ -263,12 +243,6 @@ class FunctionsMapTest extends MapTest
         assert\not\same(mapBreak(), mapNull());
     }
 
-    /**
-     * @uses \fn\mapValue
-     * @uses \fn\mapKey
-     * @uses \fn\mapGroup
-     * @uses \fn\mapChildren
-     */
     public function testValueFunctions(): void
     {
         assert\equals(new Map\Value, mapValue());
@@ -282,9 +256,6 @@ class FunctionsMapTest extends MapTest
         assert\equals((new Map\Value)->andChildren('c'), mapChildren('c'));
     }
 
-    /**
-     * @uses \fn\map
-     */
     public function testMap(): void
     {
         assert\type(Map::class, map());
@@ -313,9 +284,6 @@ class FunctionsMapTest extends MapTest
         assert\same('B', map(['a' => 'A'], ['b' => 'B'])['b']);
     }
 
-    /**
-     * @uses \fn\merge
-     */
     public function testMerge(): void
     {
         assert\same([], merge(), 'args = 0');
@@ -336,9 +304,6 @@ class FunctionsMapTest extends MapTest
         assert\same('B', merge(['a' => 'A'], ['b' => 'B'])['b']);
     }
 
-    /**
-     * @uses \fn\values
-     */
     public function testValues(): void
     {
         assert\same([], values(), 'args = 0');
@@ -359,9 +324,6 @@ class FunctionsMapTest extends MapTest
         assert\same('B', values(['a' => 'A'], ['b' => 'B'])[1]);
     }
 
-    /**
-     * @uses \fn\keys
-     */
     public function testKeys(): void
     {
         assert\same([], keys(), 'args = 0');
@@ -386,9 +348,6 @@ class FunctionsMapTest extends MapTest
         assert\equals([0, 1], keys([10 => 'numeric'], [20 => 'numeric']));
     }
 
-    /**
-     * @uses \fn\mixin
-     */
     public function testMixin(): void
     {
         assert\same([], mixin(), 'args = 0');
@@ -407,9 +366,6 @@ class FunctionsMapTest extends MapTest
         })), 'args > 1, with mapper');
     }
 
-    /**
-     * @uses \fn\every
-     */
     public function testEveryFunction(): void
     {
         assert\true(every());
@@ -420,9 +376,6 @@ class FunctionsMapTest extends MapTest
         assert\true(every([''], [0], static function() {return true;}));
     }
 
-    /**
-     * @uses \fn\some
-     */
     public function testSomeFunction(): void
     {
         assert\false(some());
@@ -432,9 +385,6 @@ class FunctionsMapTest extends MapTest
         assert\false(some([1, true], [' '], static function() {return false;}));
     }
 
-    /**
-     * @uses \fn\tree
-     */
     public function testTreeFunction(): void
     {
         assert\same([], tree());
@@ -445,9 +395,6 @@ class FunctionsMapTest extends MapTest
         }));
     }
 
-    /**
-     * @uses \fn\leaves
-     */
     public function testLeavesFunction(): void
     {
         assert\same([], leaves());

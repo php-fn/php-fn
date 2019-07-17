@@ -113,7 +113,6 @@ class LazyTest extends TestCase
     /**
      * @dataProvider providerUnify
      *
-     * @covers \fn\Map\Lazy::unify
      *
      * @param array|Exception $expected
      * @param callable|iterable ...$proxy
@@ -126,7 +125,6 @@ class LazyTest extends TestCase
     }
 
     /**
-     * @covers \fn\Map\Lazy::isLast
      */
     public function testIsLastExplicitIteration(): void
     {
@@ -210,7 +208,6 @@ class LazyTest extends TestCase
 
     /**
      * @dataProvider providerIsLast
-     * @covers \fn\Map\Lazy::isLast
      *
      * @param array $expected
      * @param Lazy $it
@@ -226,7 +223,6 @@ class LazyTest extends TestCase
 
     /**
      * @dataProvider providerIsLast
-     * @covers \fn\Map\Lazy::isLast
      *
      * @param array $expected
      * @param Lazy $it
@@ -242,7 +238,6 @@ class LazyTest extends TestCase
 
     /**
      * @dataProvider providerIsLast
-     * @covers \fn\Map\Lazy::isLast
      *
      * @param array $expected
      * @param Lazy $it

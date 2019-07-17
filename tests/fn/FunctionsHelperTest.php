@@ -26,7 +26,6 @@ use Traversable;
 class FunctionsHelperTest extends TestCase
 {
     /**
-     * @uses \fn\_\toTraversable
      */
     public function testToTraversable(): void
     {
@@ -44,7 +43,6 @@ class FunctionsHelperTest extends TestCase
     }
 
     /**
-     * @uses \fn\_\toArray
      */
     public function testToArray(): void
     {
@@ -57,7 +55,6 @@ class FunctionsHelperTest extends TestCase
     }
 
     /**
-     * @uses \fn\_\toValues
      */
     public function testToValues(): void
     {
@@ -70,7 +67,6 @@ class FunctionsHelperTest extends TestCase
     }
 
     /**
-     * @uses \fn\str
      * @dataProvider providerStr
      *
      * @param string $expected
@@ -106,7 +102,6 @@ class FunctionsHelperTest extends TestCase
     }
 
     /**
-     * @uses \fn\type
      * @dataProvider providerType
      *
      * @param string $expected

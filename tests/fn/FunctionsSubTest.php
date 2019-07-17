@@ -10,7 +10,6 @@ use fn\test\assert;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @uses \fn\sub
  */
 class FunctionsSubTest extends TestCase
 {
@@ -60,8 +59,6 @@ class FunctionsSubTest extends TestCase
     /**
      * @dataProvider providerSubWithIterable
      *
-     * @uses \fn\sub
-     * @covers \fn\Map::sub
      *
      * @param array $expected
      * @param array $candidate
@@ -142,8 +139,6 @@ class FunctionsSubTest extends TestCase
 
     /**
      * @dataProvider providerSubWithString
-     *
-     * @uses \fn\sub
      *
      * @param array $expected
      * @param array $candidate

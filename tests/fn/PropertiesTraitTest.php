@@ -161,7 +161,6 @@ class PropertiesReadWrite
 class PropertiesTraitTest extends TestCase
 {
     /**
-     * @covers \fn\PropertiesTrait::propResolved
      */
     public function testPropResolved(): void
     {
@@ -185,7 +184,6 @@ class PropertiesTraitTest extends TestCase
     }
 
     /**
-     * @covers \fn\PropertiesTrait::prop
      */
     public function testTrait(): void
     {
@@ -303,8 +301,6 @@ class PropertiesTraitTest extends TestCase
     }
 
     /**
-     * @covers \fn\PropertiesTrait\ReadOnly::__set
-     * @covers \fn\PropertiesTrait\Init::propsInit
      */
     public function testReadOnly(): void
     {
