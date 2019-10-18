@@ -1,44 +1,51 @@
 {
-  "name": "php-fn/php-fn",
-  "description": "a php library",
-  "keywords": ["php", "library"],
-  "homepage": "https://github.com/php-fn/php-fn",
-  "license": "MIT",
-  "require": {
-    "ext-mbstring": "*",
-    "php": ">=7.1"
-  },
-  "require-dev": {
-    "php-fn/test": "^3.0",
-    "php-coveralls/php-coveralls": "^2.1",
-    "ext-simplexml": "*"
-  },
-  "autoload": {
-    "psr-4": {
-      "php\\": ["src/php"]
+    "name": "php-fn/php-fn",
+    "description": "a php library",
+    "keywords": [
+        "php",
+        "library"
+    ],
+    "homepage": "https://github.com/php-fn/php-fn",
+    "license": "MIT",
+    "require": {
+        "ext-mbstring": "*",
+        "php": ">=7.1"
     },
-    "files": [
-      "src/autoload-files.php"
-    ]
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "php\\": ["tests/php"]
+    "require-dev": {
+        "php-fn/test": "^3.0",
+        "php-coveralls/php-coveralls": "^2.1",
+        "ext-simplexml": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "php\\": [
+                "src/php"
+            ]
+        },
+        "files": [
+            "src/autoload-files.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "php\\": [
+                "tests/php"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-master": "3.x-dev"
+        }
+    },
+    "scripts": {
+        "test": "php -d error_reporting=22527 vendor/bin/phpunit tests/",
+        "cover": [
+            "mkdir -p build/logs",
+            "xdebug -d error_reporting=22527 vendor/bin/phpunit --coverage-clover build/logs/clover.xml --whitelist src/php/ tests/",
+            "COVERALLS_RUN_LOCALLY=1 vendor/bin/php-coveralls -v"
+        ]
     }
-  },
-  "minimum-stability": "dev",
-  "prefer-stable": true,
-  "extra": {
-    "branch-alias": {
-      "dev-master": "3.x-dev"
-    }
-  },
-  "scripts": {
-    "test": "php -d error_reporting=22527 vendor/bin/phpunit tests/",
-    "cover": [
-      "mkdir -p build/logs",
-      "xdebug -d error_reporting=22527 vendor/bin/phpunit --coverage-clover build/logs/clover.xml --whitelist src/php/ tests/",
-      "COVERALLS_RUN_LOCALLY=1 vendor/bin/php-coveralls -v"
-    ]
-  }
 }
