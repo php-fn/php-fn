@@ -53,7 +53,6 @@ class MapTest extends TestCase
         assert\exception(new \InvalidArgumentException('a'), static function () use($map) {
            $map['a'];
         });
-        assert\same(['b' => 'B', 'c' => 'C'], traverse($map->replace(['c' => 'C'])));
     }
 
     public function testThen(): void
@@ -158,35 +157,6 @@ class MapTest extends TestCase
         assert\equals(['z', 'a' => 'A', 'b' => 'b', 'c' => 'C', 'd' => 'd', 'z'], traverse($map));
     }
 
-    public function testReplace(): void
-    {
-        $map = $this->map(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c'])->replace(
-            ['d' => 'd', 'a' => 'A'],
-            $this->map(['c' => 'C']),
-            ['z']
-        );
-        assert\type(Map::class, $map);
-        assert\equals(['z', 'a' => 'A', 'b' => 'b', 'c' => 'C', 'd' => 'd'], traverse($map));
-    }
-
-    public function testDiff(): void
-    {
-        $map = $this->map(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c'])->diff(
-            ['d' => 'd', 'a' => 'A'],
-            $this->map(['c' => 'C']),
-            ['z', 'b']
-        );
-        assert\type(Map::class, $map);
-        assert\equals(['a' => 'a', 'c' => 'c'], traverse($map));
-    }
-
-    public function testSub(): void
-    {
-        $map = $this->map(['z', 'a' => 'a', 'b' => 'b', 'c' => 'c'])->sub(1, -1);
-        assert\type(Map::class, $map);
-        assert\same(['a' => 'a', 'b' => 'b'], $map->traverse);
-    }
-
     public function testProperties(): void
     {
         $data = ['a' => 'A', 'b' => 'B', 'c' => 'C'];
@@ -222,28 +192,6 @@ class MapTest extends TestCase
         assert\same($expected, $map->traverse);
         assert\same(array_values($expected), $map->values);
         assert\same(array_keys($expected), $map->keys);
-    }
-
-    public function testHas(): void
-    {
-        $map = $this->map(['a', '1']);
-        assert\true($map->has('a'));
-        assert\true($map->has('1'));
-        assert\false($map->has(1));
-        assert\true($map->has(1, false));
-        assert\false($map->has('A'));
-        assert\false($map->has('A', false));
-    }
-
-    public function testSearch(): void
-    {
-        $map = $this->map(['a', '1']);
-        assert\same(0, $map->search('a'));
-        assert\same(1, $map->search('1'));
-        assert\same(false, $map->search(1));
-        assert\same(1, $map->search(1, false));
-        assert\same(false, $map->search('A'));
-        assert\same(false, $map->search('A', false));
     }
 
     public function testTree(): void

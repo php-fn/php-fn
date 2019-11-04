@@ -23,6 +23,9 @@ use IteratorAggregate;
  */
 class Map implements IteratorAggregate, Countable, ArrayAccess
 {
+    /**
+     * @uses data
+     */
     use ArrayAccessTrait;
 
     /**
@@ -273,16 +276,6 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     }
 
     /**
-     * @param mixed $value
-     * @param bool  $strict
-     * @return bool
-     */
-    public function has($value, $strict = true): bool
-    {
-        return hasValue($value, $this->data(), $strict);
-    }
-
-    /**
      * @return array
      */
     private function data(): array
@@ -293,16 +286,6 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
             $this->mappers = [];
         }
         return $this->data;
-    }
-
-    /**
-     * @param string $key
-     * @param mixed  $default
-     * @return mixed|null
-     */
-    public function get($key, $default = null)
-    {
-        return $this->offsetExists($key) ? $this->offsetGet($key) : $default;
     }
 
     /**
@@ -348,46 +331,6 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
                 return _\toArray($iterable);
             }));
         };
-    }
-
-    /**
-     * @param iterable ...$iterables
-     * @return static
-     */
-    public function replace(...$iterables): self
-    {
-        return new static(new Map\Lazy(self::variadic('array_replace', $this, ...$iterables)));
-    }
-
-    /**
-     * @param iterable ...$iterables
-     * @return static
-     */
-    public function diff(...$iterables): self
-    {
-        return new static(new Map\Lazy(self::variadic('array_diff', $this, ...$iterables)));
-    }
-
-    /**
-     * @param int $start
-     * @param int $length
-     * @return static
-     */
-    public function sub($start, $length = null): self
-    {
-        return new static(new Map\Lazy(function () use ($start, $length) {
-            return sub($this, $start, $length);
-        }));
-    }
-
-    /**
-     * @param mixed $needle
-     * @param bool  $strict
-     * @return false|int|string
-     */
-    public function search($needle, $strict = true)
-    {
-        return array_search($needle, $this->data(), $strict);
     }
 
     /**

@@ -277,9 +277,6 @@ class FunctionsMapTest extends MapTest
         // array_key_exists('a', array_merge(['a' => 'A'], ['b' => 'B']))
         assert\true(isset(map(['a' => null], ['b' => 'B'])['a']));
 
-        // in_array('B', array_merge(['a' => 'A'], ['b' => 'B']), true)
-        assert\true(map(['a' => null], ['b' => 'B'])->has('B'));
-
         // array_merge(['a' => 'A'], ['b' => 'B'])['b']
         assert\same('B', map(['a' => 'A'], ['b' => 'B'])['b']);
     }

@@ -57,30 +57,6 @@ class FunctionsSubTest extends TestCase
     }
 
     /**
-     * @dataProvider providerSubWithIterable
-     *
-     *
-     * @param array $expected
-     * @param array $candidate
-     * @param int $start
-     * @param int|callable $lengthOrCallable
-     * @param callable $encodingOrCallable
-     */
-    public function testSubWithIterable($expected, $candidate, $start, $lengthOrCallable, $encodingOrCallable): void
-    {
-        assert\same($expected, sub($candidate, $start, $lengthOrCallable, $encodingOrCallable), 'candidate as array');
-        assert\same(
-            $expected,
-            sub(new ArrayObject($candidate), $start, $lengthOrCallable, $encodingOrCallable),
-            'candidate as iterator'
-        );
-        if (!$encodingOrCallable) {
-            assert\same($expected, map($candidate)->sub($start, $lengthOrCallable)->traverse);
-        }
-        assert\same([], sub([], $start, $lengthOrCallable, $encodingOrCallable), 'empty candidate');
-    }
-
-    /**
      * for string:
      *  sub($string, $start)
      *  sub($string, $start, $callable = null)
