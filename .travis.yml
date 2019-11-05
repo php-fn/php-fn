@@ -1,19 +1,20 @@
 language: php
 
 php:
-  - 7.1
-  - 7.2
-  - 7.3
-  - 7.4snapshot
+    - 7.1
+    - 7.2
+    - 7.3
+    - 7.4snapshot
 
 sudo: false
 
 before_script:
-  - composer install
+    - yes '' | pecl install -f apcu
+    - composer install
 
 script:
-  - mkdir -p build/logs
-  - vendor/bin/phpunit tests --coverage-clover build/logs/clover.xml --whitelist src/php
+    - mkdir -p build/logs
+    - vendor/bin/phpunit tests --coverage-clover build/logs/clover.xml --whitelist src
 
 after_success:
-  - travis_retry php vendor/bin/php-coveralls -v
+    - travis_retry php vendor/bin/php-coveralls -v
