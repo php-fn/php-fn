@@ -3,13 +3,11 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace Php;
+namespace php;
 
 use ArrayAccess;
 use Closure;
 use Countable;
-use php\Map\Path;
-use php\Map\RowMapper;
 use php\test\assert;
 use OuterIterator;
 use PHPUnit\Framework\TestCase;
@@ -35,7 +33,7 @@ class PhpTest extends TestCase
     {
         $count = (static function (): callable {return 'count';})();
         $method = (static function (): callable {return [static::class, 'providerType'];})();
-        $callable = new RowMapper(null);
+        $callable = new Map\RowMapper(null);
         return [
             "null = ''" => ['', null],
             "'' => string" => ['string', ''],
@@ -56,7 +54,7 @@ class PhpTest extends TestCase
             '[], iterable, array => iterable' => ['iterable', [], 'iterable', 'array'],
             "[], array, int => ''" => ['', [], 'array', 'int'],
             'function => callable' => ['callable', static function () {}],
-            'RowMapper => RowMapper' => [RowMapper::class, $callable],
+            'RowMapper => RowMapper' => [Map\RowMapper::class, $callable],
             'Closure(RowMapper) => callable' => ['callable', Closure::fromCallable($callable)],
             '(object)[] => stdClass' => [stdClass::class, (object)[]],
             'map, iterable, Map => iterable' => ['iterable', map(), 'iterable', Map::class],
@@ -70,14 +68,14 @@ class PhpTest extends TestCase
             ],
             'path => Countable (extends)' => [
                 RecursiveIteratorIterator::class,
-                new Path(map()),
+                new Map\Path(map()),
                 RecursiveIteratorIterator::class,
                 OuterIterator::class,
                 'iterable'
             ],
             'path => not callable' => [
                 '',
-                new Path(map()),
+                new Map\Path(map()),
                 RecursiveIteratorIterator::class,
                 OuterIterator::class,
                 'iterable',
