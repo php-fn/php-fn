@@ -14,17 +14,15 @@ use ReflectionClass;
  */
 class PackageTest extends TestCase
 {
-    private const PACKAGES = [
-        'foo' => [
-            'name'        => 'foo',
-            'version'     => '1.2.3.0',
-            'description' => 'foo-d',
-            'homepage'    => 'foo-h',
-            'authors'     => ['foo-a'],
-            'dir'         => '/foo-dir/',
-            'root'        => true,
-            'extra'       => ['foo-e'],
-        ]
+    private const FOO = [
+        'name' => 'foo',
+        'version' => '1.2.3.0',
+        'description' => 'foo-d',
+        'homepage' => 'foo-h',
+        'authors' => ['foo-a'],
+        'dir' => '/foo-dir/',
+        'root' => true,
+        'extra' => ['foo-e'],
     ];
 
     /**
@@ -90,9 +88,7 @@ class PackageTest extends TestCase
      */
     public function testDefined(): void
     {
-        defined('php\\PACKAGES') || define('php\\PACKAGES', self::PACKAGES);
-
-        $package = Package::get('foo');
+        $package = new Package(self::FOO);
         assert\same('foo', $package->name);
         assert\same('1.2.3.0', $package->version);
         assert\same('foo-h', $package->homepage);
