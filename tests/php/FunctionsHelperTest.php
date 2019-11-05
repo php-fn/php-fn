@@ -5,21 +5,12 @@
 
 namespace php;
 
-use ArrayAccess;
 use ArrayObject;
-use Closure;
-use Countable;
 use function php\_\toArray;
 use function php\_\toTraversable;
 use function php\_\toValues;
-use php\Map\Path;
-use php\Map\RowMapper;
 use php\test\assert;
-use OuterIterator;
 use PHPUnit\Framework\TestCase;
-use RecursiveIteratorIterator;
-use stdClass;
-use Traversable;
 
 /**
  */
@@ -98,76 +89,6 @@ class FunctionsHelperTest extends TestCase
             '%s | format without args' => ['%s', '%s'],
             'null | with args' => ['', null, 'arg'],
             'null' => ['', null],
-        ];
-    }
-
-    /**
-     * @dataProvider providerType
-     *
-     * @param string $expected
-     * @param mixed $var
-     * @param mixed ...$types
-     */
-    public function testType(string $expected, $var, ...$types): void
-    {
-        assert\same($expected, type($var, ...$types));
-    }
-
-    /**
-     * @return array
-     */
-    public static function providerType(): array
-    {
-        $count = (static function (): callable {return 'count';})();
-        $method = (static function (): callable {return [static::class, 'providerType'];})();
-        $callable = new RowMapper(null);
-        return [
-            "null = ''" => ['', null],
-            "'' => string" => ['string', ''],
-            'count, callable, string => callable' => ['callable', $count, 'callable', 'string'],
-            "'', string, string => string" => ['string', '', 'string', 'string'],
-            "'', string, int => ''" => ['', '', 'string', 'int'],
-            'false => bool' => ['bool', false],
-            'false, bool, bool => bool' => ['bool', false, 'bool', 'bool'],
-            'true => bool' => ['bool', true],
-            "true, bool, int => ''" => ['', true, 'bool', 'int'],
-            '0 => int' => ['int', 0],
-            '0, int, int => int' => ['int', 0, 'int', 'int'],
-            "0, int, bool => ''" => ['', 0, 'int', 'bool'],
-            '[] => array' => ['array', []],
-            'method, callable, array => callable' => ['callable', $method, 'callable', 'array'],
-            '[], array, array => array' => ['array', [], 'array', 'array'],
-            '[], array, iterable => array' => ['array', [], 'array', 'iterable'],
-            '[], iterable, array => iterable' => ['iterable', [], 'iterable', 'array'],
-            "[], array, int => ''" => ['', [], 'array', 'int'],
-            'function => callable' => ['callable', static function () {}],
-            'RowMapper => RowMapper' => [RowMapper::class, $callable],
-            'Closure(RowMapper) => callable' => ['callable', Closure::fromCallable($callable)],
-            '(object)[] => stdClass' => [stdClass::class, (object)[]],
-            'map, iterable, Map => iterable' => ['iterable', map(), 'iterable', Map::class],
-            'map, Map, iterable => Map' => [Map::class, map(), Map::class, 'iterable'],
-            'map => Countable (implements)' => [
-                Countable::class, map(),
-                Countable::class,
-                Traversable::class,
-                'iterable',
-                ArrayAccess::class
-            ],
-            'path => Countable (extends)' => [
-                RecursiveIteratorIterator::class,
-                new Path(map()),
-                RecursiveIteratorIterator::class,
-                OuterIterator::class,
-                'iterable'
-            ],
-            'path => not callable' => [
-                '',
-                new Path(map()),
-                RecursiveIteratorIterator::class,
-                OuterIterator::class,
-                'iterable',
-                'callable'
-            ],
         ];
     }
 }

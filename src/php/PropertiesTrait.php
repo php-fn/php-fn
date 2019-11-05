@@ -112,7 +112,7 @@ trait PropertiesTrait
     {
         if ($method && $method->hasReturnType()) {
             $type = $method->getReturnType()->getName();
-            return $type === 'void' || type($var, $type === 'self' ? self::class : $type);
+            return $type === 'void' || Php::type($var, $type === 'self' ? self::class : $type);
         }
         return true;
     }

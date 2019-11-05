@@ -20,6 +20,12 @@
         "psr-4": {
             "php\\": [
                 "src/php"
+            ],
+            "Php\\": [
+                "src/Php"
+            ],
+            "": [
+                "src"
             ]
         },
         "files": [
@@ -30,6 +36,9 @@
         "psr-4": {
             "php\\": [
                 "tests/php"
+            ],
+            "Php\\": [
+                "tests/Php"
             ]
         }
     },
