@@ -124,7 +124,7 @@ function recursive(Traversable $inner, $leavesOnly, callable $mapper = null): Tr
         if (($parClass = $parameter->getClass()) && $parClass->getName() === Path::class) {
             $pos = $parameter->getPosition();
             return new $class($it, static function(...$args) use($it, $mapper, $pos) {
-                return $mapper(...php\merge(php\sub($args, 0, $pos) , [$it], php\sub($args, $pos)));
+                return $mapper(...php\merge(array_slice($args, 0, $pos) , [$it], array_slice($args, $pos)));
             });
         }
     }
