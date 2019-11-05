@@ -63,22 +63,4 @@ namespace php\fail {
     {
         _\fail(DomainException::class, $message, ...$replacements);
     }
-
-    /**
-     * @param $message
-     * @param mixed ...$replacements
-     */
-    function value($message, ...$replacements): void
-    {
-        _\fail(UnexpectedValueException::class, $message, ...$replacements);
-    }
-
-    /**
-     * @param $message
-     * @param mixed ...$replacements
-     */
-    function bounds($message, ...$replacements): void
-    {
-        _\fail(OutOfBoundsException::class, $message, ...$replacements);
-    }
 }
