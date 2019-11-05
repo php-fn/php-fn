@@ -1,28 +1,32 @@
 {
     "name": "php-fn/php-fn",
     "description": "a php library",
-    "keywords": [
-        "php",
-        "library"
-    ],
+    "type": "composer-plugin",
+    "replace": {
+        "php-fn/di": "self.version"
+    },
     "homepage": "https://github.com/php-fn/php-fn",
     "license": "MIT",
     "require": {
+        "php-fn/invoker": "^2.0",
+        "php-di/php-di": "^6.0",
+        "composer-plugin-api": "^1",
         "ext-mbstring": "*",
         "php": ">=7.1"
     },
     "require-dev": {
-        "php-fn/test": "^3.0",
+        "roave/security-advisories": "dev-master",
+        "doctrine/annotations": "^1",
+        "composer/composer": "^1",
         "php-coveralls/php-coveralls": "^2.1",
+        "php-fn/test": "^3.0",
+        "ext-apcu": "*",
         "ext-simplexml": "*"
     },
     "autoload": {
         "psr-4": {
             "php\\": [
                 "src/php"
-            ],
-            "Php\\": [
-                "src/Php"
             ],
             "": [
                 "src"
@@ -36,9 +40,6 @@
         "psr-4": {
             "php\\": [
                 "tests/php"
-            ],
-            "Php\\": [
-                "tests/Php"
             ]
         }
     },
@@ -46,9 +47,13 @@
     "extra": {
         "branch-alias": {
             "dev-master": "3.x-dev"
-        }
+        },
+        "class": "php\\Composer\\DIPlugin"
     },
     "scripts": {
+        "post-autoload-dump": [
+            "php\\Composer\\DIPlugin::onAutoloadDump"
+        ],
         "test": "php -d error_reporting=22527 vendor/bin/phpunit tests/",
         "cover": [
             "mkdir -p build/logs",

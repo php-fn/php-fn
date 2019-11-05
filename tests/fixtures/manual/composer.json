@@ -1,0 +1,45 @@
+{
+  "name": "php-fn/di-test-manual",
+  "license": "MIT",
+  "repositories": [
+    {
+      "type": "package",
+      "package": {
+        "type": "composer-plugin",
+        "name": "php-fn/di",
+        "version": "999",
+        "dist": {
+          "type": "path",
+          "url": "../../../"
+        },
+        "require": {
+          "php-di/php-di": "^6.0",
+          "composer-plugin-api": "^1.0"
+        },
+        "autoload": {
+          "psr-4": {"php\\": ["src/php"]}
+        },
+        "extra": {
+          "class": "php\\Composer\\DIPlugin"
+        }
+      }
+    }
+  ],
+  "require": {
+    "php-fn/di": "999"
+  },
+  "config": {
+    "vendor-dir": "/tmp/vendor-di-test-manual/"
+  },
+  "extra": {
+    "di": {
+      "@php\\c2": {
+        "@php\\c3": {
+          "c3": "C3",
+          "@php\\c31": {"c31": "C31"}
+        }
+      },
+      "foo": "bar"
+    }
+  }
+}

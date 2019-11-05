@@ -1,0 +1,12 @@
+# ignore everything
+/bin
+
+# http://php-pds.com/
+
+## dirs
+!/config/
+!/bin/
+
+## files
+!/.gitignore
+!/composer.json
