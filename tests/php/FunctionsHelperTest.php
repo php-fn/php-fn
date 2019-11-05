@@ -3,13 +3,13 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php;
+namespace Php;
 
 use ArrayObject;
-use function php\_\toArray;
-use function php\_\toTraversable;
-use function php\_\toValues;
-use php\test\assert;
+use function Php\_\toArray;
+use function Php\_\toTraversable;
+use function Php\_\toValues;
+use Php\test\assert;
 use PHPUnit\Framework\TestCase;
 
 /**

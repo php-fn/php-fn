@@ -3,9 +3,9 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php\Cli;
+namespace Php\Cli;
 
-use php;
+use Php;
 
 /**
  * @todo add unit tests
@@ -58,14 +58,14 @@ class Renderable
             return $content->toCli($io);
         }
 
-        if (php\isCallable($content)) {
+        if (Php\isCallable($content)) {
             return (int)$content($io, $type);
         }
 
         if (is_array($content)) {
             $current = current($content);
             if (is_array($current)) {
-                $io->table(php\keys($current), $content);
+                $io->table(Php\keys($current), $content);
             } else {
                 $io->listing($content);
             }

@@ -28,11 +28,8 @@
     },
     "autoload": {
         "psr-4": {
-            "php\\": [
+            "Php\\": [
                 "src/php"
-            ],
-            "": [
-                "src"
             ]
         },
         "files": [
@@ -41,7 +38,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "php\\": [
+            "Php\\": [
                 "tests/php"
             ]
         }
@@ -51,11 +48,11 @@
         "branch-alias": {
             "dev-master": "3.x-dev"
         },
-        "class": "php\\Composer\\DIPlugin"
+        "class": "Php\\Composer\\DIPlugin"
     },
     "scripts": {
         "post-autoload-dump": [
-            "php\\Composer\\DIPlugin::onAutoloadDump"
+            "Php\\Composer\\DIPlugin::onAutoloadDump"
         ],
         "test": "php -d error_reporting=22527 vendor/bin/phpunit tests/",
         "cover": [

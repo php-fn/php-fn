@@ -3,7 +3,7 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php {
+namespace Php {
 
     use RuntimeException;
 
@@ -17,9 +17,9 @@ namespace php {
     }
 }
 
-namespace php\fail {
+namespace Php\fail {
 
-    use php\_;
+    use Php\_;
 
     use DomainException;
     use InvalidArgumentException;

@@ -3,10 +3,10 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php\Map;
+namespace Php\Map;
 
-use function php\isCallable;
-use function php\traverse;
+use function Php\isCallable;
+use function Php\traverse;
 use ArrayIterator;
 use IteratorAggregate;
 

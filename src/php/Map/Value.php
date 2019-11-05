@@ -3,9 +3,9 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php\Map;
+namespace Php\Map;
 
-use php;
+use Php;
 
 /**
  * @property-read mixed $value
@@ -15,7 +15,7 @@ use php;
  */
 class Value
 {
-    use php\PropertiesTrait\ReadOnly;
+    use Php\PropertiesTrait\ReadOnly;
 
     /**
      * @param mixed [$value]

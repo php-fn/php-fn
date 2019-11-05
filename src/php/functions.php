@@ -3,9 +3,7 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php;
-
-use Closure;
+namespace Php;
 
 /**
  * @param callable|mixed $candidate

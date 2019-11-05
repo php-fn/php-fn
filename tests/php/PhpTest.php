@@ -3,12 +3,12 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php;
+namespace Php;
 
 use ArrayAccess;
 use Closure;
 use Countable;
-use php\test\assert;
+use Php\test\assert;
 use OuterIterator;
 use PHPUnit\Framework\TestCase;
 use RecursiveIteratorIterator;

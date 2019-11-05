@@ -3,9 +3,9 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php\Map;
+namespace Php\Map;
 
-use php;
+use Php;
 use RecursiveIteratorIterator;
 
 /**
@@ -13,7 +13,7 @@ use RecursiveIteratorIterator;
  */
 class Path extends RecursiveIteratorIterator
 {
-    use php\PropertiesTrait\ReadOnly;
+    use Php\PropertiesTrait\ReadOnly;
 
     /**
      * @var string

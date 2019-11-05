@@ -3,9 +3,9 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php\Composer;
+namespace Php\Composer;
 
-use php;
+use Php;
 use Composer\Package\RootPackageInterface;
 use Composer\Composer;
 use Composer\Package\CompletePackageInterface;
@@ -145,12 +145,12 @@ class DIPackages
         $ns    = [];
         $const = [
             '',
-            'namespace php {',
+            'namespace Php {',
             '    const PACKAGES = [',
         ];
 
         foreach ($this->getVendors() as $vendor => $packages) {
-            $ns[] = "namespace php\\VENDOR\\{$this->up($vendor)} {";
+            $ns[] = "namespace Php\\VENDOR\\{$this->up($vendor)} {";
             foreach ($packages as $name => $package) {
                 $ns[] = "    const {$this->up($name)} = '{$package['name']}';";
 
@@ -162,8 +162,8 @@ class DIPackages
                 $const[] = "            'description' => " . var_export($package['description'], true) . ',';
                 $const[] = "            'homepage'    => " . var_export($package['homepage'], true) . ',';
                 $const[] = "            'dir'         => $dir,";
-                $const[] = "            'authors'     => " . new php\ArrayExport((array)$package['authors']) . ',';
-                $const[] = "            'extra'       => " . new php\ArrayExport($package['extra']) . ',';
+                $const[] = "            'authors'     => " . new Php\ArrayExport((array)$package['authors']) . ',';
+                $const[] = "            'extra'       => " . new Php\ArrayExport($package['extra']) . ',';
                 $const[] = '        ],';
                 $const[] = '';
             }

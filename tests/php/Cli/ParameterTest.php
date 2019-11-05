@@ -3,10 +3,10 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php\Cli;
+namespace Php\Cli;
 
-use php\test\assert;
-use php;
+use Php\test\assert;
+use Php;
 use PHPUnit\Framework\TestCase;
 use ReflectionFunction;
 use ReflectionParameter;
@@ -47,13 +47,13 @@ class ParameterTest extends TestCase
             'a123B456c789d000'   => 'a123-b456-c789-d000',
         ];
 
-        return php\traverse($ref->getParameters(), function(ReflectionParameter $param, &$key) use($expected) {
+        return Php\traverse($ref->getParameters(), function(ReflectionParameter $param, &$key) use($expected) {
             return ['expected' => $expected[$key = $param->getName()], $param];
         });
     }
 
     /**
-     * @covers \php\Cli\Parameter::getName
+     * @covers \Php\Cli\Parameter::getName
      * @dataProvider providerGetName
      *
      * @param string              $expected

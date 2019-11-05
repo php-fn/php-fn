@@ -6,9 +6,9 @@
 /** @noinspection PhpDocMissingThrowsInspection */
 /** @noinspection PhpUnhandledExceptionInspection */
 
-namespace php;
+namespace Php;
 
-use php\Map\Value;
+use Php\Map\Value;
 use ReflectionMethod;
 
 /**

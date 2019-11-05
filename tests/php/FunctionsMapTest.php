@@ -3,10 +3,10 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php;
+namespace Php;
 
 use ArrayObject;
-use php\test\assert;
+use Php\test\assert;
 
 class FunctionsMapTest extends MapTest
 {
@@ -104,7 +104,7 @@ class FunctionsMapTest extends MapTest
                 }
             ],
 
-            'php\map should not merge single iterable' => [
+            'Php\map should not merge single iterable' => [
                 [2 => 'numeric-key'],
                 [2 => 'numeric-key']
             ],

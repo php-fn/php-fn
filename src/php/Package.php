@@ -3,7 +3,7 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php;
+namespace Php;
 
 /**
  * @property-read string $name
@@ -22,7 +22,7 @@ class Package
 
     private static $null;
     private static $data;
-    private const CONSTANT = 'php\\PACKAGES';
+    private const CONSTANT = 'Php\\PACKAGES';
 
     /**
      * @param string $name

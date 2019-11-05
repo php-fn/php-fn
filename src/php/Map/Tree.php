@@ -3,10 +3,10 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php\Map;
+namespace Php\Map;
 
 use Countable;
-use php;
+use Php;
 use Iterator;
 use RecursiveIterator;
 
@@ -64,7 +64,7 @@ class Tree implements RecursiveIterator, Countable
     private function getChildrenIterator(): ?RecursiveIterator
     {
         if ($this->mappers && $this->doMap() && $this->children) {
-            if (php\isCallable($this->children)) {
+            if (Php\isCallable($this->children)) {
                 $this->children = call_user_func($this->children, $this->current(), $this->key(), $this);
             }
             if (!$this->children instanceof RecursiveIterator) {
@@ -90,8 +90,8 @@ class Tree implements RecursiveIterator, Countable
     {
         static $break, $null;
         if (!$break) {
-            $break = php\mapBreak();
-            $null = php\mapNull();
+            $break = Php\mapBreak();
+            $null = Php\mapNull();
         }
         if ($this->currentValid === $break) {
             return false;
@@ -142,7 +142,7 @@ class Tree implements RecursiveIterator, Countable
                      * @todo in this case the remaining children information is lost, fix it ASAP
                      */
                     if ($curValue->group !== null) {
-                        $iter = $this->inner = new Lazy(php\traverse($iter, $mapper, false));
+                        $iter = $this->inner = new Lazy(Php\traverse($iter, $mapper, false));
                         $iter->rewind();
                         $this->needsMap = true;
                         $this->mappers = [function() {
@@ -280,7 +280,7 @@ class Tree implements RecursiveIterator, Countable
      */
     public function recursive(callable $mapper = null): self
     {
-        return php\_\recursive($this, false, $mapper);
+        return Php\_\recursive($this, false, $mapper);
     }
 
     /**
@@ -290,6 +290,6 @@ class Tree implements RecursiveIterator, Countable
      */
     public function flatten(callable $mapper = null): self
     {
-        return php\_\recursive($this, true, $mapper);
+        return Php\_\recursive($this, true, $mapper);
     }
 }

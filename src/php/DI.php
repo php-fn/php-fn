@@ -3,12 +3,12 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php;
+namespace Php;
 
 use DI\CompiledContainer;
 use DI\ContainerBuilder;
 use DI\Definition\Source\DefinitionSource;
-use php\DI\ContainerConfiguration;
+use Php\DI\ContainerConfiguration;
 use Psr\Container\ContainerInterface;
 
 abstract class DI

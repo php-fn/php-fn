@@ -3,10 +3,10 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php\_;
+namespace Php\_;
 
-use php;
-use php\Map\Path;
+use Php;
+use Php\Map\Path;
 use ReflectionFunction;
 use Traversable;
 
@@ -21,7 +21,7 @@ function lastCallable(array &$args): array
     }
 
     $last = array_pop($args);
-    if ($args && !is_iterable($last) && php\isCallable($last)) {
+    if ($args && !is_iterable($last) && Php\isCallable($last)) {
         return [$last];
     }
 
@@ -53,7 +53,7 @@ function chainIterables(array $functions, ...$args)
         }
         $result = $variadic ? $function(...$result) : $function($result);
     }
-    return $callable ? php\traverse($result, ...$callable) : $result;
+    return $callable ? Php\traverse($result, ...$callable) : $result;
 }
 
 /**
@@ -68,7 +68,7 @@ function toTraversable($candidate, $cast = false): iterable
     if (is_iterable($candidate)) {
         return $candidate;
     }
-    $cast ?: php\fail\argument('argument $candidate must be traversable');
+    $cast ?: Php\fail\argument('argument $candidate must be traversable');
     return (array)$candidate;
 }
 
@@ -124,7 +124,7 @@ function recursive(Traversable $inner, $leavesOnly, callable $mapper = null): Tr
         if (($parClass = $parameter->getClass()) && $parClass->getName() === Path::class) {
             $pos = $parameter->getPosition();
             return new $class($it, static function(...$args) use($it, $mapper, $pos) {
-                return $mapper(...php\merge(array_slice($args, 0, $pos) , [$it], array_slice($args, $pos)));
+                return $mapper(...Php\merge(array_slice($args, 0, $pos) , [$it], array_slice($args, $pos)));
             });
         }
     }
@@ -141,5 +141,5 @@ function recursive(Traversable $inner, $leavesOnly, callable $mapper = null): Tr
  */
 function fail($class, $message, ...$replacements): void
 {
-    throw new $class(php\str($message, ...$replacements));
+    throw new $class(Php\str($message, ...$replacements));
 }

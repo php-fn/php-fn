@@ -3,13 +3,13 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php\Map;
+namespace Php\Map;
 
 use ArrayIterator;
 use Closure;
 use Exception;
-use php;
-use php\test\assert;
+use Php;
+use Php\test\assert;
 use IteratorAggregate;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -120,7 +120,7 @@ class LazyTest extends TestCase
     public function testUnify($expected, ...$proxy): void
     {
         assert\equals\trial($expected, static function () use ($proxy) {
-            return php\traverse(new Lazy(...$proxy));
+            return Php\traverse(new Lazy(...$proxy));
         });
     }
 
@@ -229,7 +229,7 @@ class LazyTest extends TestCase
      */
     public function testIsLastTraverse(array $expected, Lazy $it): void
     {
-        $result = php\traverse($it, static function($value, &$key) use(&$it) {
+        $result = Php\traverse($it, static function($value, &$key) use(&$it) {
             $key = $value;
             return $it->isLast();
         });

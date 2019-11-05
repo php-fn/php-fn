@@ -3,11 +3,11 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php\Map;
+namespace Php\Map;
 
 use DomainException;
-use php;
-use php\test\assert;
+use Php;
+use Php\test\assert;
 use OutOfRangeException;
 use PHPUnit\Framework\TestCase;
 
@@ -28,25 +28,25 @@ class RowMapperTest extends TestCase
 
         return [
             'unknown key column' => [$undefined, new RowMapper('foo'), []],
-            'map key' => [php\mapKey('bar'), new RowMapper('foo'), ['foo' => 'bar']],
-            'map key closure' => [php\mapKey('mapped'), new RowMapper($useKey), [], 'mapped'],
+            'map key' => [Php\mapKey('bar'), new RowMapper('foo'), ['foo' => 'bar']],
+            'map key closure' => [Php\mapKey('mapped'), new RowMapper($useKey), [], 'mapped'],
             'unknown value scalar' => [$undefined, new RowMapper(null, 'foo'), []],
             'unknown value array' => [$undefined, new RowMapper(null, ['foo']), []],
-            'map value scalar' => [php\mapValue('bar'), new RowMapper(null, 'foo'), ['foo' => 'bar']],
+            'map value scalar' => [Php\mapValue('bar'), new RowMapper(null, 'foo'), ['foo' => 'bar']],
             'map value array' => [
-                php\mapValue(['c1' => 'bar', 'c2' => 'bar', 'foo' => 'bar']),
+                Php\mapValue(['c1' => 'bar', 'c2' => 'bar', 'foo' => 'bar']),
                 new RowMapper(null, ['c1' => 'foo', 'c2' => 'foo', 'foo']),
                 ['foo' => 'bar']
             ],
-            'map value closure' => [php\mapValue('mapped'), new RowMapper(null, $useKey), [], 'mapped'],
+            'map value closure' => [Php\mapValue('mapped'), new RowMapper(null, $useKey), [], 'mapped'],
             'unknown group column' => [$undefined, new RowMapper(null, null, 'foo'), []],
             'map single group' => [
-                php\mapGroup(['bar']),
+                Php\mapGroup(['bar']),
                 new RowMapper(null, null, 'foo'),
                 ['foo' => 'bar']
             ],
             'map multiple group' => [
-                php\mapGroup(['bar', 'bar']),
+                Php\mapGroup(['bar', 'bar']),
                 new RowMapper(null, null, 'foo', 'foo'),
                 ['foo' => 'bar']
             ],
@@ -81,21 +81,21 @@ class RowMapperTest extends TestCase
         assert\equals([
             'g1' => ['a' => 'A', 'c' => 'C'],
             'g2' => ['b' => 'B'],
-        ], php\traverse([
+        ], Php\traverse([
             ['id' => 'a', 'name' => 'A', 'group' => 'g1'],
             ['id' => 'b', 'name' => 'B', 'group' => 'g2'],
             ['id' => 'c', 'name' => 'C', 'group' => 'g1'],
-        ], php\mapRow('name', 'id', 'group')));
+        ], Php\mapRow('name', 'id', 'group')));
 
         assert\equals([
-            'g1' => ['a' => php\mapValue(['k1' => 'A']), 'c' => php\mapValue(['k3' => 'C'])],
-            'g2' => ['b' => php\mapValue(['k2' => 'B'])],
-        ], php\traverse([
+            'g1' => ['a' => Php\mapValue(['k1' => 'A']), 'c' => Php\mapValue(['k3' => 'C'])],
+            'g2' => ['b' => Php\mapValue(['k2' => 'B'])],
+        ], Php\traverse([
             'k1' => ['id' => 'a', 'name' => 'A', 'group' => 'g1'],
             'k2' => ['id' => 'b', 'name' => 'B', 'group' => 'g2'],
             'k3' => ['id' => 'c', 'name' => 'C', 'group' => 'g1'],
-        ], php\mapRow(static function (array $row, $key) {
-            return php\mapValue([$key => $row['name']]);
+        ], Php\mapRow(static function (array $row, $key) {
+            return Php\mapValue([$key => $row['name']]);
         }, 'id', 'group')));
 
         $rows = [
@@ -108,13 +108,13 @@ class RowMapperTest extends TestCase
             'a-k2' => 'a-k1',
             'b-k2' => 'b-k1',
             'c-k2' => 'c-k1',
-        ], php\traverse($rows, php\mapRow(0, 1)));
+        ], Php\traverse($rows, Php\mapRow(0, 1)));
 
         assert\same([
             'a-k1' => ['k3' => 'g1', 'a-k2'],
             'b-k1' => ['k3' => 'g2', 'b-k2'],
             'c-k1' => ['k3' => 'g1', 'c-k2'],
-        ], php\traverse($rows, php\mapRow(['k3', 1], 0)));
+        ], Php\traverse($rows, Php\mapRow(['k3', 1], 0)));
 
         assert\same([
             'g1' => [
@@ -124,6 +124,6 @@ class RowMapperTest extends TestCase
             'g2' => [
                 'b-k1' => ['b-k2', 'b-k1', 'b-k2'],
             ],
-        ], php\traverse($rows, php\mapRow([1, 0, 1], 0, 2)));
+        ], Php\traverse($rows, Php\mapRow([1, 0, 1], 0, 2)));
     }
 }

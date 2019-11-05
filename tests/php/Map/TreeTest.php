@@ -3,11 +3,11 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php\Map;
+namespace Php\Map;
 
 use Exception;
-use php;
-use php\test\assert;
+use Php;
+use Php\test\assert;
 use PHPUnit\Framework\TestCase;
 use RecursiveArrayIterator;
 use Traversable;
@@ -52,7 +52,7 @@ class TreeTest extends TestCase
                 'expected' => ['a', 'a-0', 'b', 'b-0', 'b-1', 'c', 'c-0', 'c-1', 'c-2'],
                 'inner' => ['a', 'b', 'c'],
                 'mapper' => static function () {
-                    return php\mapChildren(static function ($value, $key) {
+                    return Php\mapChildren(static function ($value, $key) {
                         $children = [];
                         for ($i = 0; $i <= $key; $i++) {
                             $children[] = "$value-$i";
@@ -69,7 +69,7 @@ class TreeTest extends TestCase
                     for ($i = 0; $i <= $key; $i++) {
                         $children[] = "$value-$i";
                     }
-                    return php\mapChildren($children);
+                    return Php\mapChildren($children);
                 },
             ],
             'no mapper' => [
@@ -91,8 +91,8 @@ class TreeTest extends TestCase
      */
     public function testRecursiveIteration($expected, $inner, $mapper, $mode = Path::SELF_FIRST): void
     {
-        assert\equals($expected, php\_\toValues(new Path(new Tree($inner, ...(array)$mapper), $mode)));
-        assert\equals($expected, php\_\toValues(new Path(new Tree(new Lazy(static function () use ($inner) {
+        assert\equals($expected, Php\_\toValues(new Path(new Tree($inner, ...(array)$mapper), $mode)));
+        assert\equals($expected, Php\_\toValues(new Path(new Tree(new Lazy(static function () use ($inner) {
             return is_array($inner) ? new RecursiveArrayIterator($inner) : $inner;
         }), ...(array)$mapper), $mode)));
     }
@@ -108,7 +108,7 @@ class TreeTest extends TestCase
                 'inner' => ['a', 'b', 'c', 'd', 'e', 'f'],
                 'mapper' => static function ($value, &$key) {
                     if ($value === 'e') {
-                        return php\mapBreak();
+                        return Php\mapBreak();
                     }
                     if ($value === 'c') {
                         return null;
@@ -118,7 +118,7 @@ class TreeTest extends TestCase
                         return 'directly-value';
                     }
                     if ($value === 'b') {
-                        return php\mapValue('map-value', 'map-key');
+                        return Php\mapValue('map-value', 'map-key');
                     }
 
                     return $value;
@@ -129,7 +129,7 @@ class TreeTest extends TestCase
                 'inner' => ['a', 'b', 'c', 'd', 'e', 'f'],
                 'mapper' => static function ($value) {
                     if ($value === 'd') {
-                        return php\mapBreak();
+                        return Php\mapBreak();
                     }
                     return $value;
                 },
@@ -145,7 +145,7 @@ class TreeTest extends TestCase
                 'expected' => ['0-a' => 'a', '1-b' => 'b', '2-c' => 'c'],
                 'inner' => ['a', 'b', 'c'],
                 'mapper' => static function ($value, $key) {
-                    return php\mapKey("$key-$value");
+                    return Php\mapKey("$key-$value");
                 },
             ],
             'map keys directly' => [
@@ -160,7 +160,7 @@ class TreeTest extends TestCase
                 'expected' => ['0-a', '1-b', '2-c'],
                 'inner' => ['a', 'b', 'c'],
                 'mapper' => static function ($value, $key) {
-                    return php\mapValue("$key-$value");
+                    return Php\mapValue("$key-$value");
                 },
             ],
             'map values directly' => [
@@ -185,11 +185,11 @@ class TreeTest extends TestCase
     public function testSimpleIteration($expected, $inner, callable $mapper): void
     {
         assert\equals\trial($expected, static function ($iterator) {
-            return php\traverse($iterator);
+            return Php\traverse($iterator);
         }, new Tree($inner, ...(array)$mapper));
 
         assert\equals\trial($expected, static function ($iterator) {
-            return php\traverse($iterator);
+            return Php\traverse($iterator);
         }, new Tree(new Lazy(static function () use ($inner) {
             return $inner;
         }), ...(array)$mapper));
@@ -205,26 +205,26 @@ class TreeTest extends TestCase
 
         assert\same(
             ['k0' => 'a', 'k1' => ['k2' => 'b', 'k3' => 'c'], 'k2' => 'b', 'k3' => 'c'],
-            php\traverse($tree->recursive())
+            Php\traverse($tree->recursive())
         );
         assert\same(
             ['k0' => ['a', 0], 'k1' => [['k2' => 'b', 'k3' => 'c'], 0], 'k3' => ['c', 1]],
-            php\traverse($tree->recursive(static function ($value, $key, Path $it) {
-                return $value === 'b' ? null : php\mapValue([$value, $it->getDepth()]);
+            Php\traverse($tree->recursive(static function ($value, $key, Path $it) {
+                return $value === 'b' ? null : Php\mapValue([$value, $it->getDepth()]);
             }))
         );
         assert\same(
             ['k0' => ['a', 0], 'k3' => ['c', 1]],
-            php\traverse($tree->flatten(static function ($value, $key, Path $it) {
-                return $value === 'b' ? null : php\mapValue([$value, $it->getDepth()]);
+            Php\traverse($tree->flatten(static function ($value, $key, Path $it) {
+                return $value === 'b' ? null : Php\mapValue([$value, $it->getDepth()]);
             }))
         );
 
         $tree = new Tree(['a' => 'a', new Tree(['b' => 'b', new Tree(['c' => 'c'])])]);
-        assert\same(['a' => 'a', 'b' => 'b', 'c' => 'c'], php\traverse($tree->flatten()));
-        assert\same([0, 0, 1, 1, 2], php\traverse($tree->recursive(static function ($value, $key, Path $it) {
+        assert\same(['a' => 'a', 'b' => 'b', 'c' => 'c'], Php\traverse($tree->flatten()));
+        assert\same([0, 0, 1, 1, 2], Php\traverse($tree->recursive(static function ($value, $key, Path $it) {
             static $count = 0;
-            return php\mapValue($it->getDepth())->andKey($count++);
+            return Php\mapValue($it->getDepth())->andKey($count++);
         })));
     }
 
@@ -236,10 +236,10 @@ class TreeTest extends TestCase
             ['k1' => 'v1', 'k2' => 'v2'],
             static function ($value, &$key) {
                 $key = strtoupper($key);
-                return $value === 'v1' ? php\mapNull() : $value;
+                return $value === 'v1' ? Php\mapNull() : $value;
             },
             static function ($value, $key) {
-                return php\mapValue($value ?? '-')->andKey($key === 'K1' ? 'k1' : $key);
+                return Php\mapValue($value ?? '-')->andKey($key === 'K1' ? 'k1' : $key);
             },
             static function ($value) {
                 return $value . $value;
@@ -249,7 +249,7 @@ class TreeTest extends TestCase
         assert\same([
             'k1' => '--',
             'K2' => 'v2v2',
-        ], php\traverse($tree));
+        ], Php\traverse($tree));
     }
 
     /**
@@ -258,8 +258,8 @@ class TreeTest extends TestCase
     {
         assert\same(
             ['a' => false, 'b' => false, 'c' => true],
-            php\traverse(new Tree(['a', 'b', 'c'], static function ($value, $key, Tree $it) {
-                return php\mapKey($value)->andValue($it->isLast());
+            Php\traverse(new Tree(['a', 'b', 'c'], static function ($value, $key, Tree $it) {
+                return Php\mapKey($value)->andValue($it->isLast());
             }))
         );
     }

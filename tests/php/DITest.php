@@ -3,13 +3,13 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php;
+namespace Php;
 
 use DI\Annotation\Inject;
 use DI\CompiledContainer;
 use DI\Definition\Source\SourceChain;
 use DI\Proxy\ProxyFactory;
-use php\test\assert;
+use Php\test\assert;
 use PHPUnit\Framework\TestCase;
 
 class DITest extends TestCase

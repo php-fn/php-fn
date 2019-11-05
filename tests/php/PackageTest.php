@@ -3,9 +3,9 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php;
+namespace Php;
 
-use php\test\assert;
+use Php\test\assert;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -36,18 +36,18 @@ class PackageTest extends TestCase
     }
 
     /**
-     * @covers \php\Package::get
-     * @covers \php\Package::resolveName
-     * @covers \php\Package::resolveVersion
-     * @covers \php\Package::resolveHomepage
-     * @covers \php\Package::resolveDescription
-     * @covers \php\Package::resolveDir
-     * @covers \php\Package::resolveAuthors
-     * @covers \php\Package::resolveExtra
-     * @covers \php\Package::resolveRoot
-     * @covers \php\Package::file
-     * @covers \php\Package::files
-     * @covers \php\Package::version
+     * @covers \Php\Package::get
+     * @covers \Php\Package::resolveName
+     * @covers \Php\Package::resolveVersion
+     * @covers \Php\Package::resolveHomepage
+     * @covers \Php\Package::resolveDescription
+     * @covers \Php\Package::resolveDir
+     * @covers \Php\Package::resolveAuthors
+     * @covers \Php\Package::resolveExtra
+     * @covers \Php\Package::resolveRoot
+     * @covers \Php\Package::file
+     * @covers \Php\Package::files
+     * @covers \Php\Package::version
      */
     public function testNullObject(): void
     {
@@ -73,18 +73,18 @@ class PackageTest extends TestCase
     }
 
     /**
-     * @covers \php\Package::get
-     * @covers \php\Package::resolveName
-     * @covers \php\Package::resolveVersion
-     * @covers \php\Package::resolveHomepage
-     * @covers \php\Package::resolveDescription
-     * @covers \php\Package::resolveDir
-     * @covers \php\Package::resolveAuthors
-     * @covers \php\Package::resolveExtra
-     * @covers \php\Package::resolveRoot
-     * @covers \php\Package::file
-     * @covers \php\Package::files
-     * @covers \php\Package::version
+     * @covers \Php\Package::get
+     * @covers \Php\Package::resolveName
+     * @covers \Php\Package::resolveVersion
+     * @covers \Php\Package::resolveHomepage
+     * @covers \Php\Package::resolveDescription
+     * @covers \Php\Package::resolveDir
+     * @covers \Php\Package::resolveAuthors
+     * @covers \Php\Package::resolveExtra
+     * @covers \Php\Package::resolveRoot
+     * @covers \Php\Package::file
+     * @covers \Php\Package::files
+     * @covers \Php\Package::version
      */
     public function testDefined(): void
     {
@@ -108,7 +108,7 @@ class PackageTest extends TestCase
     }
 
     /**
-     * @covers \php\Package::version
+     * @covers \Php\Package::version
      */
     public function testVersion(): void
     {

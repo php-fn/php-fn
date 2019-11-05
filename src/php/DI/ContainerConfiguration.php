@@ -3,7 +3,7 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php\DI;
+namespace Php\DI;
 
 use DI\CompiledContainer;
 use DI\Definition\Source\MutableDefinitionSource;

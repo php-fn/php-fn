@@ -3,9 +3,9 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php\Cli;
+namespace Php\Cli;
 
-use php;
+use Php;
 use ReflectionParameter;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -54,7 +54,7 @@ class Parameter
                 $tokens[$t] .= $char;
             }
 
-            $name = php\map($tokens, function ($token) {
+            $name = Php\map($tokens, function ($token) {
                 return str_replace('_', '', strtolower($token)) ?: null;
             })->string($delimiter);
         }

@@ -3,11 +3,11 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php\Map;
+namespace Php\Map;
 
 use ArrayAccess;
 use Closure;
-use php;
+use Php;
 
 /**
  */
@@ -37,11 +37,11 @@ class RowMapper
     public function __invoke($row, $key): Value
     {
         if (!(is_array($row) || $row instanceof ArrayAccess)) {
-            is_iterable($row) ?: php\fail\domain('row should be of type: array|ArrayAccess|iterable');
-            $row = php\_\toArray($row);
+            is_iterable($row) ?: Php\fail\domain('row should be of type: array|ArrayAccess|iterable');
+            $row = Php\_\toArray($row);
         }
 
-        $rowValues = php\map($row)->values();
+        $rowValues = Php\map($row)->values();
         $mapped = new Value;
 
         if (null !== $valueColumns = $this->config->value) {
@@ -54,13 +54,13 @@ class RowMapper
                         $toColumn = $fromColumn;
                     }
                     if (is_int($fromColumn)) {
-                        $mappedValue[] =  php\at($fromColumn, $rowValues );
+                        $mappedValue[] =  Php\at($fromColumn, $rowValues );
                     } else {
-                        $mappedValue[$toColumn] =  php\at($fromColumn, $row);
+                        $mappedValue[$toColumn] =  Php\at($fromColumn, $row);
                     }
                 }
             } else {
-                $mappedValue = php\at($valueColumns, is_int($valueColumns) ? $rowValues : $row);
+                $mappedValue = Php\at($valueColumns, is_int($valueColumns) ? $rowValues : $row);
             }
             $mapped->andValue($mappedValue);
         }
@@ -69,7 +69,7 @@ class RowMapper
             if ($keyColumn instanceof Closure) {
                 $mappedKey = $keyColumn($row, $key, $mapped);
             } else {
-                $mappedKey = php\at($keyColumn, is_int($keyColumn) ? $rowValues : $row);
+                $mappedKey = Php\at($keyColumn, is_int($keyColumn) ? $rowValues : $row);
             }
             $mapped->andKey($mappedKey);
         }
@@ -77,7 +77,7 @@ class RowMapper
         if ($groupColumns = $this->config->group) {
             $mappedGroups = [];
             foreach ($groupColumns as $groupColumn) {
-                $mappedGroups[] = php\at($groupColumn, is_int($groupColumn) ? $rowValues : $row);
+                $mappedGroups[] = Php\at($groupColumn, is_int($groupColumn) ? $rowValues : $row);
             }
             $mapped->andGroup($mappedGroups);
         }

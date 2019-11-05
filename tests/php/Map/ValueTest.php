@@ -3,10 +3,10 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php\Map;
+namespace Php\Map;
 
-use php\test\assert;
-use php;
+use Php\test\assert;
+use Php;
 use PHPUnit\Framework\TestCase;
 
 /**

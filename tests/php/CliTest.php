@@ -3,9 +3,9 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php;
+namespace Php;
 
-use php\test\assert;
+use Php\test\assert;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;
 
@@ -15,7 +15,7 @@ use Symfony\Component\Console\Command\Command;
 class CliTest extends TestCase
 {
     /**
-     * @covers \php\Cli::command
+     * @covers \Php\Cli::command
      *
      * @todo complete
      */
@@ -26,8 +26,8 @@ class CliTest extends TestCase
     }
 
     /**
-     * @covers \php\Cli::fromPackage
-     * @uses \php\cli
+     * @covers \Php\Cli::fromPackage
+     * @uses \Php\cli
      */
     public function testFromPackage(): void
     {

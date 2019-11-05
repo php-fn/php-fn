@@ -3,11 +3,11 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php\DI;
+namespace Php\DI;
 
 use function DI\value;
-use php;
-use php\test\assert;
+use Php;
+use Php\test\assert;
 use Invoker\ParameterResolver\DefaultValueResolver;
 use PHPUnit\Framework\TestCase;
 use ReflectionFunction;
@@ -19,7 +19,7 @@ use ReflectionMethod;
 class InvokerTest extends TestCase
 {
     /**
-     * @covers \php\DI\Invoker::resolve
+     * @covers \Php\DI\Invoker::resolve
      */
     public function testResolve(): void
     {
@@ -30,12 +30,12 @@ class InvokerTest extends TestCase
         assert\same($func = static function () {}, (new Invoker)->resolve($func));
         assert\same([$this, __FUNCTION__], (new Invoker)->resolve([$this, __FUNCTION__]));
 
-        $resolver = new Invoker(php\DI::create(['callback' => value($func)]));
+        $resolver = new Invoker(Php\DI::create(['callback' => value($func)]));
         assert\same($func, $resolver->resolve('callback'));
     }
 
     /**
-     * @covers \php\DI\Invoker::reflect
+     * @covers \Php\DI\Invoker::reflect
      */
     public function testReflect(): void
     {
@@ -45,7 +45,7 @@ class InvokerTest extends TestCase
     }
 
     /**
-     * @covers \php\DI\Invoker::parameters
+     * @covers \Php\DI\Invoker::parameters
      */
     public function testParameters(): void
     {
@@ -65,7 +65,7 @@ class InvokerTest extends TestCase
     }
 
     /**
-     * @covers \php\DI\Invoker::call
+     * @covers \Php\DI\Invoker::call
      */
     public function testCall(): void
     {
@@ -81,8 +81,8 @@ class InvokerTest extends TestCase
     }
 
     /**
-     * @covers \php\DI\ReflectionParameter::resolveDescription
-     * @covers \php\DI\ReflectionParameter::resolveTypes
+     * @covers \Php\DI\ReflectionParameter::resolveDescription
+     * @covers \Php\DI\ReflectionParameter::resolveTypes
      */
     public function testTaggedParameter(): void
     {
@@ -108,9 +108,9 @@ class InvokerTest extends TestCase
     private function resolver(array $definition = []): Invoker
     {
         return new Invoker(
-            php\DI::create($definition),
+            Php\DI::create($definition),
             static function (\ReflectionParameter $parameter, array $provided) {
-                $map = php\map(array_change_key_case($provided));
+                $map = Php\map(array_change_key_case($provided));
                 if (($value = $map[strtolower($parameter->getName())] ?? null) !== null) {
                     yield $value;
                 }

@@ -3,10 +3,10 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php\Composer;
+namespace Php\Composer;
 
-use php;
-use php\test\assert;
+use Php;
+use Php\test\assert;
 use Composer;
 use PHPUnit\Framework\TestCase;
 
@@ -39,7 +39,7 @@ class DIPluginTest extends TestCase
                     'name'  => 'php-fn/extra-string-reflection',
                     'extra' => [
                         'di'        => 'config/di.php',
-                        'di-config' => [php\DI::WIRING => php\DI\WIRING::REFLECTION]
+                        'di-config' => [Php\DI::WIRING => Php\DI\WIRING::REFLECTION]
                     ]
                 ]
             ],
@@ -80,10 +80,10 @@ class DIPluginTest extends TestCase
                             'baz' => ['foo', 'bar'],
                         ],
                         'di-config' => [
-                            php\DI::WIRING => php\DI\WIRING::REFLECTION,
+                            Php\DI::WIRING => Php\DI\WIRING::REFLECTION,
                             '@ns\c5' => 'cast-to-array',
                             '@ns\c1' => ['cache' => true],
-                            '@ns\c2' => [php\DI::WIRING => false],
+                            '@ns\c2' => [Php\DI::WIRING => false],
                         ],
                     ]
                 ]
@@ -94,7 +94,7 @@ class DIPluginTest extends TestCase
     /**
      * @large
      *
-     * @covers \php\Composer\DIPlugin::onAutoloadDump
+     * @covers \Php\Composer\DIPlugin::onAutoloadDump
      * @dataProvider providerOnAutoloadDump
      *
      * @param mixed $expected

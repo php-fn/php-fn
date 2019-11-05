@@ -3,4 +3,4 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-class_alias(php\Php::class, Php::class);
+class_alias(Php\Php::class, Php::class);

@@ -3,12 +3,12 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php\PropertiesTrait;
+namespace Php\PropertiesTrait;
 
-use php;
+use Php;
 
 /**
- * @mixin php\PropertiesTrait
+ * @mixin Php\PropertiesTrait
  */
 trait Init
 {
@@ -23,14 +23,14 @@ trait Init
     private function propsInit(iterable $properties = null): void
     {
         if (!defined('static::DEFAULT')) {
-            $properties === null || $this->properties = php\merge($this->properties, $properties);
+            $properties === null || $this->properties = Php\merge($this->properties, $properties);
             return;
         }
         $defaults = constant('static::DEFAULT');
         $diff = [];
-        $methods = php\merge($defaults, (array)$properties, function($value, $name) use ($defaults, &$diff) {
+        $methods = Php\merge($defaults, (array)$properties, function($value, $name) use ($defaults, &$diff) {
             $method = static::propMethod($name);
-            if ($method || php\hasKey($name, $defaults)) {
+            if ($method || Php\hasKey($name, $defaults)) {
                 $this->properties[$name] = $value;
             } else {
                 $diff[] = $name;
@@ -38,7 +38,7 @@ trait Init
             return $method ?: null;
         });
 
-        $diff && php\fail\domain(
+        $diff && Php\fail\domain(
             'magic properties (%s) are not defined in %s::DEFAULT',
             implode(',', $diff),
             static::class

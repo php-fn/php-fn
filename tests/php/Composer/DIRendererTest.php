@@ -3,10 +3,10 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php\Composer;
+namespace Php\Composer;
 
-use php\DI;
-use php\test\assert;
+use Php\DI;
+use Php\test\assert;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -28,8 +28,8 @@ class DIRendererTest extends TestCase
     }
 
     /**
-     * @covers \php\Composer\DIRenderer::getNameSpace
-     * @covers \php\Composer\DIRenderer::getClassName
+     * @covers \Php\Composer\DIRenderer::getNameSpace
+     * @covers \Php\Composer\DIRenderer::getClassName
      *
      * @dataProvider providerClass
      *
@@ -55,14 +55,14 @@ class DIRendererTest extends TestCase
 namespace ns1\\ns2 {
     /**
      */
-    class c1 extends \\php\\DI\\Container
+    class c1 extends \\Php\\DI\\Container
     {
         /**
          * @inheritdoc
          */
         public function __construct()
         {
-            \$cc = \\php\\DI::config(
+            \$cc = \\Php\\DI::config(
                 ['wiring' => 'reflection', 'cache' => false, 'proxy' => 'proxy.php', 'compile' => '/tmp/'], 
                 \$sources = [
                     \\ns1\\ns2\\ns3\\c2::class => new \\ns1\\ns2\\ns3\\c2,
@@ -72,8 +72,8 @@ namespace ns1\\ns2 {
                 ],
                 ...\array_values(\$sources),
                 ...[
-                    \\php\\BASE_DIR . 'config/c1.php',
-                    \\php\\BASE_DIR . 'config/c2.php',
+                    \\Php\\BASE_DIR . 'config/c1.php',
+                    \\Php\\BASE_DIR . 'config/c2.php',
                 ],
                 ...[['k1' => 'v1', 'k2' => ['v2', 'v3'], 'k3' => ['k4' => ['v5']]]]
             );
@@ -108,14 +108,14 @@ EOF
 namespace  {
     /**
      */
-    class c1 extends \\php\\DI\\Container
+    class c1 extends \\Php\\DI\\Container
     {
         /**
          * @inheritdoc
          */
         public function __construct()
         {
-            \$cc = \\php\\DI::config(
+            \$cc = \\Php\\DI::config(
                 [], 
                 \$sources = [
                 ],
@@ -135,7 +135,7 @@ EOF
     }
 
     /**
-     * @covers \php\Composer\DIRenderer::__toString
+     * @covers \Php\Composer\DIRenderer::__toString
      *
      * @dataProvider providerToString
      *

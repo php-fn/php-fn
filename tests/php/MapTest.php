@@ -3,10 +3,10 @@
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
-namespace php;
+namespace Php;
 
-use php\Map\Sort;
-use php\test\assert;
+use Php\Map\Sort;
+use Php\test\assert;
 use LogicException;
 use PHPUnit\Framework\TestCase;
 use Traversable;
