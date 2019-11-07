@@ -13,7 +13,7 @@ namespace Php {
      */
     function fail($message, ...$replacements): void
     {
-        _\fail(RuntimeException::class, $message, ...$replacements);
+        Functions::fail(RuntimeException::class, $message, ...$replacements);
     }
 }
 
@@ -25,6 +25,7 @@ namespace Php\fail {
     use InvalidArgumentException;
     use LogicException;
     use OutOfRangeException;
+    use Php\Functions;
 
     /**
      * @param $message
@@ -32,7 +33,7 @@ namespace Php\fail {
      */
     function logic($message, ...$replacements): void
     {
-        _\fail(LogicException::class, $message, ...$replacements);
+        Functions::fail(LogicException::class, $message, ...$replacements);
     }
 
     /**
@@ -41,7 +42,7 @@ namespace Php\fail {
      */
     function argument($message, ...$replacements): void
     {
-        _\fail(InvalidArgumentException::class, $message, ...$replacements);
+        Functions::fail(InvalidArgumentException::class, $message, ...$replacements);
     }
 
     /**
@@ -50,7 +51,7 @@ namespace Php\fail {
      */
     function range($message, ...$replacements): void
     {
-        _\fail(OutOfRangeException::class, $message, ...$replacements);
+        Functions::fail(OutOfRangeException::class, $message, ...$replacements);
     }
 
     /**
@@ -59,6 +60,6 @@ namespace Php\fail {
      */
     function domain($message, ...$replacements): void
     {
-        _\fail(DomainException::class, $message, ...$replacements);
+        Functions::fail(DomainException::class, $message, ...$replacements);
     }
 }

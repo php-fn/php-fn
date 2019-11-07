@@ -65,11 +65,11 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
             case 'traverse':
                 return is_array($this->data) ? $this->data : traverse($this);
             case 'values':
-                return _\toValues(is_array($this->data) ? $this->data : $this);
+                return Functions::toValues(is_array($this->data) ? $this->data : $this);
             case 'tree':
-                return _\toValues($this->tree());
+                return Functions::toValues($this->tree());
             case 'leaves':
-                return _\toValues($this->leaves());
+                return Functions::toValues($this->leaves());
             case 'flatten':
                 return traverse($this->flatten());
             case 'string':
@@ -127,7 +127,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function tree(callable $mapper = null): self
     {
-        return _\recursive($this, false, $mapper);
+        return Functions::recursive($this, false, $mapper);
     }
 
     /**
@@ -137,7 +137,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function leaves(callable $mapper = null): self
     {
-        return _\recursive($this, true, $mapper);
+        return Functions::recursive($this, true, $mapper);
     }
 
     /**
@@ -328,7 +328,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     {
         return static function () use ($function, $iterables) {
             return $function(...traverse($iterables, static function ($iterable) {
-                return _\toArray($iterable);
+                return Functions::toArray($iterable);
             }));
         };
     }

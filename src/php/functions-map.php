@@ -25,7 +25,7 @@ function hasKey($key, $in): bool
     if ($in instanceof ArrayAccess) {
         return false;
     }
-    return is_iterable($in) && array_key_exists($key, _\toArray($in));
+    return is_iterable($in) && array_key_exists($key, Functions::toArray($in));
 }
 
 /**
@@ -39,7 +39,7 @@ function at($index, $in, $default = null)
     if ((is_array($in) || $in instanceof ArrayAccess || is_scalar($in)) && isset($in[$index])) {
         return $in[$index];
     }
-    if (is_iterable($in) && array_key_exists($index, $map = _\toArray($in))) {
+    if (is_iterable($in) && array_key_exists($index, $map = Functions::toArray($in))) {
         return $map[$index];
     }
     func_num_args() > 2 ?: fail\range('undefined index: %s', $index);
@@ -54,7 +54,7 @@ function at($index, $in, $default = null)
  */
 function hasValue($value, $in, $strict = true): bool
 {
-    return is_iterable($in) && in_array($value, _\toArray($in), $strict);
+    return is_iterable($in) && in_array($value, Functions::toArray($in), $strict);
 }
 
 /**
@@ -84,7 +84,7 @@ function hasValue($value, $in, $strict = true): bool
 function traverse($traversable, callable $callable = null, $reset = true): array
 {
     if (!$callable) {
-        return _\toArray($traversable);
+        return Functions::toArray($traversable);
     }
     if (!($isArray = is_array($traversable)) && !$traversable instanceof Iterator) {
         $traversable instanceof Traversable ?: fail\argument('argument $traversable must be traversable');
@@ -139,7 +139,7 @@ function traverse($traversable, callable $callable = null, $reset = true): array
         }
 
         $groups = &$map;
-        foreach (_\toTraversable($mapped->group, true) as $group) {
+        foreach (Functions::toTraversable($mapped->group, true) as $group) {
             if (!isset($groups[$group])) {
                 $groups[$group] = [];
             }
@@ -156,7 +156,7 @@ function traverse($traversable, callable $callable = null, $reset = true): array
  */
 function map(...$iterable): Map
 {
-    $callable = _\lastCallable($iterable);
+    $callable = Functions::lastCallable($iterable);
     if (count($iterable) === 1) {
         return new Map($iterable[0], ...$callable);
     }
@@ -174,7 +174,7 @@ function map(...$iterable): Map
  */
 function merge(...$iterable): array
 {
-    return _\chainIterables(['array_merge' => true], ...$iterable);
+    return Functions::chainIterables(['array_merge' => true], ...$iterable);
 }
 
 /**
@@ -187,10 +187,10 @@ function merge(...$iterable): array
  */
 function keys(...$iterable): array
 {
-    $callable  = _\lastCallable($iterable);
+    $callable  = Functions::lastCallable($iterable);
     $functions = count($iterable) > 1 ? ['array_merge' => true, 'array_keys'] : ['array_keys' => true];
-    _\chainIterables($functions, ...$iterable);
-    return _\chainIterables($functions, ...$iterable, ...$callable);
+    Functions::chainIterables($functions, ...$iterable);
+    return Functions::chainIterables($functions, ...$iterable, ...$callable);
 }
 
 /**
@@ -204,9 +204,9 @@ function keys(...$iterable): array
  */
 function values(...$iterable): array
 {
-    $callable = _\lastCallable($iterable);
+    $callable = Functions::lastCallable($iterable);
     return merge(...traverse($iterable, function($candidate) {
-        return _\toValues($candidate);
+        return Functions::toValues($candidate);
     }), ...$callable);
 }
 
@@ -220,7 +220,7 @@ function values(...$iterable): array
  */
 function mixin(...$iterable): array
 {
-    return _\chainIterables(['array_replace' => true], ...$iterable);
+    return Functions::chainIterables(['array_replace' => true], ...$iterable);
 }
 
 /**
@@ -253,7 +253,7 @@ function some(...$iterable): bool
  */
 function leaves(...$iterable): array
 {
-    $callable  = _\lastCallable($iterable);
+    $callable  = Functions::lastCallable($iterable);
     return $callable ? map(...$iterable)->leaves(...$callable)->values : map(...$iterable)->leaves;
 }
 
@@ -267,7 +267,7 @@ function leaves(...$iterable): array
  */
 function tree(...$iterable): array
 {
-    $callable  = _\lastCallable($iterable);
+    $callable  = Functions::lastCallable($iterable);
     return $callable ? map(...$iterable)->tree(...$callable)->values : map(...$iterable)->tree;
 }
 
@@ -281,7 +281,7 @@ function tree(...$iterable): array
  */
 function flatten(...$iterable): array
 {
-    $callable = _\lastCallable($iterable);
+    $callable = Functions::lastCallable($iterable);
     return $callable ? map(...$iterable)->flatten(...$callable)->traverse : map(...$iterable)->flatten;
 }
 

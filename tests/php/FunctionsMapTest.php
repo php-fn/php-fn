@@ -215,8 +215,8 @@ class FunctionsMapTest extends MapTest
 
         assert\same(['key' => 'value'], traverse(['key' => 'value']));
         assert\same(['key' => 'value'], traverse(new ArrayObject(['key' => 'value'])));
-        assert\same([], traverse(_\toArray(null, true)));
-        assert\same([], traverse(_\toArray(null, true), $emptyCallable));
+        assert\same([], traverse(Functions::toArray(null, true)));
+        assert\same([], traverse(Functions::toArray(null, true), $emptyCallable));
 
         assert\exception('argument $candidate must be traversable', static function () {
             traverse(null);
@@ -224,10 +224,10 @@ class FunctionsMapTest extends MapTest
         assert\exception('argument $traversable must be traversable', static function ($emptyCallable) {
             traverse(null, $emptyCallable);
         }, $emptyCallable);
-        assert\same(['VALUE'], traverse(_\toArray('value', true), $this));
+        assert\same(['VALUE'], traverse(Functions::toArray('value', true), $this));
 
         if (PHP_VERSION_ID < 70200) {
-            assert\same([1], traverse(_\toArray('value', true), 'count'));
+            assert\same([1], traverse(Functions::toArray('value', true), 'count'));
         }
     }
 
@@ -294,7 +294,7 @@ class FunctionsMapTest extends MapTest
             'args > 1, no mapper, with assoc key'
         );
 
-        assert\equals(['A', 'C', 'D', 'E'], _\toValues(merge(['a', 'b'], ['c'], ['d', 'e'], static function ($value) {
+        assert\equals(['A', 'C', 'D', 'E'], Functions::toValues(merge(['a', 'b'], ['c'], ['d', 'e'], static function ($value) {
             return $value === 'b' ? null : strtoupper($value);
         })), 'args > 1, with mapper');
 
@@ -334,7 +334,7 @@ class FunctionsMapTest extends MapTest
             'args > 1, no mapper, with assoc key'
         );
 
-        assert\equals([0, 20, 30, 40], _\toValues(keys(['a', 'b'], ['c'], ['d', 'e'], static function ($value) {
+        assert\equals([0, 20, 30, 40], Functions::toValues(keys(['a', 'b'], ['c'], ['d', 'e'], static function ($value) {
             return $value === 1 ? null : $value * 10;
         })), 'args > 1, with mapper');
 
@@ -358,7 +358,7 @@ class FunctionsMapTest extends MapTest
             'args > 1, no mapper, with assoc key'
         );
 
-        assert\equals(['D'], _\toValues(mixin(['a', 'b'], ['c'], ['d'], static function ($value) {
+        assert\equals(['D'], Functions::toValues(mixin(['a', 'b'], ['c'], ['d'], static function ($value) {
             return $value === 'b' ? null : strtoupper($value);
         })), 'args > 1, with mapper');
     }

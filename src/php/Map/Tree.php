@@ -280,7 +280,7 @@ class Tree implements RecursiveIterator, Countable
      */
     public function recursive(callable $mapper = null): self
     {
-        return Php\_\recursive($this, false, $mapper);
+        return Php\Functions::recursive($this, false, $mapper);
     }
 
     /**
@@ -290,6 +290,6 @@ class Tree implements RecursiveIterator, Countable
      */
     public function flatten(callable $mapper = null): self
     {
-        return Php\_\recursive($this, true, $mapper);
+        return Php\Functions::recursive($this, true, $mapper);
     }
 }

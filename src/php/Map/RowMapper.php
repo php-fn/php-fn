@@ -38,7 +38,7 @@ class RowMapper
     {
         if (!(is_array($row) || $row instanceof ArrayAccess)) {
             is_iterable($row) ?: Php\fail\domain('row should be of type: array|ArrayAccess|iterable');
-            $row = Php\_\toArray($row);
+            $row = Php\Functions::toArray($row);
         }
 
         $rowValues = Php\map($row)->values();
