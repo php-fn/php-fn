@@ -24,9 +24,7 @@ namespace Php\fail {
     use DomainException;
     use InvalidArgumentException;
     use LogicException;
-    use OutOfBoundsException;
     use OutOfRangeException;
-    use UnexpectedValueException;
 
     /**
      * @param $message
