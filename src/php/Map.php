@@ -182,7 +182,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
             $string .= $delimiter(...[$counter++, $iterator->getDepth(), $iterator]) . $value;
 
         }));
-        return $replacements ? str($string, ...$replacements) : $string;
+        return $replacements ? Php::str($string, ...$replacements) : $string;
     }
 
     /**

@@ -188,7 +188,7 @@ class PropertiesTraitTest extends TestCase
     public function testTrait(): void
     {
         assert\exception(
-            str('magic properties (b,c) are not defined in %s::DEFAULT', PropertiesReadWrite::class),
+            Php::str('magic properties (b,c) are not defined in %s::DEFAULT', PropertiesReadWrite::class),
             static function () {
                 new PropertiesReadWrite(['b' => 'B', 'a' => 'A', 'c' => 'C', 'z' => 'Z']);
             }
@@ -237,7 +237,7 @@ class PropertiesTraitTest extends TestCase
         });
         assert\same('D', $obj->d);
         assert\exception(
-            str('class %s has read-only access for the magic-property: d', get_class($obj)),
+            Php::str('class %s has read-only access for the magic-property: d', get_class($obj)),
             static function ($obj) {
                 $obj->d = 'd';
             },
@@ -289,7 +289,7 @@ class PropertiesTraitTest extends TestCase
         assert\false(isset($obj->c));
         assert\same($a, $obj->a);
         assert\same($b, $obj->b);
-        assert\exception(str('missing magic-property c in %s', get_class($obj)), static function ($obj) {
+        assert\exception(Php::str('missing magic-property c in %s', get_class($obj)), static function ($obj) {
             $obj->c;
         }, $obj);
         unset($obj->a, $obj->b, $obj->c);
@@ -313,7 +313,7 @@ class PropertiesTraitTest extends TestCase
                 return 'A';
             }
         };
-        $message = str('class %s has read-only access for magic-properties: a', get_class($obj));
+        $message = Php::str('class %s has read-only access for magic-properties: a', get_class($obj));
         assert\exception($message, static function($obj) {$obj->a = '';}, $obj);
         assert\exception($message, static function($obj) {unset($obj->a);}, $obj);
 

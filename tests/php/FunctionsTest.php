@@ -55,7 +55,7 @@ class FunctionsTest extends TestCase
      */
     public function testStr($expected, $subject, ...$replacements): void
     {
-        assert\same($expected, str($subject, ...$replacements));
+        assert\same($expected, Php::str($subject, ...$replacements));
     }
 
     public function providerStr(): array
