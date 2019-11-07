@@ -207,18 +207,18 @@ class MapTest extends TestCase
         assert\same(
             ['k0' => ['a', 0], 'k1' => [['k2' => 'b', 'k3' => 'c'], 0], 'k3' => ['c', 1]],
             traverse($map->tree(static function ($value, $key, Map\Path $it) {
-                return $value === 'b' ? null : mapValue([$value, $it->getDepth()]);
+                return $value === 'b' ? null : Php::mapValue([$value, $it->getDepth()]);
             }))
         );
         assert\same(
             ['k0' => ['a', 0], 'k3' => ['c', 1]],
             traverse($map->leaves(static function ($value, Map\Path $it) {
-                return $value === 'b' ? null : mapValue([$value, $it->getDepth()]);
+                return $value === 'b' ? null : Php::mapValue([$value, $it->getDepth()]);
             }))
         );
 
         $mapper = static function ($value) {
-            return mapChildren(['k2' => 'b', 'k3' => 'c'])->andValue(strtoupper($value));
+            return Php::mapChildren(['k2' => 'b', 'k3' => 'c'])->andValue(strtoupper($value));
         };
 
         $map = $this->map(['a'], $mapper);
@@ -234,13 +234,13 @@ class MapTest extends TestCase
         assert\same(
             ['A' => 0, 'b' => 1, 'c' => 1],
             traverse($map->tree(static function (Map\Path $it, $value) {
-                return mapKey($value)->andValue($it->getDepth());
+                return Php::mapKey($value)->andValue($it->getDepth());
             }))
         );
         assert\same(
             ['b' => 1, 'c' => 1],
             traverse($map->leaves(static function ($value, $key, Map\Path $it) {
-                return mapKey($value)->andValue($it->getDepth());
+                return Php::mapKey($value)->andValue($it->getDepth());
             }))
         );
 
@@ -253,7 +253,7 @@ class MapTest extends TestCase
             [0, 0, 1, 1, 2],
             traverse($map->tree(static function (Map\Path $it) {
                 static $count = 0;
-                return mapValue($it->getDepth())->andKey($count++);
+                return Php::mapValue($it->getDepth())->andKey($count++);
             }))
         );
     }
@@ -345,7 +345,7 @@ EOF;
             ['a' => false, 'b' => false, 'c' => true],
             traverse($map = new Map(['a', 'b', 'c'], static function ($value) use (&$map) {
                 /** @var Map $map */
-                return mapKey($value)->andValue($map->isLast());
+                return Php::mapKey($value)->andValue($map->isLast());
             }))
         );
     }
@@ -377,13 +377,13 @@ EOF;
         assert\equals([
             '' => ['a', 'b']
         ], traverse(['a', 'b'], static function ($value) {
-            return mapGroup('')->andValue($value);
+            return Php::mapGroup('')->andValue($value);
         }));
 
         assert\equals([
             '' => ['a', 'b']
         ], $this->map(['a', 'b'], static function ($value) {
-            return mapGroup('')->andValue($value);
+            return Php::mapGroup('')->andValue($value);
         })->traverse);
     }
 }

@@ -81,7 +81,7 @@ class FunctionsMapTest extends MapTest
                 ['a' => 'a', 'b' => 'b'],
                 ['c' => 'C', 'a' => 'A'],
                 static function ($value, $key) {
-                    return mapValue("v:$value")->andKey("k:$key");
+                    return Php::mapValue("v:$value")->andKey("k:$key");
                 }
             )),
             'last argument is callable => replace and map'
@@ -100,7 +100,7 @@ class FunctionsMapTest extends MapTest
                 [null],
                 ['v'],
                 static function() {
-                    return mapValue(Php::mapNull());
+                    return Php::mapValue(Php::mapNull());
                 }
             ],
 
@@ -136,16 +136,16 @@ class FunctionsMapTest extends MapTest
                 ['value', 'key', 'flip' => 'pair', 'no' => 'changes'],
                 static function ($value, $key) {
                     if ($value === 'value') {
-                        return mapValue('VALUE');
+                        return Php::mapValue('VALUE');
                     }
                     if ($value === 'key') {
-                        return mapKey('KEY');
+                        return Php::mapKey('KEY');
                     }
                     if ($key === 'flip') {
-                        return mapValue($key)->andKey($value);
+                        return Php::mapValue($key)->andKey($value);
                     }
 
-                    return mapValue();
+                    return Php::mapValue();
                 },
             ],
             'group by a single value' => [
@@ -161,7 +161,7 @@ class FunctionsMapTest extends MapTest
                 ],
                 $toGroup,
                 static function ($value) {
-                    return mapGroup($value[0]);
+                    return Php::mapGroup($value[0]);
                 },
             ],
             'group by multiple values, with key' => [
@@ -177,7 +177,7 @@ class FunctionsMapTest extends MapTest
                 ],
                 $toGroup,
                 static function($value, $key) {
-                    return mapGroup($value)->andKey($key + 100);
+                    return Php::mapGroup($value)->andKey($key + 100);
                 },
             ],
         ];
@@ -245,15 +245,15 @@ class FunctionsMapTest extends MapTest
 
     public function testValueFunctions(): void
     {
-        assert\equals(new Map\Value, mapValue());
-        assert\equals(new Map\Value('v'), mapValue('v'));
-        assert\equals(new Map\Value('v', 'k'), mapValue('v', 'k'));
-        assert\equals(new Map\Value('v', 'k', 'g'), mapValue('v', 'k', 'g'));
-        assert\equals(new Map\Value('v', 'k', 'g', 'c'), mapValue('v', 'k', 'g', 'c'));
+        assert\equals(new Map\Value, Php::mapValue());
+        assert\equals(new Map\Value('v'), Php::mapValue('v'));
+        assert\equals(new Map\Value('v', 'k'), Php::mapValue('v', 'k'));
+        assert\equals(new Map\Value('v', 'k', 'g'), Php::mapValue('v', 'k', 'g'));
+        assert\equals(new Map\Value('v', 'k', 'g', 'c'), Php::mapValue('v', 'k', 'g', 'c'));
 
-        assert\equals((new Map\Value)->andKey('k'), mapKey('k'));
-        assert\equals((new Map\Value)->andGroup('g'), mapGroup('g'));
-        assert\equals((new Map\Value)->andChildren('c'), mapChildren('c'));
+        assert\equals((new Map\Value)->andKey('k'), Php::mapKey('k'));
+        assert\equals((new Map\Value)->andGroup('g'), Php::mapGroup('g'));
+        assert\equals((new Map\Value)->andChildren('c'), Php::mapChildren('c'));
     }
 
     public function testMap(): void

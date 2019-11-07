@@ -104,7 +104,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     {
         return $this->then(static function ($value, $key) {
             static $counter = 0;
-            return mapValue($key)->andKey($counter++);
+            return Php::mapValue($key)->andKey($counter++);
         }, ...$mappers);
     }
 
@@ -154,7 +154,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
             if ($value instanceof Map\Value) {
                 return $value->key === null ? $value->andKey($key) : $value;
             }
-            return $value === null ? $value : mapKey($key)->andValue($value);
+            return $value === null ? $value : Php::mapKey($key)->andValue($value);
         });
     }
 
@@ -306,7 +306,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     {
         return $this->then(static function ($value) {
             static $counter = 0;
-            return mapValue($value)->andKey($counter++);
+            return Php::mapValue($value)->andKey($counter++);
         }, ...$mappers);
     }
 

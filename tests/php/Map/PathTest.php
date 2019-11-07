@@ -75,7 +75,7 @@ class PathTest extends TestCase
                 return null;
             }
             if ($it->getDepth() === 2) {
-                $value = Php\mapValue(strtoupper($value));
+                $value = Php::mapValue(strtoupper($value));
                 $key === '2/0/1' && $value->andKey('-');
             }
             return $value;

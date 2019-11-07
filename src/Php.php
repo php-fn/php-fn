@@ -134,4 +134,53 @@ abstract class Php
         }
         return $break;
     }
+
+    /**
+     * @param mixed $value
+     * @param mixed $key
+     * @param mixed $group
+     * @param mixed $children
+     * @return Php\Map\Value
+     */
+    public static function mapValue(...$args): Php\Map\Value
+    {
+        return new Php\Map\Value(...$args);
+    }
+
+    /**
+     * @param mixed $key
+     * @return Php\Map\Value
+     */
+    public static function mapKey($key): Php\Map\Value
+    {
+        return self::mapValue()->andKey($key);
+    }
+
+    /**
+     * @param mixed $group
+     * @return Php\Map\Value
+     */
+    public static function mapGroup($group): Php\Map\Value
+    {
+        return self::mapValue()->andGroup($group);
+    }
+
+    /**
+     * @param iterable|callable $children
+     * @return Php\Map\Value
+     */
+    public static function mapChildren($children): Php\Map\Value
+    {
+        return self::mapValue()->andChildren($children);
+    }
+
+    /**
+     * @param string|iterable|\Closure $value
+     * @param string $key column to
+     * @return Php\Map\RowMapper
+     */
+    public static function mapRow($value, $key = null, ...$group): Php\Map\RowMapper
+    {
+        return new Php\Map\RowMapper($key, $value, ...$group);
+    }
 }

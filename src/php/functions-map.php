@@ -63,13 +63,13 @@ function hasValue($value, $in, $strict = true): bool
  *
  * - value mapping
  *  - directly (by return)
- *  - with Value object @see mapValue
+ *  - with Value object @see Php::mapValue
  *
  * - key mapping
  *  - directly (by reference)
- *  - with Value object @see mapKey
+ *  - with Value object @see Php::mapKey
  *
- * - grouping with Value object @see mapGroup
+ * - grouping with Value object @see Php::mapGroup
  *
  * @see array_walk
  * @see array_filter
@@ -282,53 +282,4 @@ function flatten(...$iterable): array
 {
     $callable = Functions::lastCallable($iterable);
     return $callable ? map(...$iterable)->flatten(...$callable)->traverse : map(...$iterable)->flatten;
-}
-
-/**
- * @param string|iterable|\Closure $value
- * @param string $key column to
- * @return Map\RowMapper
- */
-function mapRow($value, $key = null, ...$group): Map\RowMapper
-{
-    return new Map\RowMapper($key, $value, ...$group);
-}
-
-/**
- * @param mixed $value
- * @param mixed $key
- * @param mixed $group
- * @param mixed $children
- * @return Map\Value
- */
-function mapValue(...$args): Map\Value
-{
-    return new Map\Value(...$args);
-}
-
-/**
- * @param mixed $key
- * @return Map\Value
- */
-function mapKey($key): Map\Value
-{
-    return mapValue()->andKey($key);
-}
-
-/**
- * @param mixed $group
- * @return Map\Value
- */
-function mapGroup($group): Map\Value
-{
-    return mapValue()->andGroup($group);
-}
-
-/**
- * @param iterable|callable $children
- * @return Map\Value
- */
-function mapChildren($children): Map\Value
-{
-    return mapValue()->andChildren($children);
 }

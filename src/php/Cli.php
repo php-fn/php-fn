@@ -179,7 +179,7 @@ class Cli extends Application
             $command->setDescription($doc->getSummary());
             $desc = merge(traverse($doc->getTagsByName('param'), function(Param $tag) {
                 if ($paramDesc = (string)$tag->getDescription()) {
-                    return mapKey($tag->getVariableName())->andValue($paramDesc);
+                    return Php::mapKey($tag->getVariableName())->andValue($paramDesc);
                 }
                 return null;
             }), $desc);

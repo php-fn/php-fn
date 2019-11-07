@@ -52,7 +52,7 @@ class TreeTest extends TestCase
                 'expected' => ['a', 'a-0', 'b', 'b-0', 'b-1', 'c', 'c-0', 'c-1', 'c-2'],
                 'inner' => ['a', 'b', 'c'],
                 'mapper' => static function () {
-                    return Php\mapChildren(static function ($value, $key) {
+                    return Php::mapChildren(static function ($value, $key) {
                         $children = [];
                         for ($i = 0; $i <= $key; $i++) {
                             $children[] = "$value-$i";
@@ -69,7 +69,7 @@ class TreeTest extends TestCase
                     for ($i = 0; $i <= $key; $i++) {
                         $children[] = "$value-$i";
                     }
-                    return Php\mapChildren($children);
+                    return Php::mapChildren($children);
                 },
             ],
             'no mapper' => [
@@ -118,7 +118,7 @@ class TreeTest extends TestCase
                         return 'directly-value';
                     }
                     if ($value === 'b') {
-                        return Php\mapValue('map-value', 'map-key');
+                        return Php::mapValue('map-value', 'map-key');
                     }
 
                     return $value;
@@ -145,7 +145,7 @@ class TreeTest extends TestCase
                 'expected' => ['0-a' => 'a', '1-b' => 'b', '2-c' => 'c'],
                 'inner' => ['a', 'b', 'c'],
                 'mapper' => static function ($value, $key) {
-                    return Php\mapKey("$key-$value");
+                    return Php::mapKey("$key-$value");
                 },
             ],
             'map keys directly' => [
@@ -160,7 +160,7 @@ class TreeTest extends TestCase
                 'expected' => ['0-a', '1-b', '2-c'],
                 'inner' => ['a', 'b', 'c'],
                 'mapper' => static function ($value, $key) {
-                    return Php\mapValue("$key-$value");
+                    return Php::mapValue("$key-$value");
                 },
             ],
             'map values directly' => [
@@ -210,13 +210,13 @@ class TreeTest extends TestCase
         assert\same(
             ['k0' => ['a', 0], 'k1' => [['k2' => 'b', 'k3' => 'c'], 0], 'k3' => ['c', 1]],
             Php\traverse($tree->recursive(static function ($value, $key, Path $it) {
-                return $value === 'b' ? null : Php\mapValue([$value, $it->getDepth()]);
+                return $value === 'b' ? null : Php::mapValue([$value, $it->getDepth()]);
             }))
         );
         assert\same(
             ['k0' => ['a', 0], 'k3' => ['c', 1]],
             Php\traverse($tree->flatten(static function ($value, $key, Path $it) {
-                return $value === 'b' ? null : Php\mapValue([$value, $it->getDepth()]);
+                return $value === 'b' ? null : Php::mapValue([$value, $it->getDepth()]);
             }))
         );
 
@@ -224,7 +224,7 @@ class TreeTest extends TestCase
         assert\same(['a' => 'a', 'b' => 'b', 'c' => 'c'], Php\traverse($tree->flatten()));
         assert\same([0, 0, 1, 1, 2], Php\traverse($tree->recursive(static function ($value, $key, Path $it) {
             static $count = 0;
-            return Php\mapValue($it->getDepth())->andKey($count++);
+            return Php::mapValue($it->getDepth())->andKey($count++);
         })));
     }
 
@@ -239,7 +239,7 @@ class TreeTest extends TestCase
                 return $value === 'v1' ? Php::mapNull() : $value;
             },
             static function ($value, $key) {
-                return Php\mapValue($value ?? '-')->andKey($key === 'K1' ? 'k1' : $key);
+                return Php::mapValue($value ?? '-')->andKey($key === 'K1' ? 'k1' : $key);
             },
             static function ($value) {
                 return $value . $value;
@@ -259,7 +259,7 @@ class TreeTest extends TestCase
         assert\same(
             ['a' => false, 'b' => false, 'c' => true],
             Php\traverse(new Tree(['a', 'b', 'c'], static function ($value, $key, Tree $it) {
-                return Php\mapKey($value)->andValue($it->isLast());
+                return Php::mapKey($value)->andValue($it->isLast());
             }))
         );
     }

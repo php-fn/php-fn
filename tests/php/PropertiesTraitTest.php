@@ -56,7 +56,7 @@ class PropertiesReadWrite
     protected function resolveY(): Map\Value
     {
         static $count = 0;
-        return mapValue([$count++ => $this->properties['y'] ?? null]);
+        return Php::mapValue([$count++ => $this->properties['y'] ?? null]);
     }
 
     /**
@@ -79,7 +79,7 @@ class PropertiesReadWrite
         if ($args) {
             return $this->properties['_rw'] = $args[0];
         }
-        return $this->properties['_rw'] ?? mapValue($count++);
+        return $this->properties['_rw'] ?? Php::mapValue($count++);
     }
 
     /**
