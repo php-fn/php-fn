@@ -20,7 +20,7 @@ class FunctionsIsTest extends TestCase
      */
     public function testIsCallable($expected, ...$args): void
     {
-        assert\same($expected, isCallable(...$args));
+        assert\same($expected, Php::isCallable(...$args));
     }
 
     /**

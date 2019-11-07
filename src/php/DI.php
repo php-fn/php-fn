@@ -30,7 +30,7 @@ abstract class DI
     {
         $last = array_pop($args);
 
-        if (isCallable($last)) {
+        if (Php::isCallable($last)) {
             $config = $last();
             $config = is_array($config) ? $config : [self::WIRING => $config];
         } else if ($last === DI\WIRING::AUTO) {

@@ -83,7 +83,7 @@ class Cli extends Application
         $fns    = [];
         $config = [];
         foreach ($args as $arg) {
-            if (isCallable($arg)) {
+            if (Php::isCallable($arg)) {
                 $fns[] = $arg;
             } else {
                 $config[] = is_string($arg) ? $package->file($arg) : $arg;
@@ -114,7 +114,7 @@ class Cli extends Application
     {
         $commands = parent::getDefaultCommands();
         $default  = $this->value('cli.commands.default', false);
-        if (isCallable($default)) {
+        if (Php::isCallable($default)) {
             return traverse($commands, $default);
         }
         if ($default === false) {

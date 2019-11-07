@@ -58,7 +58,7 @@ class Renderable
             return $content->toCli($io);
         }
 
-        if (Php\isCallable($content)) {
+        if (Php::isCallable($content)) {
             return (int)$content($io, $type);
         }
 

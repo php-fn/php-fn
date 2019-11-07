@@ -56,7 +56,7 @@ class Invoker extends ParameterResolver\ResolverChain implements InvokerInterfac
             /** @noinspection PhpUnhandledExceptionInspection */
             return $resolver->resolve($candidate);
         }
-        Php\isCallable($candidate) || Php::fail('argument $candidate is not callable');
+        Php::isCallable($candidate) || Php::fail('argument $candidate is not callable');
         return $candidate;
     }
 

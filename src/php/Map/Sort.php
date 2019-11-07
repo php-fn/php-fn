@@ -5,7 +5,7 @@
 
 namespace Php\Map;
 
-use function Php\isCallable;
+use Php;
 use function Php\traverse;
 use ArrayIterator;
 use IteratorAggregate;
@@ -56,7 +56,7 @@ class Sort implements IteratorAggregate
     public function __construct($iterable, $strategy = null, $flags = null)
     {
         $this->iterable = $iterable;
-        if (isCallable($strategy)) {
+        if (Php::isCallable($strategy)) {
             $this->strategy = $strategy;
         } else {
             $flags = $strategy | $flags;

@@ -92,4 +92,17 @@ abstract class Php
         }
         return vsprintf($subject, $replacements);
     }
+
+    /**
+     * @param callable|mixed $candidate
+     * @param bool $strict
+     * @return bool
+     */
+    public static function isCallable($candidate, $strict = true): bool
+    {
+        return !(
+            !is_callable($candidate, !$strict) ||
+            ($strict && is_string($candidate) && !strpos($candidate, '::'))
+        );
+    }
 }

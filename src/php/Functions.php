@@ -21,7 +21,7 @@ class Functions
         }
 
         $last = array_pop($args);
-        if ($args && !is_iterable($last) && isCallable($last)) {
+        if ($args && !is_iterable($last) && Php::isCallable($last)) {
             return [$last];
         }
 
