@@ -61,9 +61,9 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     {
         switch ($property) {
             case 'keys':
-                return traverse($this->keys());
+                return Php::traverse($this->keys());
             case 'traverse':
-                return is_array($this->data) ? $this->data : traverse($this);
+                return is_array($this->data) ? $this->data : Php::traverse($this);
             case 'values':
                 return Functions::toValues(is_array($this->data) ? $this->data : $this);
             case 'tree':
@@ -71,7 +71,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
             case 'leaves':
                 return Functions::toValues($this->leaves());
             case 'flatten':
-                return traverse($this->flatten());
+                return Php::traverse($this->flatten());
             case 'string':
                 return $this->string();
             case 'every':
@@ -177,7 +177,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
                 return $counter ? $delimiter : '';
             };
         }
-        traverse($this->leaves(static function ($value, Map\Path $iterator) use ($delimiter, &$string) {
+        Php::traverse($this->leaves(static function ($value, Map\Path $iterator) use ($delimiter, &$string) {
             static $counter = 0;
             $string .= $delimiter(...[$counter++, $iterator->getDepth(), $iterator]) . $value;
 
@@ -233,7 +233,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function __isset($property): bool
     {
-        return hasValue($property, ['keys', 'traverse', 'map', 'values', 'tree', 'leaves', 'string', 'every', 'some']);
+        return Php::hasValue($property, ['keys', 'traverse', 'map', 'values', 'tree', 'leaves', 'string', 'every', 'some']);
     }
 
     /**
@@ -281,7 +281,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     private function data(): array
     {
         if (!is_array($this->data)) {
-            $this->data    = traverse($this);
+            $this->data    = Php::traverse($this);
             $this->inner   = null;
             $this->mappers = [];
         }
@@ -327,7 +327,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
     private static function variadic($function, ...$iterables): Closure
     {
         return static function () use ($function, $iterables) {
-            return $function(...traverse($iterables, static function ($iterable) {
+            return $function(...Php::traverse($iterables, static function ($iterable) {
                 return Functions::toArray($iterable);
             }));
         };

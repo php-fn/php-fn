@@ -6,7 +6,6 @@
 namespace Php\Map;
 
 use Php;
-use function Php\traverse;
 use ArrayIterator;
 use IteratorAggregate;
 
@@ -74,7 +73,7 @@ class Sort implements IteratorAggregate
         $compare = $this->reverse ? function($left, $right) {
             return call_user_func($this->strategy, $right, $left);
         } : $this->strategy;
-        $array = traverse($this->iterable);
+        $array = Php::traverse($this->iterable);
         $this->byKeys ? uksort($array, $compare) : uasort($array, $compare);
         return $array;
     }
@@ -84,7 +83,7 @@ class Sort implements IteratorAggregate
      */
     private function sortFlags(): array
     {
-        $array = traverse($this->iterable);
+        $array = Php::traverse($this->iterable);
         if ($this->reverse) {
             $this->byKeys ? krsort($array, $this->flags) : arsort($array, $this->flags);
         } else {

@@ -120,7 +120,7 @@ class LazyTest extends TestCase
     public function testUnify($expected, ...$proxy): void
     {
         assert\equals\trial($expected, static function () use ($proxy) {
-            return Php\traverse(new Lazy(...$proxy));
+            return Php::traverse(new Lazy(...$proxy));
         });
     }
 
@@ -229,7 +229,7 @@ class LazyTest extends TestCase
      */
     public function testIsLastTraverse(array $expected, Lazy $it): void
     {
-        $result = Php\traverse($it, static function($value, &$key) use(&$it) {
+        $result = Php::traverse($it, static function ($value, &$key) use (&$it) {
             $key = $value;
             return $it->isLast();
         });

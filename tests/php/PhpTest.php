@@ -57,10 +57,10 @@ class PhpTest extends TestCase
             'RowMapper => RowMapper' => [Map\RowMapper::class, $callable],
             'Closure(RowMapper) => callable' => ['callable', Closure::fromCallable($callable)],
             '(object)[] => stdClass' => [stdClass::class, (object)[]],
-            'map, iterable, Map => iterable' => ['iterable', map(), 'iterable', Map::class],
-            'map, Map, iterable => Map' => [Map::class, map(), Map::class, 'iterable'],
+            'map, iterable, Map => iterable' => ['iterable', Php::map(), 'iterable', Map::class],
+            'map, Map, iterable => Map' => [Map::class, Php::map(), Map::class, 'iterable'],
             'map => Countable (implements)' => [
-                Countable::class, map(),
+                Countable::class, Php::map(),
                 Countable::class,
                 Traversable::class,
                 'iterable',
@@ -68,14 +68,14 @@ class PhpTest extends TestCase
             ],
             'path => Countable (extends)' => [
                 RecursiveIteratorIterator::class,
-                new Map\Path(map()),
+                new Map\Path(Php::map()),
                 RecursiveIteratorIterator::class,
                 OuterIterator::class,
                 'iterable'
             ],
             'path => not callable' => [
                 '',
-                new Map\Path(map()),
+                new Map\Path(Php::map()),
                 RecursiveIteratorIterator::class,
                 OuterIterator::class,
                 'iterable',

@@ -15,50 +15,50 @@ class FunctionsMapTest extends MapTest
      */
     protected function map(...$arguments): Map
     {
-        return map(...$arguments);
+        return Php::map(...$arguments);
     }
 
     public function testHasKey(): void
     {
-        assert\false(hasKey('key', null));
-        assert\false(hasKey('key', (object)[]));
-        assert\false(hasKey('key', []));
-        assert\false(hasKey('key', map()));
+        assert\false(Php::hasKey('key', null));
+        assert\false(Php::hasKey('key', (object)[]));
+        assert\false(Php::hasKey('key', []));
+        assert\false(Php::hasKey('key', Php::map()));
 
-        assert\true(hasKey('key', map(['key' => null])));
-        assert\true(hasKey('key', ['key' => null]));
+        assert\true(Php::hasKey('key', Php::map(['key' => null])));
+        assert\true(Php::hasKey('key', ['key' => null]));
 
-        assert\true(hasKey('key', map(['key' => false])));
-        assert\true(hasKey('key', ['key' => false]));
+        assert\true(Php::hasKey('key', Php::map(['key' => false])));
+        assert\true(Php::hasKey('key', ['key' => false]));
 
-        assert\true(hasKey('key', map(['key' => 0])));
-        assert\true(hasKey('key', ['key' => 0]));
-        assert\true(hasKey('key', ['key' => 0]));
+        assert\true(Php::hasKey('key', Php::map(['key' => 0])));
+        assert\true(Php::hasKey('key', ['key' => 0]));
+        assert\true(Php::hasKey('key', ['key' => 0]));
 
-        assert\true(hasKey(0, 'a'));
-        assert\false(hasKey(0, ''));
+        assert\true(Php::hasKey(0, 'a'));
+        assert\false(Php::hasKey(0, ''));
     }
 
     public function testHasValue(): void
     {
-        assert\false(hasValue('value', null));
-        assert\false(hasValue('value', []));
-        assert\false(hasValue('value', map()));
+        assert\false(Php::hasValue('value', null));
+        assert\false(Php::hasValue('value', []));
+        assert\false(Php::hasValue('value', Php::map()));
 
-        assert\true(hasValue(100, [100]));
-        assert\false(hasValue('100', [100]));
-        assert\true(hasValue('100', [100], false));
+        assert\true(Php::hasValue(100, [100]));
+        assert\false(Php::hasValue('100', [100]));
+        assert\true(Php::hasValue('100', [100], false));
 
-        assert\true(hasValue(100, map([100])));
-        assert\false(hasValue('100', map([100])));
-        assert\true(hasValue('100', map([100]), false));
+        assert\true(Php::hasValue(100, Php::map([100])));
+        assert\false(Php::hasValue('100', Php::map([100])));
+        assert\true(Php::hasValue('100', Php::map([100]), false));
     }
 
     public function testMapReplace(): void
     {
         assert\same(
             ['a' => 'A', 'b' => 'b', 'c' => 'C'],
-            traverse(map(
+            Php::traverse(Php::map(
                 ['a' => 'a', 'b' => 'b'],
                 ['c' => 'C', 'a' => 'A']
             )),
@@ -67,17 +67,17 @@ class FunctionsMapTest extends MapTest
 
         assert\same(
             ['a' => 'A', 'b' => 'b', 'c' => 'c', 'd'],
-            traverse(map(
+            Php::traverse(Php::map(
                 ['a' => 'a', 'b' => 'b'],
                 ['c' => 'C', 'a' => 'A'],
-                map(['c' => 'c', 'd'])
+                Php::map(['c' => 'c', 'd'])
             )),
             'three iterable arguments => replace'
         );
 
         assert\same(
             ['k:a' => 'v:A', 'k:b' => 'v:b', 'k:c' => 'v:C'],
-            traverse(map(
+            Php::traverse(Php::map(
                 ['a' => 'a', 'b' => 'b'],
                 ['c' => 'C', 'a' => 'A'],
                 static function ($value, $key) {
@@ -193,7 +193,7 @@ class FunctionsMapTest extends MapTest
      */
     public function testSameBehaviourTraverse($expected, $iterable, ...$mapper): void
     {
-        assert\same($expected, traverse($iterable, ...$mapper));
+        assert\same($expected, Php::traverse($iterable, ...$mapper));
     }
 
     /**
@@ -206,28 +206,28 @@ class FunctionsMapTest extends MapTest
      */
     public function testSameBehaviourMap($expected, $iterable, ...$mapper): void
     {
-        assert\same($expected, map($iterable, ...$mapper)->traverse);
+        assert\same($expected, Php::map($iterable, ...$mapper)->traverse);
     }
 
     public function testTraverse(): void
     {
         $emptyCallable = static function () {};
 
-        assert\same(['key' => 'value'], traverse(['key' => 'value']));
-        assert\same(['key' => 'value'], traverse(new ArrayObject(['key' => 'value'])));
-        assert\same([], traverse(Functions::toArray(null, true)));
-        assert\same([], traverse(Functions::toArray(null, true), $emptyCallable));
+        assert\same(['key' => 'value'], Php::traverse(['key' => 'value']));
+        assert\same(['key' => 'value'], Php::traverse(new ArrayObject(['key' => 'value'])));
+        assert\same([], Php::traverse(Functions::toArray(null, true)));
+        assert\same([], Php::traverse(Functions::toArray(null, true), $emptyCallable));
 
         assert\exception('argument $candidate must be traversable', static function () {
-            traverse(null);
+            Php::traverse(null);
         });
         assert\exception('argument $traversable must be traversable', static function ($emptyCallable) {
-            traverse(null, $emptyCallable);
+            Php::traverse(null, $emptyCallable);
         }, $emptyCallable);
-        assert\same(['VALUE'], traverse(Functions::toArray('value', true), $this));
+        assert\same(['VALUE'], Php::traverse(Functions::toArray('value', true), $this));
 
         if (PHP_VERSION_ID < 70200) {
-            assert\same([1], traverse(Functions::toArray('value', true), 'count'));
+            assert\same([1], Php::traverse(Functions::toArray('value', true), 'count'));
         }
     }
 
@@ -258,147 +258,151 @@ class FunctionsMapTest extends MapTest
 
     public function testMap(): void
     {
-        assert\type(Map::class, map());
-        assert\equals([], map()->traverse, 'args = 0');
+        assert\type(Map::class, Php::map());
+        assert\equals([], Php::map()->traverse, 'args = 0');
         assert\equals(
             ['a', 'b', 'c', 'd', 'e'],
-            map(['a', 'b'], ['c'], ['d', 'e'])->traverse,
+            Php::map(['a', 'b'], ['c'], ['d', 'e'])->traverse,
             'args > 1, no mapper'
         );
         assert\equals(
             ['a', 'k' => 'e', 'c', 'd'],
-            map(['a', 'k' => 'b'], ['c'], ['d', 'k' => 'e'])->traverse,
+            Php::map(['a', 'k' => 'b'], ['c'], ['d', 'k' => 'e'])->traverse,
             'args > 1, no mapper, with assoc key'
         );
-        assert\equals(['A', 'C', 'D', 'E'], map(['a', 'b'], ['c'], ['d', 'e'], static function ($value) {
+        assert\equals(['A', 'C', 'D', 'E'], Php::map(['a', 'b'], ['c'], ['d', 'e'], static function ($value) {
             return $value === 'b' ? null : strtoupper($value);
         })->values, 'args > 1, with mapper');
 
         // array_key_exists('a', array_merge(['a' => 'A'], ['b' => 'B']))
-        assert\true(isset(map(['a' => null], ['b' => 'B'])['a']));
+        assert\true(isset(Php::map(['a' => null], ['b' => 'B'])['a']));
 
         // array_merge(['a' => 'A'], ['b' => 'B'])['b']
-        assert\same('B', map(['a' => 'A'], ['b' => 'B'])['b']);
+        assert\same('B', Php::map(['a' => 'A'], ['b' => 'B'])['b']);
     }
 
     public function testMerge(): void
     {
-        assert\same([], merge(), 'args = 0');
-        assert\same([], merge([]));
-        assert\same([], merge([], new Map));
-        assert\equals(['a', 'b', 'c', 'd', 'e'], merge(['a', 'b'], ['c'], ['d', 'e']), 'args > 1, no mapper');
+        assert\same([], Php::merge(), 'args = 0');
+        assert\same([], Php::merge([]));
+        assert\same([], Php::merge([], new Map));
+        assert\equals(['a', 'b', 'c', 'd', 'e'], Php::merge(['a', 'b'], ['c'], ['d', 'e']), 'args > 1, no mapper');
 
         assert\equals(
             ['a', 'k' => 'e', 'c', 'd'],
-            merge(['a', 'k' => 'b'], ['c'], ['d', 'k' => 'e']),
+            Php::merge(['a', 'k' => 'b'], ['c'], ['d', 'k' => 'e']),
             'args > 1, no mapper, with assoc key'
         );
 
-        assert\equals(['A', 'C', 'D', 'E'], Functions::toValues(merge(['a', 'b'], ['c'], ['d', 'e'], static function ($value) {
+        assert\equals(['A', 'C', 'D', 'E'], Functions::toValues(Php::merge(['a', 'b'], ['c'], ['d', 'e'], static function ($value) {
             return $value === 'b' ? null : strtoupper($value);
         })), 'args > 1, with mapper');
 
-        assert\same('B', merge(['a' => 'A'], ['b' => 'B'])['b']);
+        assert\same('B', Php::merge(['a' => 'A'], ['b' => 'B'])['b']);
     }
 
     public function testValues(): void
     {
-        assert\same([], values(), 'args = 0');
-        assert\same([], values([]));
-        assert\same([], values([], new Map));
-        assert\same(['a', 'b', 'c', 'd', 'e'], merge(['a', 'b'], ['c'], ['d', 'e']), 'args > 1, no mapper');
+        assert\same([], Php::values(), 'args = 0');
+        assert\same([], Php::values([]));
+        assert\same([], Php::values([], new Map));
+        assert\same(['a', 'b', 'c', 'd', 'e'], Php::merge(['a', 'b'], ['c'], ['d', 'e']), 'args > 1, no mapper');
 
         assert\same(
             ['a', 'b', 'c', 'd', 'e'],
-            values(['a', 'k' => 'b'], ['c'], ['d', 'k' => 'e']),
+            Php::values(['a', 'k' => 'b'], ['c'], ['d', 'k' => 'e']),
             'args > 1, no mapper, with assoc key'
         );
 
-        assert\same(['A', 2 => 'C', 'D', 'E'], values(['a', 'b'], ['c'], ['d', 'e'], static function ($value) {
+        assert\same(['A', 2 => 'C', 'D', 'E'], Php::values(['a', 'b'], ['c'], ['d', 'e'], static function ($value) {
             return $value === 'b' ? null : strtoupper($value);
         }), 'args > 1, with mapper');
 
-        assert\same('B', values(['a' => 'A'], ['b' => 'B'])[1]);
+        assert\same('B', Php::values(['a' => 'A'], ['b' => 'B'])[1]);
     }
 
     public function testKeys(): void
     {
-        assert\same([], keys(), 'args = 0');
-        assert\same([], keys([]));
-        assert\same([], keys([], new Map));
-        assert\equals([0, 1, 2, 3, 4], keys(['a', 'b'], ['c'], ['d', 'e']), 'args > 1, no mapper');
+        assert\same([], Php::keys(), 'args = 0');
+        assert\same([], Php::keys([]));
+        assert\same([], Php::keys([], new Map));
+        assert\equals([0, 1, 2, 3, 4], Php::keys(['a', 'b'], ['c'], ['d', 'e']), 'args > 1, no mapper');
 
         assert\equals(
             [0, 'k', 1, 2],
-            keys(['a', 'k' => 'b'], ['c'], ['d', 'k' => 'e']),
+            Php::keys(['a', 'k' => 'b'], ['c'], ['d', 'k' => 'e']),
             'args > 1, no mapper, with assoc key'
         );
 
-        assert\equals([0, 20, 30, 40], Functions::toValues(keys(['a', 'b'], ['c'], ['d', 'e'], static function ($value) {
+        assert\equals([0, 20, 30, 40], Functions::toValues(Php::keys(['a', 'b'], ['c'], ['d', 'e'], static function ($value) {
             return $value === 1 ? null : $value * 10;
         })), 'args > 1, with mapper');
 
-        assert\equals([10], keys([10 => 'numeric']));
-        assert\equals([10], keys([10 => 'numeric'], static function ($key) {
+        assert\equals([10], Php::keys([10 => 'numeric']));
+        assert\equals([10], Php::keys([10 => 'numeric'], static function ($key) {
             return $key;
         }));
-        assert\equals([0, 1], keys([10 => 'numeric'], [20 => 'numeric']));
+        assert\equals([0, 1], Php::keys([10 => 'numeric'], [20 => 'numeric']));
     }
 
     public function testMixin(): void
     {
-        assert\same([], mixin(), 'args = 0');
-        assert\same([], mixin([]));
-        assert\same([], mixin([], new Map));
-        assert\equals(['d', 'b'], mixin(['a', 'b'], ['c'], ['d']), 'args > 1, no mapper');
+        assert\same([], Php::mixin(), 'args = 0');
+        assert\same([], Php::mixin([]));
+        assert\same([], Php::mixin([], new Map));
+        assert\equals(['d', 'b'], Php::mixin(['a', 'b'], ['c'], ['d']), 'args > 1, no mapper');
 
         assert\equals(
             ['d', 'K' => 'c', 'k' => 'e'],
-            mixin(['a', 'k' => 'b', 'K' => 'c'], ['c'], ['d', 'k' => 'e']),
+            Php::mixin(['a', 'k' => 'b', 'K' => 'c'], ['c'], ['d', 'k' => 'e']),
             'args > 1, no mapper, with assoc key'
         );
 
-        assert\equals(['D'], Functions::toValues(mixin(['a', 'b'], ['c'], ['d'], static function ($value) {
+        assert\equals(['D'], Functions::toValues(Php::mixin(['a', 'b'], ['c'], ['d'], static function ($value) {
             return $value === 'b' ? null : strtoupper($value);
         })), 'args > 1, with mapper');
     }
 
     public function testEveryFunction(): void
     {
-        assert\true(every());
-        assert\true(every([]));
-        assert\true(every([], []));
-        assert\true(every([' ']));
-        assert\false(every(['']));
-        assert\true(every([''], [0], static function() {return true;}));
+        assert\true(Php::every());
+        assert\true(Php::every([]));
+        assert\true(Php::every([], []));
+        assert\true(Php::every([' ']));
+        assert\false(Php::every(['']));
+        assert\true(Php::every([''], [0], static function () {
+            return true;
+        }));
     }
 
     public function testSomeFunction(): void
     {
-        assert\false(some());
-        assert\false(some([]));
-        assert\false(some([''], [0, null], [[]]));
-        assert\true(some([''], [0, null], [false, []], [' ']));
-        assert\false(some([1, true], [' '], static function() {return false;}));
+        assert\false(Php::some());
+        assert\false(Php::some([]));
+        assert\false(Php::some([''], [0, null], [[]]));
+        assert\true(Php::some([''], [0, null], [false, []], [' ']));
+        assert\false(Php::some([1, true], [' '], static function () {
+            return false;
+        }));
     }
 
     public function testTreeFunction(): void
     {
-        assert\same([], tree());
-        assert\same([], tree([], []));
-        assert\same(['a', 'b', ['c'], 'c'], tree(['a'], ['b', ['c']]));
-        assert\same(['A', 'B', 0, 'C'], tree(['a'], ['b', ['c']], static function($value, Map\Path $it) {
+        assert\same([], Php::tree());
+        assert\same([], Php::tree([], []));
+        assert\same(['a', 'b', ['c'], 'c'], Php::tree(['a'], ['b', ['c']]));
+        assert\same(['A', 'B', 0, 'C'], Php::tree(['a'], ['b', ['c']], static function ($value, Map\Path $it) {
             return is_string($value) ? strtoupper($value) : $it->getDepth();
         }));
     }
 
     public function testLeavesFunction(): void
     {
-        assert\same([], leaves());
-        assert\same([], leaves([], []));
-        assert\same(['a', 'b', 'c'], leaves(['a'], ['b', ['c']]));
-        assert\same(['a', 'b', '  c'], leaves(['a'], ['b', ['c']], static function(Map\Path $it) {
-            return (string) $it;
+        assert\same([], Php::leaves());
+        assert\same([], Php::leaves([], []));
+        assert\same(['a', 'b', 'c'], Php::leaves(['a'], ['b', ['c']]));
+        assert\same(['a', 'b', '  c'], Php::leaves(['a'], ['b', ['c']], static function (Map\Path $it) {
+            return (string)$it;
         }));
     }
 

@@ -47,7 +47,7 @@ class ParameterTest extends TestCase
             'a123B456c789d000'   => 'a123-b456-c789-d000',
         ];
 
-        return Php\traverse($ref->getParameters(), function(ReflectionParameter $param, &$key) use($expected) {
+        return Php::traverse($ref->getParameters(), function (ReflectionParameter $param, &$key) use ($expected) {
             return ['expected' => $expected[$key = $param->getName()], $param];
         });
     }

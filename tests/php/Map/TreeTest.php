@@ -185,11 +185,11 @@ class TreeTest extends TestCase
     public function testSimpleIteration($expected, $inner, callable $mapper): void
     {
         assert\equals\trial($expected, static function ($iterator) {
-            return Php\traverse($iterator);
+            return Php::traverse($iterator);
         }, new Tree($inner, ...(array)$mapper));
 
         assert\equals\trial($expected, static function ($iterator) {
-            return Php\traverse($iterator);
+            return Php::traverse($iterator);
         }, new Tree(new Lazy(static function () use ($inner) {
             return $inner;
         }), ...(array)$mapper));
@@ -205,24 +205,24 @@ class TreeTest extends TestCase
 
         assert\same(
             ['k0' => 'a', 'k1' => ['k2' => 'b', 'k3' => 'c'], 'k2' => 'b', 'k3' => 'c'],
-            Php\traverse($tree->recursive())
+            Php::traverse($tree->recursive())
         );
         assert\same(
             ['k0' => ['a', 0], 'k1' => [['k2' => 'b', 'k3' => 'c'], 0], 'k3' => ['c', 1]],
-            Php\traverse($tree->recursive(static function ($value, $key, Path $it) {
+            Php::traverse($tree->recursive(static function ($value, $key, Path $it) {
                 return $value === 'b' ? null : Php::mapValue([$value, $it->getDepth()]);
             }))
         );
         assert\same(
             ['k0' => ['a', 0], 'k3' => ['c', 1]],
-            Php\traverse($tree->flatten(static function ($value, $key, Path $it) {
+            Php::traverse($tree->flatten(static function ($value, $key, Path $it) {
                 return $value === 'b' ? null : Php::mapValue([$value, $it->getDepth()]);
             }))
         );
 
         $tree = new Tree(['a' => 'a', new Tree(['b' => 'b', new Tree(['c' => 'c'])])]);
-        assert\same(['a' => 'a', 'b' => 'b', 'c' => 'c'], Php\traverse($tree->flatten()));
-        assert\same([0, 0, 1, 1, 2], Php\traverse($tree->recursive(static function ($value, $key, Path $it) {
+        assert\same(['a' => 'a', 'b' => 'b', 'c' => 'c'], Php::traverse($tree->flatten()));
+        assert\same([0, 0, 1, 1, 2], Php::traverse($tree->recursive(static function ($value, $key, Path $it) {
             static $count = 0;
             return Php::mapValue($it->getDepth())->andKey($count++);
         })));
@@ -249,7 +249,7 @@ class TreeTest extends TestCase
         assert\same([
             'k1' => '--',
             'K2' => 'v2v2',
-        ], Php\traverse($tree));
+        ], Php::traverse($tree));
     }
 
     /**
@@ -258,7 +258,7 @@ class TreeTest extends TestCase
     {
         assert\same(
             ['a' => false, 'b' => false, 'c' => true],
-            Php\traverse(new Tree(['a', 'b', 'c'], static function ($value, $key, Tree $it) {
+            Php::traverse(new Tree(['a', 'b', 'c'], static function ($value, $key, Tree $it) {
                 return Php::mapKey($value)->andValue($it->isLast());
             }))
         );

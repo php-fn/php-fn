@@ -119,7 +119,7 @@ class Package
      */
     public function files(string ...$files): array
     {
-        return traverse($files, [$this, 'file']);
+        return Php::traverse($files, [$this, 'file']);
     }
 
     /**

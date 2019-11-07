@@ -49,6 +49,6 @@ class ReflectionParameter extends \ReflectionParameter
     protected function resolveTypes(): Php\Map
     {
         $type = $this->tag ? $this->tag->getType() : [];
-        return Php\map(is_iterable($type) ? $type : [$type]);
+        return Php::map(is_iterable($type) ? $type : [$type]);
     }
 }

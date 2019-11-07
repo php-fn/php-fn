@@ -65,7 +65,7 @@ class Renderable
         if (is_array($content)) {
             $current = current($content);
             if (is_array($current)) {
-                $io->table(Php\keys($current), $content);
+                $io->table(Php::keys($current), $content);
             } else {
                 $io->listing($content);
             }

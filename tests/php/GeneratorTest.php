@@ -15,7 +15,7 @@ class GeneratorTest extends MapTest
      */
     protected function map($iterable = null, ...$args): Map
     {
-        return map(static function() use ($iterable) {
+        return Php::map(static function () use ($iterable) {
             $iterable !== null && yield from $iterable;
         }, ...$args);
     }

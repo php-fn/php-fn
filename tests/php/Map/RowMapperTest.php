@@ -80,7 +80,7 @@ class RowMapperTest extends TestCase
         assert\equals([
             'g1' => ['a' => 'A', 'c' => 'C'],
             'g2' => ['b' => 'B'],
-        ], Php\traverse([
+        ], Php::traverse([
             ['id' => 'a', 'name' => 'A', 'group' => 'g1'],
             ['id' => 'b', 'name' => 'B', 'group' => 'g2'],
             ['id' => 'c', 'name' => 'C', 'group' => 'g1'],
@@ -89,7 +89,7 @@ class RowMapperTest extends TestCase
         assert\equals([
             'g1' => ['a' => Php::mapValue(['k1' => 'A']), 'c' => Php::mapValue(['k3' => 'C'])],
             'g2' => ['b' => Php::mapValue(['k2' => 'B'])],
-        ], Php\traverse([
+        ], Php::traverse([
             'k1' => ['id' => 'a', 'name' => 'A', 'group' => 'g1'],
             'k2' => ['id' => 'b', 'name' => 'B', 'group' => 'g2'],
             'k3' => ['id' => 'c', 'name' => 'C', 'group' => 'g1'],
@@ -107,13 +107,13 @@ class RowMapperTest extends TestCase
             'a-k2' => 'a-k1',
             'b-k2' => 'b-k1',
             'c-k2' => 'c-k1',
-        ], Php\traverse($rows, Php::mapRow(0, 1)));
+        ], Php::traverse($rows, Php::mapRow(0, 1)));
 
         assert\same([
             'a-k1' => ['k3' => 'g1', 'a-k2'],
             'b-k1' => ['k3' => 'g2', 'b-k2'],
             'c-k1' => ['k3' => 'g1', 'c-k2'],
-        ], Php\traverse($rows, Php::mapRow(['k3', 1], 0)));
+        ], Php::traverse($rows, Php::mapRow(['k3', 1], 0)));
 
         assert\same([
             'g1' => [
@@ -123,6 +123,6 @@ class RowMapperTest extends TestCase
             'g2' => [
                 'b-k1' => ['b-k2', 'b-k1', 'b-k2'],
             ],
-        ], Php\traverse($rows, Php::mapRow([1, 0, 1], 0, 2)));
+        ], Php::traverse($rows, Php::mapRow([1, 0, 1], 0, 2)));
     }
 }

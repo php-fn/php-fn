@@ -25,7 +25,7 @@ trait ArrayAccessTrait
      */
     public function offsetExists($offset): bool
     {
-        return hasKey($offset, $this->data());
+        return Php::hasKey($offset, $this->data());
     }
 
     /**
@@ -33,7 +33,7 @@ trait ArrayAccessTrait
      */
     public function offsetGet($offset)
     {
-        hasKey($offset, $data = $this->data()) || Php::fail($offset);
+        Php::hasKey($offset, $data = $this->data()) || Php::fail($offset);
         return $data[$offset];
     }
 

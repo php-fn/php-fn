@@ -65,7 +65,7 @@ trait PropertiesTrait
      */
     private function propGetter(string $name, ReflectionMethod $method, bool $force = false)
     {
-        if (!$force && hasKey($name, $this->properties)) {
+        if (!$force && Php::hasKey($name, $this->properties)) {
             return $this->properties[$name];
         }
         if (($value = $this->{$method->name}()) instanceof Value) {
@@ -84,7 +84,7 @@ trait PropertiesTrait
     private function prop(string $name, ...$args)
     {
         $method = static::propMethod($name);
-        $has = hasKey($name, $this->properties);
+        $has = Php::hasKey($name, $this->properties);
         $has || $method || Php::fail('missing magic-property %s in %s', $name, static::class);
 
         if ($args) {
@@ -147,7 +147,7 @@ trait PropertiesTrait
      */
     public function __isset(string $name): bool
     {
-        return hasKey($name, $this->properties) || static::propMethod($name);
+        return Php::hasKey($name, $this->properties) || static::propMethod($name);
     }
 
     /**

@@ -151,7 +151,7 @@ class PropertiesReadWrite
 
     protected function resolveAccess(): ArrayAccess
     {
-        return map();
+        return Php::map();
     }
 }
 
@@ -168,11 +168,11 @@ class PropertiesTraitTest extends TestCase
 
         assert\same('void', $obj->void);
         assert\same('', $obj->string);
-        $obj->string = map(['a', 'b']);
+        $obj->string = Php::map(['a', 'b']);
         assert\same("a\nb", $obj->string);
 
         assert\same(0, $obj->int);
-        $obj->int = map(['a', 'b']);
+        $obj->int = Php::map(['a', 'b']);
         assert\same(2, $obj->int);
 
         assert\same(.0, $obj->float);
@@ -180,7 +180,7 @@ class PropertiesTraitTest extends TestCase
         assert\same([], $obj->iterable);
         assert\equals(static function () {}, $obj->callable);
         assert\same($obj, $obj->self);
-        assert\equals(map(), $obj->access);
+        assert\equals(Php::map(), $obj->access);
     }
 
     /**

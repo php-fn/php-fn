@@ -142,7 +142,7 @@ class Tree implements RecursiveIterator, Countable
                      * @todo in this case the remaining children information is lost, fix it ASAP
                      */
                     if ($curValue->group !== null) {
-                        $iter = $this->inner = new Lazy(Php\traverse($iter, $mapper, false));
+                        $iter = $this->inner = new Lazy(Php::traverse($iter, $mapper, false));
                         $iter->rewind();
                         $this->needsMap = true;
                         $this->mappers = [function() {

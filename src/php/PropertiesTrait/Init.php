@@ -23,14 +23,14 @@ trait Init
     private function propsInit(iterable $properties = null): void
     {
         if (!defined('static::DEFAULT')) {
-            $properties === null || $this->properties = Php\merge($this->properties, $properties);
+            $properties === null || $this->properties = Php::merge($this->properties, $properties);
             return;
         }
         $defaults = constant('static::DEFAULT');
         $diff = [];
-        $methods = Php\merge($defaults, (array)$properties, function($value, $name) use ($defaults, &$diff) {
+        $methods = Php::merge($defaults, (array)$properties, function ($value, $name) use ($defaults, &$diff) {
             $method = static::propMethod($name);
-            if ($method || Php\hasKey($name, $defaults)) {
+            if ($method || Php::hasKey($name, $defaults)) {
                 $this->properties[$name] = $value;
             } else {
                 $diff[] = $name;

@@ -70,8 +70,8 @@ class MapTest extends TestCase
 
         $map = $this->map(['a-'])->then($duplicate, $duplicate, $duplicate);
         assert\type(Map::class, $map);
-        assert\equals(['a-a-a-a-a-a-a-a-'], traverse($map));
-        assert\equals(['a-a-a-a-a-a-a-a-'], traverse($map->then()));
+        assert\equals(['a-a-a-a-a-a-a-a-'], Php::traverse($map));
+        assert\equals(['a-a-a-a-a-a-a-a-'], Php::traverse($map->then()));
     }
 
     /**
@@ -123,15 +123,15 @@ class MapTest extends TestCase
     {
         $result = $this->map($map)->sort($strategy, $flags);
         assert\type(Map::class, $result);
-        assert\same($expected, traverse($result));
+        assert\same($expected, Php::traverse($result));
     }
 
     public function testKeys(): void
     {
         $map = $this->map(['a' => null, 'b' => null, 'c' => null, 10 => null]);
         assert\type(Map::class, $map->keys());
-        assert\same(['a', 'b', 'c', 10], traverse($map->keys()));
-        assert\same(['A', 'B', 'C', '10'], traverse($map->keys(static function ($value) {
+        assert\same(['a', 'b', 'c', 10], Php::traverse($map->keys()));
+        assert\same(['A', 'B', 'C', '10'], Php::traverse($map->keys(static function ($value) {
             return strtoupper($value);
         })));
     }
@@ -140,10 +140,10 @@ class MapTest extends TestCase
     {
         $map = $this->map(['a' => 'A', 'b' => 'B', 'c' => 'C']);
         assert\type(Map::class, $map->values());
-        assert\same(['A', 'B', 'C'], traverse($map->values()));
+        assert\same(['A', 'B', 'C'], Php::traverse($map->values()));
 
         $increment = static function ($value) {return ++$value;};
-        assert\same(['D', 'E', 'F'], traverse($map->values($increment, $increment, $increment)));
+        assert\same(['D', 'E', 'F'], Php::traverse($map->values($increment, $increment, $increment)));
     }
 
     public function testMerge(): void
@@ -154,7 +154,7 @@ class MapTest extends TestCase
             ['z']
         );
         assert\type(Map::class, $map);
-        assert\equals(['z', 'a' => 'A', 'b' => 'b', 'c' => 'C', 'd' => 'd', 'z'], traverse($map));
+        assert\equals(['z', 'a' => 'A', 'b' => 'b', 'c' => 'C', 'd' => 'd', 'z'], Php::traverse($map));
     }
 
     public function testProperties(): void
@@ -202,17 +202,17 @@ class MapTest extends TestCase
 
         assert\same(
             ['k0' => 'a', 'k1' => ['k2' => 'b', 'k3' => 'c'], 'k2' => 'b', 'k3' => 'c'],
-            traverse($map->tree())
+            Php::traverse($map->tree())
         );
         assert\same(
             ['k0' => ['a', 0], 'k1' => [['k2' => 'b', 'k3' => 'c'], 0], 'k3' => ['c', 1]],
-            traverse($map->tree(static function ($value, $key, Map\Path $it) {
+            Php::traverse($map->tree(static function ($value, $key, Map\Path $it) {
                 return $value === 'b' ? null : Php::mapValue([$value, $it->getDepth()]);
             }))
         );
         assert\same(
             ['k0' => ['a', 0], 'k3' => ['c', 1]],
-            traverse($map->leaves(static function ($value, Map\Path $it) {
+            Php::traverse($map->leaves(static function ($value, Map\Path $it) {
                 return $value === 'b' ? null : Php::mapValue([$value, $it->getDepth()]);
             }))
         );
@@ -230,16 +230,16 @@ class MapTest extends TestCase
         assert\same(['b', 'c'], $this->map(['a'], $mapper)->leaves);
 
         $map = $this->map(['a'], $mapper);
-        assert\same(['A'], traverse($map->values()));
+        assert\same(['A'], Php::traverse($map->values()));
         assert\same(
             ['A' => 0, 'b' => 1, 'c' => 1],
-            traverse($map->tree(static function (Map\Path $it, $value) {
+            Php::traverse($map->tree(static function (Map\Path $it, $value) {
                 return Php::mapKey($value)->andValue($it->getDepth());
             }))
         );
         assert\same(
             ['b' => 1, 'c' => 1],
-            traverse($map->leaves(static function ($value, $key, Map\Path $it) {
+            Php::traverse($map->leaves(static function ($value, $key, Map\Path $it) {
                 return Php::mapKey($value)->andValue($it->getDepth());
             }))
         );
@@ -247,11 +247,11 @@ class MapTest extends TestCase
         $map = $this->map(['k1' => 'a', 'k2' => $this->map(['k3' => 'b', 'k4' => $this->map(['k5' => 'c'])])]);
         assert\same(
             ['k1' => 'a', 'k3' => 'b', 'k5' => 'c'],
-            traverse($map->leaves())
+            Php::traverse($map->leaves())
         );
         assert\same(
             [0, 0, 1, 1, 2],
-            traverse($map->tree(static function (Map\Path $it) {
+            Php::traverse($map->tree(static function (Map\Path $it) {
                 static $count = 0;
                 return Php::mapValue($it->getDepth())->andKey($count++);
             }))
@@ -343,7 +343,7 @@ EOF;
     {
         assert\same(
             ['a' => false, 'b' => false, 'c' => true],
-            traverse($map = new Map(['a', 'b', 'c'], static function ($value) use (&$map) {
+            Php::traverse($map = new Map(['a', 'b', 'c'], static function ($value) use (&$map) {
                 /** @var Map $map */
                 return Php::mapKey($value)->andValue($map->isLast());
             }))
@@ -357,26 +357,26 @@ EOF;
         });
 
         assert\type(Map::class, $map->limit(0));
-        assert\same($all = ['A', 2 => 'C', 'D'], traverse($map->limit(0)));
-        assert\same($all, traverse($map->limit(-1)));
-        assert\same($all, traverse($map->limit(0, -1)));
-        assert\same($all, traverse($map->limit(3)));
+        assert\same($all = ['A', 2 => 'C', 'D'], Php::traverse($map->limit(0)));
+        assert\same($all, Php::traverse($map->limit(-1)));
+        assert\same($all, Php::traverse($map->limit(0, -1)));
+        assert\same($all, Php::traverse($map->limit(3)));
 
-        assert\same(['A'], traverse($map->limit(1)));
-        assert\same([2 => 'C'], traverse($map->limit(1, 1)));
-        assert\same([3 => 'D'], traverse($map->limit(1, 2)));
-        assert\same([], traverse($map->limit(1, 3)));
+        assert\same(['A'], Php::traverse($map->limit(1)));
+        assert\same([2 => 'C'], Php::traverse($map->limit(1, 1)));
+        assert\same([3 => 'D'], Php::traverse($map->limit(1, 2)));
+        assert\same([], Php::traverse($map->limit(1, 3)));
 
-        assert\same(['A', 2 => 'C'], traverse($map->limit(2)));
-        assert\same([2 => 'C', 'D'], traverse($map->limit(2, 1)));
-        assert\same([3 => 'D'], traverse($map->limit(2, 2)));
+        assert\same(['A', 2 => 'C'], Php::traverse($map->limit(2)));
+        assert\same([2 => 'C', 'D'], Php::traverse($map->limit(2, 1)));
+        assert\same([3 => 'D'], Php::traverse($map->limit(2, 2)));
     }
 
     public function testGroupByEmptyString(): void
     {
         assert\equals([
             '' => ['a', 'b']
-        ], traverse(['a', 'b'], static function ($value) {
+        ], Php::traverse(['a', 'b'], static function ($value) {
             return Php::mapGroup('')->andValue($value);
         }));
 

@@ -115,10 +115,10 @@ class Cli extends Application
         $commands = parent::getDefaultCommands();
         $default  = $this->value('cli.commands.default', false);
         if (Php::isCallable($default)) {
-            return traverse($commands, $default);
+            return Php::traverse($commands, $default);
         }
         if ($default === false) {
-            return traverse($commands, function(Command $command) {
+            return Php::traverse($commands, function (Command $command) {
                 return $command->setHidden(true);
             });
         }
@@ -168,16 +168,16 @@ class Cli extends Application
         $command = new Command($name);
         $refFn   = $this->invoker->reflect($callable);
 
-        $isOutput = some($refFn->getParameters(), function (ReflectionParameter $parameter): bool {
+        $isOutput = Php::some($refFn->getParameters(), function (ReflectionParameter $parameter): bool {
             return ($class = $parameter->getClass()) && (
-                $class->isSubclassOf(OutputInterface::class) || $class->name === OutputInterface::class
-            );
+                    $class->isSubclassOf(OutputInterface::class) || $class->name === OutputInterface::class
+                );
         });
 
         if (class_exists(DocBlockFactory::class) && $comment = $refFn->getDocComment()) {
             $doc = DocBlockFactory::createInstance()->create($comment);
             $command->setDescription($doc->getSummary());
-            $desc = merge(traverse($doc->getTagsByName('param'), function(Param $tag) {
+            $desc = Php::merge(Php::traverse($doc->getTagsByName('param'), function (Param $tag) {
                 if ($paramDesc = (string)$tag->getDescription()) {
                     return Php::mapKey($tag->getVariableName())->andValue($paramDesc);
                 }
@@ -185,10 +185,10 @@ class Cli extends Application
             }), $desc);
         }
 
-        $command->setDefinition(traverse(
+        $command->setDefinition(Php::traverse(
             static::params($refFn),
-            function(Parameter $param) use($args, $desc) {
-                return $param->input(hasValue($param->getName(), $args), at($param->getName(), $desc, null));
+            function (Parameter $param) use ($args, $desc) {
+                return $param->input(Php::hasValue($param->getName(), $args), Php::at($param->getName(), $desc, null));
             })
         );
 
@@ -197,7 +197,8 @@ class Cli extends Application
             if ($isOutput || !is_iterable($result)) {
                 return $result;
             }
-            traverse($this->container->get(IO::class)->render($result), function() {});
+            Php::traverse($this->container->get(IO::class)->render($result), function () {
+            });
             return 0;
         });
 
@@ -214,10 +215,10 @@ class Cli extends Application
     {
         $params = static::params($this->invoker->reflect($callable));
         $io = $this->container->get(IO::class);
-        return merge(
+        return Php::merge(
             $io->getOptions(true),
             $io->getArguments(true),
-            function($value, &$key) use($params) {
+            function ($value, &$key) use ($params) {
                 if (isset($params[$key])) {
                     $key = $params[$key]->getName();
                     return $value;
@@ -234,7 +235,7 @@ class Cli extends Application
      */
     protected static function params(ReflectionFunctionAbstract $refFn): Map
     {
-        return map($refFn->getParameters(), function(ReflectionParameter $ref, &$key) {
+        return Php::map($refFn->getParameters(), function (ReflectionParameter $ref, &$key) {
             if ($ref->getClass() || $ref->isCallable()) {
                 return null;
             }

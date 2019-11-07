@@ -54,7 +54,7 @@ class Parameter
                 $tokens[$t] .= $char;
             }
 
-            $name = Php\map($tokens, function ($token) {
+            $name = Php::map($tokens, function ($token) {
                 return str_replace('_', '', strtolower($token)) ?: null;
             })->string($delimiter);
         }

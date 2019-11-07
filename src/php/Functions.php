@@ -53,7 +53,7 @@ class Functions
             }
             $result = $variadic ? $function(...$result) : $function($result);
         }
-        return $callable ? traverse($result, ...$callable) : $result;
+        return $callable ? Php::traverse($result, ...$callable) : $result;
     }
 
     /**
@@ -123,7 +123,7 @@ class Functions
             if (($parClass = $parameter->getClass()) && $parClass->getName() === Map\Path::class) {
                 $pos = $parameter->getPosition();
                 return new $class($it, static function (...$args) use ($it, $mapper, $pos) {
-                    return $mapper(...merge(array_slice($args, 0, $pos), [$it], array_slice($args, $pos)));
+                    return $mapper(...Php::merge(array_slice($args, 0, $pos), [$it], array_slice($args, $pos)));
                 });
             }
         }
