@@ -10,7 +10,6 @@ use Traversable;
 
 class Functions
 {
-
     /**
      * @param array $args
      * @return callable[]
@@ -69,7 +68,7 @@ class Functions
         if (is_iterable($candidate)) {
             return $candidate;
         }
-        $cast ?: fail\argument('argument $candidate must be traversable');
+        $cast ?: Php::fail('argument $candidate must be traversable');
         return (array)$candidate;
     }
 
@@ -134,13 +133,4 @@ class Functions
         });
     }
 
-    /**
-     * @param string $class
-     * @param string $message
-     * @param mixed ...$replacements
-     */
-    public static function fail($class, $message, ...$replacements): void
-    {
-        throw new $class(str($message, ...$replacements));
-    }
 }

@@ -7,7 +7,7 @@ namespace Php;
 
 use Php\Map\Sort;
 use Php\test\assert;
-use LogicException;
+use RuntimeException;
 use PHPUnit\Framework\TestCase;
 use Traversable;
 
@@ -50,7 +50,7 @@ class MapTest extends TestCase
         assert\equals('B', $map['b']);
         unset($map['a']);
         assert\false(isset($map['a']));
-        assert\exception(new \InvalidArgumentException('a'), static function () use($map) {
+        assert\exception(new RuntimeException('a'), static function () use($map) {
            $map['a'];
         });
     }
@@ -162,15 +162,15 @@ class MapTest extends TestCase
         $data = ['a' => 'A', 'b' => 'B', 'c' => 'C'];
         $map = $this->map($data);
 
-        assert\same\trial(new LogicException('unknown'), static function () use ($map) {
+        assert\same\trial(new RuntimeException('unknown'), static function () use ($map) {
             $map->unknown;
         });
 
-        assert\same\trial(new LogicException('values'), static function () use ($map) {
+        assert\same\trial(new RuntimeException('values'), static function () use ($map) {
             $property = 'values';
             $map->$property = null;
         });
-        assert\same\trial(new LogicException('keys'), static function () use ($map) {
+        assert\same\trial(new RuntimeException('keys'), static function () use ($map) {
             $property = 'keys';
             unset($map->$property);
         });

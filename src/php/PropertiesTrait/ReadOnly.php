@@ -18,6 +18,6 @@ trait ReadOnly
      */
     public function __set(string $name, $value): void
     {
-        Php\fail('class %s has read-only access for magic-properties: %s', static::class, $name);
+        Php::fail('class %s has read-only access for magic-properties: %s', static::class, $name);
     }
 }

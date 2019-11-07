@@ -42,7 +42,7 @@ function at($index, $in, $default = null)
     if (is_iterable($in) && array_key_exists($index, $map = Functions::toArray($in))) {
         return $map[$index];
     }
-    func_num_args() > 2 ?: fail\range('undefined index: %s', $index);
+    func_num_args() > 2 ?: Php::fail('undefined index: %s', $index);
     return $default;
 }
 
@@ -87,7 +87,7 @@ function traverse($traversable, callable $callable = null, $reset = true): array
         return Functions::toArray($traversable);
     }
     if (!($isArray = is_array($traversable)) && !$traversable instanceof Iterator) {
-        $traversable instanceof Traversable ?: fail\argument('argument $traversable must be traversable');
+        $traversable instanceof Traversable ?: Php::fail('argument $traversable must be traversable');
         $traversable = new IteratorIterator($traversable);
     }
     static $break, $null;

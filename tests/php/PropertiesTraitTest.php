@@ -101,7 +101,7 @@ class PropertiesReadWrite
      */
     protected function resolveVoid(): void
     {
-        fail(__METHOD__);
+        Php::fail(__METHOD__);
     }
 
     /**

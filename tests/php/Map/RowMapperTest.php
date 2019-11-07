@@ -5,10 +5,9 @@
 
 namespace Php\Map;
 
-use DomainException;
+use RuntimeException;
 use Php;
 use Php\test\assert;
-use OutOfRangeException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -21,7 +20,7 @@ class RowMapperTest extends TestCase
      */
     public function providerInvoke(): array
     {
-        $undefined = new OutOfRangeException('undefined index: foo');
+        $undefined = new RuntimeException('undefined index: foo');
         $useKey = static function ($row, $key, Value $mapped) {
             return $key;
         };
@@ -52,7 +51,7 @@ class RowMapperTest extends TestCase
             ],
             'blank' => [new Value, new RowMapper(null), []],
             'wrong row type' => [
-                new DomainException('row should be of type: array|ArrayAccess|iterable'),
+                new RuntimeException('row should be of type: array|ArrayAccess|iterable'),
                 new RowMapper(null),
                 null
             ],

@@ -5,8 +5,6 @@
 
 namespace Php;
 
-/**
- */
 trait ArrayAccessTrait
 {
     /**
@@ -35,7 +33,7 @@ trait ArrayAccessTrait
      */
     public function offsetGet($offset)
     {
-        hasKey($offset, $data = $this->data()) || fail\argument($offset);
+        hasKey($offset, $data = $this->data()) || Php::fail($offset);
         return $data[$offset];
     }
 

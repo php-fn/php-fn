@@ -36,10 +36,8 @@ trait PropertiesTrait
             $methods[$name][$prefix] =  method_exists(...$method) ? new ReflectionMethod(...$method) : false;
         }
         if ($assertSetter && $setter = $methods[$name][$prefix]) {
-            $setter->getNumberOfParameters() > 0 || fail\domain(
-                'class %s has read-only access for the magic-property: %s',
-                static::class,
-                $name
+            $setter->getNumberOfParameters() > 0 || Php::fail(
+                'class %s has read-only access for the magic-property: %s', static::class, $name
             );
         }
         return $methods[$name][$prefix];
@@ -87,7 +85,7 @@ trait PropertiesTrait
     {
         $method = static::propMethod($name);
         $has = hasKey($name, $this->properties);
-        $has || $method || fail\domain('missing magic-property %s in %s', $name, static::class);
+        $has || $method || Php::fail('missing magic-property %s in %s', $name, static::class);
 
         if ($args) {
             return static::propMethod($name, true) ?

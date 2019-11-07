@@ -47,4 +47,13 @@ abstract class Php
             return $t === $type;
         }) ? $types[0] ?? $type : '';
     }
+
+    /**
+     * @param string $message
+     * @param string ...$replacements
+     */
+    public static function fail($message, ...$replacements): void
+    {
+        throw new RuntimeException(Php\str($message, ...$replacements));
+    }
 }

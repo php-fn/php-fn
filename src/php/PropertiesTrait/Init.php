@@ -38,7 +38,7 @@ trait Init
             return $method ?: null;
         });
 
-        $diff && Php\fail\domain(
+        $diff && Php::fail(
             'magic properties (%s) are not defined in %s::DEFAULT',
             implode(',', $diff),
             static::class

@@ -83,7 +83,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
                     return $value;
                 });
             default:
-                fail\logic($property);
+                Php::fail($property);
         }
         return null;
     }
@@ -93,7 +93,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function __set($property, $value): void
     {
-        fail\logic($property);
+        Php::fail($property);
     }
 
     /**
@@ -241,7 +241,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
      */
     public function __unset($property): void
     {
-        fail\logic($property);
+        Php::fail($property);
     }
 
     /**
