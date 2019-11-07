@@ -100,7 +100,7 @@ class FunctionsMapTest extends MapTest
                 [null],
                 ['v'],
                 static function() {
-                    return mapValue(mapNull());
+                    return mapValue(Php::mapNull());
                 }
             ],
 
@@ -122,13 +122,13 @@ class FunctionsMapTest extends MapTest
                 ['a', 'b', 'c', 'd', 'e', 'f'],
                 static function ($value) {
                     if ($value === 'e') {
-                        return mapBreak();
+                        return Php::mapBreak();
                     }
                     if (in_array($value, ['a', 'c'], true)) {
                         return null;
                     }
 
-                    return $value === 'b' ? mapNull() : $value;
+                    return $value === 'b' ? Php::mapNull() : $value;
                 },
             ],
             'using mapValue() and mapKey()' => [
@@ -233,14 +233,14 @@ class FunctionsMapTest extends MapTest
 
     public function testNullBreak(): void
     {
-        assert\equals((object)[], mapNull());
-        assert\same(mapNull(), mapNull());
+        assert\equals((object)[], Php::mapNull());
+        assert\same(Php::mapNull(), Php::mapNull());
 
-        assert\equals((object)[], mapBreak());
-        assert\same(mapBreak(), mapBreak());
+        assert\equals((object)[], Php::mapBreak());
+        assert\same(Php::mapBreak(), Php::mapBreak());
 
-        assert\equals(mapBreak(), mapNull());
-        assert\not\same(mapBreak(), mapNull());
+        assert\equals(Php::mapBreak(), Php::mapNull());
+        assert\not\same(Php::mapBreak(), Php::mapNull());
     }
 
     public function testValueFunctions(): void

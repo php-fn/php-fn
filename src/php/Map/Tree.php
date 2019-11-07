@@ -90,8 +90,8 @@ class Tree implements RecursiveIterator, Countable
     {
         static $break, $null;
         if (!$break) {
-            $break = Php\mapBreak();
-            $null = Php\mapNull();
+            $break = Php::mapBreak();
+            $null = Php::mapNull();
         }
         if ($this->currentValid === $break) {
             return false;

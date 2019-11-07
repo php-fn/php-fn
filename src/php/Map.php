@@ -348,7 +348,7 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
             if ($count < $from) {
                 $value = null;
             } else if ($to > 0 && $count >= $to) {
-                $value = mapBreak();
+                $value = Php::mapBreak();
             }
             $count++;
             return $value;

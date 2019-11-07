@@ -108,7 +108,7 @@ class TreeTest extends TestCase
                 'inner' => ['a', 'b', 'c', 'd', 'e', 'f'],
                 'mapper' => static function ($value, &$key) {
                     if ($value === 'e') {
-                        return Php\mapBreak();
+                        return Php::mapBreak();
                     }
                     if ($value === 'c') {
                         return null;
@@ -129,7 +129,7 @@ class TreeTest extends TestCase
                 'inner' => ['a', 'b', 'c', 'd', 'e', 'f'],
                 'mapper' => static function ($value) {
                     if ($value === 'd') {
-                        return Php\mapBreak();
+                        return Php::mapBreak();
                     }
                     return $value;
                 },
@@ -236,7 +236,7 @@ class TreeTest extends TestCase
             ['k1' => 'v1', 'k2' => 'v2'],
             static function ($value, &$key) {
                 $key = strtoupper($key);
-                return $value === 'v1' ? Php\mapNull() : $value;
+                return $value === 'v1' ? Php::mapNull() : $value;
             },
             static function ($value, $key) {
                 return Php\mapValue($value ?? '-')->andKey($key === 'K1' ? 'k1' : $key);

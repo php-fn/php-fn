@@ -8,7 +8,6 @@ namespace Php;
 use ArrayAccess;
 use Iterator;
 use IteratorIterator;
-use stdClass;
 use Traversable;
 
 /**
@@ -92,8 +91,8 @@ function traverse($traversable, callable $callable = null, $reset = true): array
     }
     static $break, $null;
     if (!$break) {
-        $null = mapNull();
-        $break = mapBreak();
+        $null = Php::mapNull();
+        $break = Php::mapBreak();
     }
     $map = [];
     if ($reset) {
@@ -332,33 +331,4 @@ function mapGroup($group): Map\Value
 function mapChildren($children): Map\Value
 {
     return mapValue()->andChildren($children);
-}
-
-/**
- * Returned object is used to mark the value as NULL in the @see traverse function,
- * since NULL itself is used to filter/skip values
- *
- * @return stdClass
- */
-function mapNull(): stdClass
-{
-    static $null;
-    if (!$null) {
-        $null = new stdClass;
-    }
-    return $null;
-}
-
-/**
- * Returned object is used to stop the iteration in the @see traverse function
- *
- * @return stdClass
- */
-function mapBreak(): stdClass
-{
-    static $break;
-    if (!$break) {
-        $break = new stdClass;
-    }
-    return $break;
 }

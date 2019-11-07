@@ -105,4 +105,33 @@ abstract class Php
             ($strict && is_string($candidate) && !strpos($candidate, '::'))
         );
     }
+
+    /**
+     * Returned object is used to mark the value as NULL in the @see traverse function,
+     * since NULL itself is used to filter/skip values
+     *
+     * @return stdClass
+     */
+    public static function mapNull(): stdClass
+    {
+        static $null;
+        if (!$null) {
+            $null = new stdClass;
+        }
+        return $null;
+    }
+
+    /**
+     * Returned object is used to stop the iteration in the @see traverse function
+     *
+     * @return stdClass
+     */
+    public static function mapBreak(): stdClass
+    {
+        static $break;
+        if (!$break) {
+            $break = new stdClass;
+        }
+        return $break;
+    }
 }
