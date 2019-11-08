@@ -10,7 +10,7 @@ use Php;
 use Php\test\assert;
 use PHPUnit\Framework\TestCase;
 
-class DIPluginTest extends TestCase
+class PluginTest extends TestCase
 {
     private static $TARGET;
 

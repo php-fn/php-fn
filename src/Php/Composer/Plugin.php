@@ -12,28 +12,17 @@ use Composer\Plugin\PluginInterface;
 use Composer\Script\Event;
 use Composer\Script\ScriptEvents;
 
-/**
- */
-class DIPlugin implements PluginInterface, EventSubscriberInterface
+class Plugin implements PluginInterface, EventSubscriberInterface
 {
-    /**
-     * @inheritdoc
-     */
     public function activate(Composer $composer, IOInterface $io): void
     {
     }
 
-    /**
-     * @inheritdoc
-     */
     public static function getSubscribedEvents(): array
     {
         return [ScriptEvents::POST_AUTOLOAD_DUMP => 'onAutoloadDump'];
     }
 
-    /**
-     * @param Event $event
-     */
     public static function onAutoloadDump(Event $event): void
     {
         $composer  = $event->getComposer();
@@ -54,9 +43,6 @@ class DIPlugin implements PluginInterface, EventSubscriberInterface
         $event->getIO()->write("<info>Autoload class '$file' modified</info>");
     }
 
-    /**
-     * @param string $file
-     */
     private static function modifyAutoloadFile(string $file): void
     {
         file_put_contents($file,  str_replace(

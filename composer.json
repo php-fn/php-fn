@@ -44,11 +44,11 @@
         "branch-alias": {
             "dev-master": "3.x-dev"
         },
-        "class": "Php\\Composer\\DIPlugin"
+        "class": "Php\\Composer\\Plugin"
     },
     "scripts": {
         "post-autoload-dump": [
-            "Php\\Composer\\DIPlugin::onAutoloadDump"
+            "Php\\Composer\\Plugin::onAutoloadDump"
         ],
         "test": "phpunit -d error_reporting=22527 --fail-on-warning --whitelist src/Php/ tests/",
         "cover": "COVERALLS_RUN_LOCALLY=1 COVERALLS_REPO_TOKEN= php-coveralls -v --dry-run",
