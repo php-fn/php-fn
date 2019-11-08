@@ -11,15 +11,8 @@ use RuntimeException;
 use PHPUnit\Framework\TestCase;
 use Traversable;
 
-/**
- * @coversDefaultClass Map
- */
 class MapTest extends TestCase
 {
-    /**
-     * @param array $arguments
-     * @return Map
-     */
     protected function map(...$arguments): Map
     {
         return new Map(...$arguments);

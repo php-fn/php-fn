@@ -5,14 +5,8 @@
 
 namespace Php;
 
-/**
- * @coversDefaultClass Map
- */
 class GeneratorTest extends MapTest
 {
-    /**
-     * @inheritDoc
-     */
     protected function map($iterable = null, ...$args): Map
     {
         return Php::map(static function () use ($iterable) {
