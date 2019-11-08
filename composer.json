@@ -2,10 +2,6 @@
     "name": "php-fn/php-fn",
     "description": "a php library",
     "type": "composer-plugin",
-    "replace": {
-        "php-fn/di": "self.version",
-        "php-fn/cli": "self.version"
-    },
     "homepage": "https://github.com/php-fn/php-fn",
     "license": "MIT",
     "require": {
