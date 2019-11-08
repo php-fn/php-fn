@@ -9,18 +9,13 @@ use Php;
 use Php\test\assert;
 use PHPUnit\Framework\TestCase;
 
-/**
- */
 class DIProviderTest extends TestCase
 {
-    /**
-     * @return array[]
-     */
     public function providerGetIterator(): array
     {
         return [
             'empty' => [
-                'expected' => [new DIRenderer(DI::class, [], [], [], [], true)],
+                'expected' => [new DIRenderer(DI::class, [], [], [], [])],
                 'di' => [],
                 'config' => []
             ],
@@ -31,8 +26,7 @@ class DIProviderTest extends TestCase
                         [Php\DI::WIRING => Php\DI\WIRING::REFLECTION,],
                         ['ns\c1', 'ns\c5'],
                         [],
-                        ['foo' => 'bar', 'bar' => 'foo', 'baz' => ['foo', 'bar']],
-                        true
+                        ['foo' => 'bar', 'bar' => 'foo', 'baz' => ['foo', 'bar']]
                     ),
                     new DIRenderer('ns\c1', ['cache' => true, Php\DI::WIRING => Php\DI\WIRING::REFLECTION,], ['ns\c2', 'ns\c3']),
                     new DIRenderer('ns\c2', [Php\DI::WIRING => false], [], ['config/c2.php']),
@@ -84,7 +78,6 @@ class DIProviderTest extends TestCase
 
     /**
      * @dataProvider providerGetIterator
-     * @covers \Php\Composer\DIProvider::getIterator
      *
      * @param array $expected
      * @param array $di

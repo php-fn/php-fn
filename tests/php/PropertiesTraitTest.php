@@ -155,9 +155,6 @@ class PropertiesReadWrite
     }
 }
 
-/**
- * @coversDefaultClass PropertiesTrait
- */
 class PropertiesTraitTest extends TestCase
 {
     /**
@@ -300,8 +297,6 @@ class PropertiesTraitTest extends TestCase
         assert\same(null, $obj->b);
     }
 
-    /**
-     */
     public function testReadOnly(): void
     {
         $obj = new class

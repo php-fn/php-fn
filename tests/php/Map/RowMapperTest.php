@@ -10,14 +10,8 @@ use Php;
 use Php\test\assert;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversDefaultClass RowMapper
- */
 class RowMapperTest extends TestCase
 {
-    /**
-     * @return array
-     */
     public function providerInvoke(): array
     {
         $undefined = new RuntimeException('undefined index: foo');
@@ -73,8 +67,6 @@ class RowMapperTest extends TestCase
         }, $mapper, $row, $key);
     }
 
-    /**
-     */
     public function testFunctionMapRow(): void
     {
         assert\equals([

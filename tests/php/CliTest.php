@@ -9,14 +9,9 @@ use Php\test\assert;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;
 
-/**
- * @coversDefaultClass Cli
- */
 class CliTest extends TestCase
 {
     /**
-     * @covers \Php\Cli::command
-     *
      * @todo complete
      */
     public function testCommand(): void
@@ -25,10 +20,6 @@ class CliTest extends TestCase
         assert\type(Command::class, $cli->command('cmd', static function () {}));
     }
 
-    /**
-     * @covers \Php\Cli::fromPackage
-     * @uses \Php\cli
-     */
     public function testFromPackage(): void
     {
         $package = Package::get(VENDOR\PHP_FN\PHP_FN);

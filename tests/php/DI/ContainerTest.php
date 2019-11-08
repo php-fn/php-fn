@@ -9,16 +9,8 @@ use Php\test\assert;
 use DI;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversDefaultClass Container
- */
 class ContainerTest extends TestCase
 {
-    /**
-     * @covers \Php\DI\Container::addDefinition
-     * @covers \Php\DI\Container::getDefinition
-     * @covers \Php\DI\Container::getDefinitions
-     */
     public function testDefinitionSource(): void
     {
         $container = new Container;
@@ -56,11 +48,6 @@ class ContainerTest extends TestCase
         assert\same('C2', $c3->get('c2'));
     }
 
-    /**
-     * @param string $name
-     * @param $value
-     * @return DI\Definition\Definition
-     */
     private static function def(string $name, $value): DI\Definition\Definition
     {
         $def = DI\value($value);

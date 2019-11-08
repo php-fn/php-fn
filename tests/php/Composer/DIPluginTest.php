@@ -10,9 +10,6 @@ use Php\test\assert;
 use Composer;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversDefaultClass DIPlugin
- */
 class DIPluginTest extends TestCase
 {
     private static $TARGET;
@@ -94,7 +91,6 @@ class DIPluginTest extends TestCase
     /**
      * @large
      *
-     * @covers \Php\Composer\DIPlugin::onAutoloadDump
      * @dataProvider providerOnAutoloadDump
      *
      * @param mixed $expected

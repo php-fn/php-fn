@@ -9,14 +9,8 @@ use Php\DI;
 use Php\test\assert;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversDefaultClass DIRenderer
- */
 class DIRendererTest extends TestCase
 {
-    /**
-     * @return array
-     */
     public function providerClass(): array
     {
         return [
@@ -28,9 +22,6 @@ class DIRendererTest extends TestCase
     }
 
     /**
-     * @covers \Php\Composer\DIRenderer::getNameSpace
-     * @covers \Php\Composer\DIRenderer::getClassName
-     *
      * @dataProvider providerClass
      *
      * @param string $expectedClassName
@@ -44,9 +35,6 @@ class DIRendererTest extends TestCase
         assert\same($expectedNameSpace, $renderer->getNameSpace());
     }
 
-    /**
-     * @return array
-     */
     public function providerToString(): array
     {
         return [
@@ -135,8 +123,6 @@ EOF
     }
 
     /**
-     * @covers \Php\Composer\DIRenderer::__toString
-     *
      * @dataProvider providerToString
      *
      * @param string $expected

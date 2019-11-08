@@ -11,14 +11,8 @@ use PHPUnit\Framework\TestCase;
 use ReflectionFunction;
 use ReflectionParameter;
 
-/**
- * @coversDefaultClass Parameter
- */
 class ParameterTest extends TestCase
 {
-    /**
-     * @return array
-     */
     public function providerGetName(): array
     {
         $ref = new ReflectionFunction(function(
@@ -53,7 +47,6 @@ class ParameterTest extends TestCase
     }
 
     /**
-     * @covers \Php\Cli\Parameter::getName
      * @dataProvider providerGetName
      *
      * @param string              $expected

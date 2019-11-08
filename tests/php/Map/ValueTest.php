@@ -9,9 +9,6 @@ use Php\test\assert;
 use Php;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversDefaultClass Value
- */
 class ValueTest extends TestCase
 {
     public function testProperties(): void

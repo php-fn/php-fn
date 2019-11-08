@@ -13,14 +13,8 @@ use PHPUnit\Framework\TestCase;
 use ReflectionFunction;
 use ReflectionMethod;
 
-/**
- * @coversDefaultClass Invoker
- */
 class InvokerTest extends TestCase
 {
-    /**
-     * @covers \Php\DI\Invoker::resolve
-     */
     public function testResolve(): void
     {
         assert\exception('argument $candidate is not callable', static function () {
@@ -34,9 +28,6 @@ class InvokerTest extends TestCase
         assert\same($func, $resolver->resolve('callback'));
     }
 
-    /**
-     * @covers \Php\DI\Invoker::reflect
-     */
     public function testReflect(): void
     {
         $resolver = $this->resolver(['callback' => value(static function (string $s1) {})]);
@@ -44,9 +35,6 @@ class InvokerTest extends TestCase
         assert\type(ReflectionMethod::class, $resolver->reflect([$this, __FUNCTION__]));
     }
 
-    /**
-     * @covers \Php\DI\Invoker::parameters
-     */
     public function testParameters(): void
     {
         $resolver = $this->resolver([TestCase::class => $this, static::class => $this]);
@@ -64,9 +52,6 @@ class InvokerTest extends TestCase
         );
     }
 
-    /**
-     * @covers \Php\DI\Invoker::call
-     */
     public function testCall(): void
     {
         assert\same(
@@ -80,10 +65,6 @@ class InvokerTest extends TestCase
         );
     }
 
-    /**
-     * @covers \Php\DI\ReflectionParameter::resolveDescription
-     * @covers \Php\DI\ReflectionParameter::resolveTypes
-     */
     public function testTaggedParameter(): void
     {
         $invoker = new Invoker(static function (ReflectionParameter $par) {

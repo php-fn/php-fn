@@ -92,9 +92,6 @@ class PhpTest extends MapTest
         );
     }
 
-    /**
-     * @return array[]
-     */
     public function providerSameBehaviourTraverseAndMap(): array
     {
         $toGroup = [['a', 'a'], ['a', 'b'], ['b', 'b'], ['b', 'a']];
@@ -190,7 +187,6 @@ class PhpTest extends MapTest
     /**
      * @dataProvider providerSameBehaviourTraverseAndMap
      *
-     *
      * @param mixed $expected
      * @param mixed $iterable
      * @param mixed $mapper
@@ -202,7 +198,6 @@ class PhpTest extends MapTest
 
     /**
      * @dataProvider providerSameBehaviourTraverseAndMap
-     *
      *
      * @param mixed $expected
      * @param mixed $iterable

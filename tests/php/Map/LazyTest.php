@@ -15,9 +15,6 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use SimpleXMLElement;
 
-/**
- * @coversDefaultClass Lazy
- */
 class LazyTest extends TestCase
 {
     private static function proxy($traversable): IteratorAggregate
@@ -38,9 +35,6 @@ class LazyTest extends TestCase
         };
     }
 
-    /**
-     * @return array
-     */
     public function providerUnify(): array
     {
         return [
@@ -113,7 +107,6 @@ class LazyTest extends TestCase
     /**
      * @dataProvider providerUnify
      *
-     *
      * @param array|Exception $expected
      * @param callable|iterable ...$proxy
      */
@@ -124,8 +117,6 @@ class LazyTest extends TestCase
         });
     }
 
-    /**
-     */
     public function testIsLastExplicitIteration(): void
     {
         $it = new Lazy([]);
@@ -194,9 +185,6 @@ class LazyTest extends TestCase
         assert\same(null, $it->isLast());
     }
 
-    /**
-     * @return array
-     */
     public function providerIsLast(): array
     {
         return [

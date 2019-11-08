@@ -8,14 +8,8 @@ namespace Php;
 use Php\test\assert;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversDefaultClass  ArrayExport
- */
 class ArrayExportTest extends TestCase
 {
-    /**
-     * @return array
-     */
     public function providerToString(): array
     {
         return [
@@ -35,8 +29,6 @@ class ArrayExportTest extends TestCase
     }
 
     /**
-     * @covers \Php\ArrayExport::__toString
-     *
      * @dataProvider providerToString
      *
      * @param string $expected

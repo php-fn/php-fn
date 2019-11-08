@@ -67,9 +67,6 @@ class MapTest extends TestCase
         assert\equals(['a-a-a-a-a-a-a-a-'], Php::traverse($map->then()));
     }
 
-    /**
-     * @return array[]
-     */
     public function providerSort(): array
     {
         $map = ['C' => 'C', 'A' => 'a', 'b' => 'B'];

@@ -12,14 +12,8 @@ use PHPUnit\Framework\TestCase;
 use RecursiveArrayIterator;
 use Traversable;
 
-/**
- * @coversDefaultClass Tree
- */
 class TreeTest extends TestCase
 {
-    /**
-     * @return array
-     */
     public function providerRecursiveIteration(): array
     {
         return [
@@ -83,7 +77,6 @@ class TreeTest extends TestCase
     /**
      * @dataProvider providerRecursiveIteration
      *
-     *
      * @param array                 $expected
      * @param iterable|Traversable $inner
      * @param callable|null         $mapper
@@ -97,9 +90,6 @@ class TreeTest extends TestCase
         }), ...(array)$mapper), $mode)));
     }
 
-    /**
-     * @return array
-     */
     public function providerSimpleIteration(): array
     {
         return [
@@ -177,7 +167,6 @@ class TreeTest extends TestCase
     /**
      * @dataProvider providerSimpleIteration
      *
-     *
      * @param array|Exception $expected
      * @param iterable|Traversable $inner
      * @param callable $mapper
@@ -195,8 +184,6 @@ class TreeTest extends TestCase
         }), ...(array)$mapper));
     }
 
-    /**
-     */
     public function testRecursive(): void
     {
         $tree = new Tree(['k0' => 'a', 'k1' => ['k2' => 'b', 'k3' => 'c']]);
@@ -228,8 +215,6 @@ class TreeTest extends TestCase
         })));
     }
 
-    /**
-     */
     public function testMultipleMappers(): void
     {
         $tree = new Tree(
@@ -252,8 +237,6 @@ class TreeTest extends TestCase
         ], Php::traverse($tree));
     }
 
-    /**
-     */
     public function testIsLast(): void
     {
         assert\same(

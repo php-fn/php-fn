@@ -9,13 +9,8 @@ use Php;
 use Php\test\assert;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversDefaultClass Path
- */
 class PathTest extends TestCase
 {
-    /**
-     */
     public function testFlatten(): void
     {
         $iterable = ['a', ['b', 'c', ['d', ['e'], 'f']], 'g'];

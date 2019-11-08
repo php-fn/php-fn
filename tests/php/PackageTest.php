@@ -9,9 +9,6 @@ use Php\test\assert;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
-/**
- * @coversDefaultClass Package
- */
 class PackageTest extends TestCase
 {
     private const FOO = [
@@ -25,9 +22,6 @@ class PackageTest extends TestCase
         'extra' => ['foo-e'],
     ];
 
-    /**
-     * @inheritDoc
-     */
     public function setUp()
     {
         $prop = (new ReflectionClass(Package::class))->getProperty('data');
@@ -35,20 +29,6 @@ class PackageTest extends TestCase
         $prop->setValue(null);
     }
 
-    /**
-     * @covers \Php\Package::get
-     * @covers \Php\Package::resolveName
-     * @covers \Php\Package::resolveVersion
-     * @covers \Php\Package::resolveHomepage
-     * @covers \Php\Package::resolveDescription
-     * @covers \Php\Package::resolveDir
-     * @covers \Php\Package::resolveAuthors
-     * @covers \Php\Package::resolveExtra
-     * @covers \Php\Package::resolveRoot
-     * @covers \Php\Package::file
-     * @covers \Php\Package::files
-     * @covers \Php\Package::version
-     */
     public function testNullObject(): void
     {
         assert\type(Package::class, Package::get('foo'));
@@ -72,20 +52,6 @@ class PackageTest extends TestCase
         assert\same(null, $package->version(true));
     }
 
-    /**
-     * @covers \Php\Package::get
-     * @covers \Php\Package::resolveName
-     * @covers \Php\Package::resolveVersion
-     * @covers \Php\Package::resolveHomepage
-     * @covers \Php\Package::resolveDescription
-     * @covers \Php\Package::resolveDir
-     * @covers \Php\Package::resolveAuthors
-     * @covers \Php\Package::resolveExtra
-     * @covers \Php\Package::resolveRoot
-     * @covers \Php\Package::file
-     * @covers \Php\Package::files
-     * @covers \Php\Package::version
-     */
     public function testDefined(): void
     {
         $package = new Package(self::FOO);
@@ -107,9 +73,6 @@ class PackageTest extends TestCase
         assert\same('1.2.3.0', $package->version(true));
     }
 
-    /**
-     * @covers \Php\Package::version
-     */
     public function testVersion(): void
     {
         assert\same('1.2.3.4', (new Package(['version' => '1.2.3.4']))->version());
