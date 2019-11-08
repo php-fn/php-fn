@@ -59,16 +59,14 @@
             "@phpunit --group default",
             "@phpunit --group large"
         ],
-        "cover": [
+        "build": [
             "mkdir -p build/logs",
             "@test --whitelist src/ --coverage-clover build/logs/clover.xml"
         ],
-        "coveralls": [
-            "@cover",
+        "dist": [
             "php-coveralls -v"
         ],
-        "coveralls-local": [
-            "@cover",
+        "cover": [
             "COVERALLS_RUN_LOCALLY=1 COVERALLS_REPO_TOKEN= php-coveralls -v --dry-run"
         ]
     }
