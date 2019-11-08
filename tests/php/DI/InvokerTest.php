@@ -5,10 +5,10 @@
 
 namespace Php\DI;
 
-use function DI\value;
+use DI\Definition\ValueDefinition;
+use Invoker\ParameterResolver\DefaultValueResolver;
 use Php;
 use Php\test\assert;
-use Invoker\ParameterResolver\DefaultValueResolver;
 use PHPUnit\Framework\TestCase;
 use ReflectionFunction;
 use ReflectionMethod;
@@ -24,13 +24,13 @@ class InvokerTest extends TestCase
         assert\same($func = static function () {}, (new Invoker)->resolve($func));
         assert\same([$this, __FUNCTION__], (new Invoker)->resolve([$this, __FUNCTION__]));
 
-        $resolver = new Invoker(Php\DI::create(['callback' => value($func)]));
+        $resolver = new Invoker(Php\DI::create(['callback' => new ValueDefinition($func)]));
         assert\same($func, $resolver->resolve('callback'));
     }
 
     public function testReflect(): void
     {
-        $resolver = $this->resolver(['callback' => value(static function (string $s1) {})]);
+        $resolver = $this->resolver(['callback' => new ValueDefinition(static function (string $s1) {})]);
         assert\type(ReflectionFunction::class, $resolver->reflect('callback'));
         assert\type(ReflectionMethod::class, $resolver->reflect([$this, __FUNCTION__]));
     }

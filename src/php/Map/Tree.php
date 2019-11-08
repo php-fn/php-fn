@@ -6,8 +6,8 @@
 namespace Php\Map;
 
 use Countable;
-use Php;
 use Iterator;
+use Php;
 use RecursiveIterator;
 
 /**

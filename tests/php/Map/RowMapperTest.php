@@ -5,10 +5,10 @@
 
 namespace Php\Map;
 
-use RuntimeException;
 use Php;
 use Php\test\assert;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 class RowMapperTest extends TestCase
 {

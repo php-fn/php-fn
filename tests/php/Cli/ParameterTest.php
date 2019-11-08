@@ -5,8 +5,8 @@
 
 namespace Php\Cli;
 
-use Php\test\assert;
 use Php;
+use Php\test\assert;
 use PHPUnit\Framework\TestCase;
 use ReflectionFunction;
 use ReflectionParameter;

@@ -7,8 +7,8 @@ namespace Php;
 
 use Php\Map\Sort;
 use Php\test\assert;
-use RuntimeException;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Traversable;
 
 class MapTest extends TestCase

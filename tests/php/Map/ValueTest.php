@@ -5,8 +5,8 @@
 
 namespace Php\Map;
 
-use Php\test\assert;
 use Php;
+use Php\test\assert;
 use PHPUnit\Framework\TestCase;
 
 class ValueTest extends TestCase

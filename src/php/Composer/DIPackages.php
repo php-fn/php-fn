@@ -5,12 +5,12 @@
 
 namespace Php\Composer;
 
-use Php;
-use Composer\Package\RootPackageInterface;
 use Composer\Composer;
 use Composer\Package\CompletePackageInterface;
-use Symfony\Component\Filesystem\Filesystem as FS;
+use Composer\Package\RootPackageInterface;
 use Composer\Util\Filesystem;
+use Php;
+use Symfony\Component\Filesystem\Filesystem as FS;
 
 /**
  * generate namespace constants for installed packages on autoload dump

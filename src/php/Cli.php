@@ -8,23 +8,20 @@
 
 namespace Php;
 
-use Php\Cli\Parameter;
-use Php\Cli\IO;
 use Invoker\ParameterResolver;
+use Php\Cli\IO;
+use Php\Cli\Parameter;
 use phpDocumentor\Reflection\DocBlock\Tags\Param;
 use phpDocumentor\Reflection\DocBlockFactory;
 use Psr\Container\ContainerInterface;
 use ReflectionFunctionAbstract;
 use ReflectionParameter;
-
-use Symfony\Component\Console\{
-    Application,
+use Symfony\Component\Console\{Application,
     Command\Command,
     Input\ArgvInput,
     Input\InputInterface,
     Output\ConsoleOutput,
-    Output\OutputInterface
-};
+    Output\OutputInterface};
 
 class Cli extends Application
 {

@@ -5,8 +5,8 @@
 
 namespace Php\DI;
 
-use Php\test\assert;
 use DI;
+use Php\test\assert;
 use PHPUnit\Framework\TestCase;
 
 class ContainerTest extends TestCase

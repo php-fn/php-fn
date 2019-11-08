@@ -5,9 +5,9 @@
 
 namespace Php\Composer;
 
+use Composer;
 use Php;
 use Php\test\assert;
-use Composer;
 use PHPUnit\Framework\TestCase;
 
 class DIPluginTest extends TestCase

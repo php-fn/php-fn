@@ -5,9 +5,9 @@
 
 namespace Php\Map;
 
-use Php;
 use ArrayIterator;
 use IteratorAggregate;
+use Php;
 
 /**
  */

@@ -7,9 +7,8 @@
 
 namespace Php\DI;
 
-use Php;
-
 use Invoker\{InvokerInterface, ParameterResolver, ParameterResolver\GeneratorResolver, Reflection\CallableReflection};
+use Php;
 use Psr\Container\ContainerInterface;
 use ReflectionFunctionAbstract;
 
