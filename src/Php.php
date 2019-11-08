@@ -198,7 +198,7 @@ abstract class Php
         if ($in instanceof ArrayAccess) {
             return false;
         }
-        return is_iterable($in) && array_key_exists($key, Php\Functions::toArray($in));
+        return is_iterable($in) && array_key_exists($key, self::toArray($in));
     }
 
     /**
@@ -212,7 +212,7 @@ abstract class Php
         if ((is_array($in) || $in instanceof ArrayAccess || is_scalar($in)) && isset($in[$index])) {
             return $in[$index];
         }
-        if (is_iterable($in) && array_key_exists($index, $map = Php\Functions::toArray($in))) {
+        if (is_iterable($in) && array_key_exists($index, $map = self::toArray($in))) {
             return $map[$index];
         }
         func_num_args() > 2 ?: self::fail('undefined index: %s', $index);
@@ -227,7 +227,7 @@ abstract class Php
      */
     public static function hasValue($value, $in, $strict = true): bool
     {
-        return is_iterable($in) && in_array($value, Php\Functions::toArray($in), $strict);
+        return is_iterable($in) && in_array($value, self::toArray($in), $strict);
     }
 
     /**
@@ -257,7 +257,7 @@ abstract class Php
     public static function traverse($traversable, callable $callable = null, $reset = true): array
     {
         if (!$callable) {
-            return Php\Functions::toArray($traversable);
+            return self::toArray($traversable);
         }
         if (!($isArray = is_array($traversable)) && !$traversable instanceof Iterator) {
             $traversable instanceof Traversable ?: self::fail('argument $traversable must be traversable');
@@ -312,7 +312,7 @@ abstract class Php
             }
 
             $groups = &$map;
-            foreach (Php\Functions::toTraversable($mapped->group, true) as $group) {
+            foreach (self::toTraversable($mapped->group, true) as $group) {
                 if (!isset($groups[$group])) {
                     $groups[$group] = [];
                 }
@@ -329,7 +329,7 @@ abstract class Php
      */
     public static function map(...$iterable): Php\Map
     {
-        $callable = Php\Functions::lastCallable($iterable);
+        $callable = self::lastCallable($iterable);
         if (count($iterable) === 1) {
             return new Php\Map($iterable[0], ...$callable);
         }
@@ -347,7 +347,7 @@ abstract class Php
      */
     public static function merge(...$iterable): array
     {
-        return Php\Functions::chainIterables(['array_merge' => true], ...$iterable);
+        return self::chainIterables(['array_merge' => true], ...$iterable);
     }
 
     /**
@@ -360,10 +360,10 @@ abstract class Php
      */
     public static function keys(...$iterable): array
     {
-        $callable = Php\Functions::lastCallable($iterable);
+        $callable = self::lastCallable($iterable);
         $functions = count($iterable) > 1 ? ['array_merge' => true, 'array_keys'] : ['array_keys' => true];
-        Php\Functions::chainIterables($functions, ...$iterable);
-        return Php\Functions::chainIterables($functions, ...$iterable, ...$callable);
+        self::chainIterables($functions, ...$iterable);
+        return self::chainIterables($functions, ...$iterable, ...$callable);
     }
 
     /**
@@ -377,9 +377,9 @@ abstract class Php
      */
     public static function values(...$iterable): array
     {
-        $callable = Php\Functions::lastCallable($iterable);
+        $callable = self::lastCallable($iterable);
         return self::merge(...self::traverse($iterable, function ($candidate) {
-            return Php\Functions::toValues($candidate);
+            return self::toValues($candidate);
         }), ...$callable);
     }
 
@@ -393,7 +393,7 @@ abstract class Php
      */
     public static function mixin(...$iterable): array
     {
-        return Php\Functions::chainIterables(['array_replace' => true], ...$iterable);
+        return self::chainIterables(['array_replace' => true], ...$iterable);
     }
 
     /**
@@ -426,7 +426,7 @@ abstract class Php
      */
     public static function leaves(...$iterable): array
     {
-        $callable = Php\Functions::lastCallable($iterable);
+        $callable = self::lastCallable($iterable);
         return $callable ? self::map(...$iterable)->leaves(...$callable)->values : self::map(...$iterable)->leaves;
     }
 
@@ -440,7 +440,7 @@ abstract class Php
      */
     public static function tree(...$iterable): array
     {
-        $callable = Php\Functions::lastCallable($iterable);
+        $callable = self::lastCallable($iterable);
         return $callable ? self::map(...$iterable)->tree(...$callable)->values : self::map(...$iterable)->tree;
     }
 
@@ -454,7 +454,130 @@ abstract class Php
      */
     public static function flatten(...$iterable): array
     {
-        $callable = Php\Functions::lastCallable($iterable);
+        $callable = self::lastCallable($iterable);
         return $callable ? self::map(...$iterable)->flatten(...$callable)->traverse : self::map(...$iterable)->flatten;
+    }
+
+    /**
+     * @param array $args
+     * @return callable[]
+     */
+    public static function lastCallable(array &$args): array
+    {
+        if (!$args) {
+            return [];
+        }
+
+        $last = array_pop($args);
+        if ($args && !is_iterable($last) && self::isCallable($last)) {
+            return [$last];
+        }
+
+        $args[] = $last;
+        return [];
+    }
+
+    /**
+     * Call all functions one by one with softly converted iterables to arrays.
+     *
+     * @param callable[]|bool[] $functions
+     * @param iterable[] ...$args
+     * @return array|mixed
+     */
+    public static function chainIterables(array $functions, ...$args)
+    {
+        if (!$args) {
+            return [];
+        }
+        $callable = self::lastCallable($args);
+        $result = [];
+        foreach ($args as $candidate) {
+            $result[] = self::toArray($candidate);
+        }
+        foreach ($functions as $function => $variadic) {
+            if (is_numeric($function)) {
+                $function = $variadic;
+                $variadic = false;
+            }
+            $result = $variadic ? $function(...$result) : $function($result);
+        }
+        return $callable ? self::traverse($result, ...$callable) : $result;
+    }
+
+    /**
+     * @param Traversable   $inner
+     * @param bool          $leavesOnly
+     * @param callable|null $mapper
+     *
+     * @return Traversable
+     */
+    public static function recursive(Traversable $inner, $leavesOnly, callable $mapper = null): Traversable
+    {
+        $mode = $leavesOnly ? Php\Map\Path::LEAVES_ONLY : Php\Map\Path::SELF_FIRST;
+        $it = new Php\Map\Path($inner, $mode);
+        $class = get_class($inner);
+
+        if (!$mapper) {
+            return new $class($it);
+        }
+
+        foreach ((new ReflectionFunction($mapper))->getParameters() as $parameter) {
+            if (($parClass = $parameter->getClass()) && $parClass->getName() === Php\Map\Path::class) {
+                $pos = $parameter->getPosition();
+                return new $class($it, static function (...$args) use ($it, $mapper, $pos) {
+                    return $mapper(...self::merge(array_slice($args, 0, $pos), [$it], array_slice($args, $pos)));
+                });
+            }
+        }
+
+        return new $class($it, static function (...$args) use ($mapper) {
+            return $mapper(...$args);
+        });
+    }
+
+    /**
+     * Convert the given candidate to an associative array
+     *
+     * @param iterable|mixed $candidate
+     * @param bool $cast
+     * @return array
+     */
+    public static function toArray($candidate, $cast = false): array
+    {
+        if (is_array($candidate = self::toTraversable($candidate, $cast))) {
+            return $candidate;
+        }
+        return iterator_to_array($candidate);
+    }
+
+    /**
+     * Convert the given candidate to an iterable entity
+     *
+     * @param iterable|mixed $candidate
+     * @param bool $cast
+     * @return iterable
+     */
+    public static function toTraversable($candidate, $cast = false): iterable
+    {
+        if (is_iterable($candidate)) {
+            return $candidate;
+        }
+        $cast ?: self::fail('argument $candidate must be traversable');
+        return (array)$candidate;
+    }
+
+    /**
+     * Convert the given candidate to an array
+     *
+     * @param mixed $candidate
+     * @param bool $cast
+     * @return array
+     */
+    public static function toValues($candidate, $cast = false): array
+    {
+        if (is_array($candidate = self::toTraversable($candidate, $cast))) {
+            return array_values($candidate);
+        }
+        return iterator_to_array($candidate, false);
     }
 }

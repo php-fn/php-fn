@@ -15,34 +15,34 @@ class FunctionsTest extends TestCase
     {
         $ar = [true];
         $it = new ArrayObject($ar);
-        assert\same($ar, Functions::toTraversable([true]));
-        assert\same($it, Functions::toTraversable($it));
-        assert\equals($it, Functions::toTraversable(new ArrayObject($ar)));
-        assert\not\same($it, Functions::toTraversable(new ArrayObject($ar)));
-        assert\same(['string'], Functions::toTraversable('string', true));
-        assert\same([], Functions::toTraversable(null, true));
+        assert\same($ar, Php::toTraversable([true]));
+        assert\same($it, Php::toTraversable($it));
+        assert\equals($it, Php::toTraversable(new ArrayObject($ar)));
+        assert\not\same($it, Php::toTraversable(new ArrayObject($ar)));
+        assert\same(['string'], Php::toTraversable('string', true));
+        assert\same([], Php::toTraversable(null, true));
         assert\exception('argument $candidate must be traversable', static function () {
-            Functions::toTraversable('string');
+            Php::toTraversable('string');
         });
     }
 
     public function testToArray(): void
     {
-        assert\equals(['key' => 'value'], Functions::toArray(['key' => 'value']));
-        assert\equals(['key' => 'value'], Functions::toArray(new ArrayObject(['key' => 'value'])));
-        assert\equals([], Functions::toArray(null, true));
+        assert\equals(['key' => 'value'], Php::toArray(['key' => 'value']));
+        assert\equals(['key' => 'value'], Php::toArray(new ArrayObject(['key' => 'value'])));
+        assert\equals([], Php::toArray(null, true));
         assert\exception('argument $candidate must be traversable', static function () {
-            Functions::toArray(null);
+            Php::toArray(null);
         });
     }
 
     public function testToValues(): void
     {
-        assert\equals(['value'], Functions::toValues(['key' => 'value']));
-        assert\equals(['value'], Functions::toValues(new ArrayObject(['key' => 'value'])));
-        assert\equals([], Functions::toValues(null, true));
+        assert\equals(['value'], Php::toValues(['key' => 'value']));
+        assert\equals(['value'], Php::toValues(new ArrayObject(['key' => 'value'])));
+        assert\equals([], Php::toValues(null, true));
         assert\exception('argument $candidate must be traversable', static function () {
-            Functions::toValues(null);
+            Php::toValues(null);
         });
     }
 

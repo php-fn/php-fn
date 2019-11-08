@@ -91,8 +91,8 @@ class TreeTest extends TestCase
      */
     public function testRecursiveIteration($expected, $inner, $mapper, $mode = Path::SELF_FIRST): void
     {
-        assert\equals($expected, Php\Functions::toValues(new Path(new Tree($inner, ...(array)$mapper), $mode)));
-        assert\equals($expected, Php\Functions::toValues(new Path(new Tree(new Lazy(static function () use ($inner) {
+        assert\equals($expected, Php::toValues(new Path(new Tree($inner, ...(array)$mapper), $mode)));
+        assert\equals($expected, Php::toValues(new Path(new Tree(new Lazy(static function () use ($inner) {
             return is_array($inner) ? new RecursiveArrayIterator($inner) : $inner;
         }), ...(array)$mapper), $mode)));
     }
