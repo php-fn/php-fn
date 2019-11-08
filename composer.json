@@ -54,20 +54,12 @@
         "post-autoload-dump": [
             "Php\\Composer\\DIPlugin::onAutoloadDump"
         ],
-        "phpunit": "phpunit -d error_reporting=22527 --fail-on-warning tests/",
-        "test": [
-            "@phpunit --group default",
-            "@phpunit --group large"
-        ],
+        "test": "phpunit -d error_reporting=22527 --fail-on-warning --whitelist src/Php/ tests/",
+        "cover": "COVERALLS_RUN_LOCALLY=1 COVERALLS_REPO_TOKEN= php-coveralls -v --dry-run",
         "build": [
             "mkdir -p build/logs",
-            "@test --whitelist src/ --coverage-clover build/logs/clover.xml"
+            "@test --coverage-clover build/logs/clover.xml"
         ],
-        "dist": [
-            "php-coveralls -v"
-        ],
-        "cover": [
-            "COVERALLS_RUN_LOCALLY=1 COVERALLS_REPO_TOKEN= php-coveralls -v --dry-run"
-        ]
+        "dist": "php-coveralls -v"
     }
 }
