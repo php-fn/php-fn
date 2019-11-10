@@ -17,75 +17,6 @@ use Symfony\Component\Filesystem\Filesystem as FS;
  */
 class DIPackages
 {
-    public const RESERVED = [
-        '__halt_compiler',
-        'abstract',
-        'and',
-        'array',
-        'as',
-        'break',
-        'callable',
-        'case',
-        'catch',
-        'class',
-        'clone',
-        'const',
-        'continue',
-        'declare',
-        'default',
-        'die',
-        'do',
-        'echo',
-        'else',
-        'elseif',
-        'empty',
-        'enddeclare',
-        'endfor',
-        'endforeach',
-        'endif',
-        'endswitch',
-        'endwhile',
-        'eval',
-        'exit',
-        'extends',
-        'final',
-        'fn',
-        'for',
-        'foreach',
-        'function',
-        'global',
-        'goto',
-        'if',
-        'implements',
-        'include',
-        'include_once',
-        'instanceof',
-        'insteadof',
-        'interface',
-        'isset',
-        'list',
-        'namespace',
-        'new',
-        'or',
-        'print',
-        'private',
-        'protected',
-        'public',
-        'require',
-        'require_once',
-        'return',
-        'static',
-        'switch',
-        'throw',
-        'trait',
-        'try',
-        'unset',
-        'use',
-        'var',
-        'while',
-        'xor'
-    ];
-
     public $vendorDir;
     private $composer;
 
@@ -133,8 +64,7 @@ class DIPackages
 
     private function up($string): string
     {
-        $string .= in_array(strtolower($string), self::RESERVED, true) ?  '_' : '';
-        return str_replace('-', '_', strtoupper($string));
+        return str_replace('-', '_', strtoupper(Php\Lang::sanitize($string)));
     }
 
     /**
