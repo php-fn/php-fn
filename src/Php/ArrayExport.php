@@ -40,19 +40,19 @@ class ArrayExport
         $depths = [$init = ['i' => 0, 'c' => 0]];
         foreach ($it as $key => $value) {
             $depth = $it->getDepth();
-            $lastDepth = \count($depths) - 1;
+            $lastDepth = count($depths) - 1;
             $depths[$depth] = $depths[$depth] ?? $init;
             if ($depth > $lastDepth) {
                 $tokens[] = '[';
             } else if ($depth < $lastDepth) {
-                $depths = \array_slice($depths, 0, $depth + 1, true);
-                $tokens[] = \str_repeat(']', $lastDepth - $depth);
+                $depths = array_slice($depths, 0, $depth + 1, true);
+                $tokens[] = str_repeat(']', $lastDepth - $depth);
                 $tokens[] = ', ';
             } else if ($depths[$depth]['c']) {
                 $tokens[] = ', ';
             }
 
-            if (!\is_numeric($key)) {
+            if (!is_numeric($key)) {
                 $tokens[] = var_export($key, true);
                 $tokens[] = ' => ';
             } else if ($key === $depths[$depth]['i']) {
@@ -63,7 +63,7 @@ class ArrayExport
                 $tokens[] = ' => ';
             }
 
-            if (!\is_array($value)) {
+            if (!is_array($value)) {
                 $tokens[] = var_export($value, true);
             } else if (empty($value)) {
                 $tokens[] = '[]';
@@ -73,7 +73,7 @@ class ArrayExport
         }
 
         $tokens[] = ']';
-        $tokens[] = \str_repeat(']', \count($depths) - 1);
+        $tokens[] = str_repeat(']', count($depths) - 1);
 
         return implode('', $tokens);
     }

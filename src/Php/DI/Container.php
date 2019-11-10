@@ -17,16 +17,12 @@ class Container extends \DI\Container implements MutableDefinitionSource
 {
     use DefinitionSourceProxyTrait;
 
-    /**
-     * @inheritdoc
-     */
     public function __construct(
         MutableDefinitionSource $definitionSource = null,
         ProxyFactory $proxyFactory = null,
         ContainerInterface $wrapperContainer = null
     ) {
         if (!$definitionSource) {
-            /** @noinspection PhpUnhandledExceptionInspection */
             ($definitionSource = new SourceChain([new ReflectionBasedAutowiring]))->setMutableDefinitionSource(
                 new DefinitionArray([], new ReflectionBasedAutowiring)
             );
@@ -36,9 +32,6 @@ class Container extends \DI\Container implements MutableDefinitionSource
         $this->resolvedEntries[static::class] = $this;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function addDefinition(Definition $definition)
     {
         $this->setDefinition($definition->getName(), $definition);

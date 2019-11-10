@@ -7,42 +7,18 @@ namespace Php\Composer;
 
 use Php\ArrayExport;
 
-/**
- */
 class DIRenderer
 {
-    /**
-     * @var string
-     */
     private $class;
 
-    /**
-     * @var ArrayExport
-     */
     private $config;
 
-    /**
-     * @var array
-     */
     private $containers;
 
-    /**
-     * @var array
-     */
     private $files;
 
-    /**
-     * @var ArrayExport
-     */
     private $values;
 
-    /**
-     * @param string $class
-     * @param array $config
-     * @param array $containers
-     * @param array $files
-     * @param array $values
-     */
     public function __construct(
         string $class,
         array $config = [],
@@ -76,9 +52,6 @@ class DIRenderer
         return (string)end($parts);
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return <<<EOF
