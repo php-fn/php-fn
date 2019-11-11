@@ -185,7 +185,7 @@ class Cli extends Application
         $command->setDefinition(Php::traverse(
             static::params($refFn),
             function (Parameter $param) use ($args, $desc) {
-                return $param->input(Php::hasValue($param->getName(), $args), Php::at($param->getName(), $desc, null));
+                return $param->input(Php::hasValue($param->getName(), $args), $desc[$param->getName()] ?? null);
             })
         );
 

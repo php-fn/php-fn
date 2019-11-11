@@ -14,7 +14,7 @@ class RowMapperTest extends TestCase
 {
     public function providerInvoke(): array
     {
-        $undefined = new RuntimeException('undefined index: foo');
+        $undefined = new RuntimeException('Undefined index: foo');
         $useKey = static function ($row, $key, Value $mapped) {
             return $key;
         };

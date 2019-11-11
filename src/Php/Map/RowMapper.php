@@ -9,8 +9,6 @@ use ArrayAccess;
 use Closure;
 use Php;
 
-/**
- */
 class RowMapper
 {
     /**
@@ -54,13 +52,13 @@ class RowMapper
                         $toColumn = $fromColumn;
                     }
                     if (is_int($fromColumn)) {
-                        $mappedValue[] = Php::at($fromColumn, $rowValues);
+                        $mappedValue[] = $rowValues[$fromColumn];
                     } else {
-                        $mappedValue[$toColumn] = Php::at($fromColumn, $row);
+                        $mappedValue[$toColumn] = $row[$fromColumn];
                     }
                 }
             } else {
-                $mappedValue = Php::at($valueColumns, is_int($valueColumns) ? $rowValues : $row);
+                $mappedValue = is_int($valueColumns) ? $rowValues[$valueColumns] : $row[$valueColumns];
             }
             $mapped->andValue($mappedValue);
         }
@@ -69,7 +67,7 @@ class RowMapper
             if ($keyColumn instanceof Closure) {
                 $mappedKey = $keyColumn($row, $key, $mapped);
             } else {
-                $mappedKey = Php::at($keyColumn, is_int($keyColumn) ? $rowValues : $row);
+                $mappedKey = is_int($keyColumn) ? $rowValues[$keyColumn] : $row[$keyColumn];
             }
             $mapped->andKey($mappedKey);
         }
@@ -77,7 +75,7 @@ class RowMapper
         if ($groupColumns = $this->config->group) {
             $mappedGroups = [];
             foreach ($groupColumns as $groupColumn) {
-                $mappedGroups[] = Php::at($groupColumn, is_int($groupColumn) ? $rowValues : $row);
+                $mappedGroups[] = is_int($groupColumn) ? $rowValues[$groupColumn] : $row[$groupColumn];
             }
             $mapped->andGroup($mappedGroups);
         }

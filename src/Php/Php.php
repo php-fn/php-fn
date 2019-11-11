@@ -213,24 +213,6 @@ abstract class Php
     }
 
     /**
-     * @param string|int $index
-     * @param array|ArrayAccess|iterable|string $in
-     * @param mixed $default
-     * @return mixed
-     */
-    public static function at($index, $in, $default = null)
-    {
-        if ((is_array($in) || $in instanceof ArrayAccess || is_scalar($in)) && isset($in[$index])) {
-            return $in[$index];
-        }
-        if (is_iterable($in) && array_key_exists($index, $map = self::toArray($in))) {
-            return $map[$index];
-        }
-        func_num_args() > 2 ?: self::fail('undefined index: %s', $index);
-        return $default;
-    }
-
-    /**
      * @param mixed $value
      * @param iterable|mixed $in
      * @param bool $strict
@@ -428,20 +410,6 @@ abstract class Php
     }
 
     /**
-     * Flatten the given iterable recursively from root to leaves (@see RecursiveIteratorIterator::LEAVES_ONLY).
-     * The last argument can be a callable, in that case it will be applied to each element of the merged result.
-     *
-     * @param iterable|callable ...$iterable If more than one iterable argument is passed they will be merged
-     *
-     * @return array
-     */
-    public static function leaves(...$iterable): array
-    {
-        $callable = self::lastCallable($iterable);
-        return $callable ? self::map(...$iterable)->leaves(...$callable)->values : self::map(...$iterable)->leaves;
-    }
-
-    /**
      * Traverse the given iterable recursively from root to leaves (@see RecursiveIteratorIterator::SELF_FIRST).
      * The last argument can be a callable, in that case it will be applied to each element of the merged result.
      *
@@ -473,7 +441,7 @@ abstract class Php
      * @param array $args
      * @return callable[]
      */
-    public static function lastCallable(array &$args): array
+    protected static function lastCallable(array &$args): array
     {
         if (!$args) {
             return [];
@@ -495,7 +463,7 @@ abstract class Php
      * @param iterable[] ...$args
      * @return array|mixed
      */
-    public static function chainIterables(array $functions, ...$args)
+    protected static function chainIterables(array $functions, ...$args)
     {
         if (!$args) {
             return [];
@@ -568,7 +536,7 @@ abstract class Php
      * @param bool $cast
      * @return iterable
      */
-    public static function toTraversable($candidate, $cast = false): iterable
+    protected static function toTraversable($candidate, $cast = false): iterable
     {
         if (is_iterable($candidate)) {
             return $candidate;

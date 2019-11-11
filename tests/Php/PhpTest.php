@@ -395,16 +395,6 @@ class PhpTest extends MapTest
         }));
     }
 
-    public function testLeavesFunction(): void
-    {
-        assert\same([], Php::leaves());
-        assert\same([], Php::leaves([], []));
-        assert\same(['a', 'b', 'c'], Php::leaves(['a'], ['b', ['c']]));
-        assert\same(['a', 'b', '  c'], Php::leaves(['a'], ['b', ['c']], static function (Map\Path $it) {
-            return (string)$it;
-        }));
-    }
-
     public function __invoke($value, &$key): string
     {
         $key = strtolower($key);
@@ -476,21 +466,6 @@ class PhpTest extends MapTest
                 'callable'
             ],
         ];
-    }
-
-    public function testToTraversable(): void
-    {
-        $ar = [true];
-        $it = new ArrayObject($ar);
-        assert\same($ar, Php::toTraversable([true]));
-        assert\same($it, Php::toTraversable($it));
-        assert\equals($it, Php::toTraversable(new ArrayObject($ar)));
-        assert\not\same($it, Php::toTraversable(new ArrayObject($ar)));
-        assert\same(['string'], Php::toTraversable('string', true));
-        assert\same([], Php::toTraversable(null, true));
-        assert\exception('argument $candidate must be traversable', static function () {
-            Php::toTraversable('string');
-        });
     }
 
     public function testToArray(): void
