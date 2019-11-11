@@ -362,25 +362,24 @@ class PhpTest extends MapTest
         })), 'args > 1, with mapper');
     }
 
-    public function testEveryFunction(): void
+    public function testEvery(): void
     {
         assert\true(Php::every());
         assert\true(Php::every([]));
-        assert\true(Php::every([], []));
         assert\true(Php::every([' ']));
         assert\false(Php::every(['']));
-        assert\true(Php::every([''], [0], static function () {
+        assert\true(Php::every([''], function () {
             return true;
         }));
     }
 
-    public function testSomeFunction(): void
+    public function testSome(): void
     {
         assert\false(Php::some());
         assert\false(Php::some([]));
-        assert\false(Php::some([''], [0, null], [[]]));
-        assert\true(Php::some([''], [0, null], [false, []], [' ']));
-        assert\false(Php::some([1, true], [' '], static function () {
+        assert\false(Php::some(['', 0, null, [], false]));
+        assert\true(Php::some(['', 0, null, [], false, ' ']));
+        assert\false(Php::some([1, true, ' '], static function () {
             return false;
         }));
     }

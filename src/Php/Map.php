@@ -18,8 +18,6 @@ use IteratorAggregate;
  * @property-read array  $leaves
  * @property-read array  $flatten
  * @property-read string $string
- * @property-read bool   $every
- * @property-read bool   $some
  */
 class Map implements IteratorAggregate, Countable, ArrayAccess
 {
@@ -74,14 +72,6 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
                 return Php::traverse($this->flatten());
             case 'string':
                 return $this->string();
-            case 'every':
-                return $this->every(static function ($value) {
-                    return $value;
-                });
-            case 'some':
-                return $this->some(static function ($value) {
-                    return $value;
-                });
             default:
                 Php::fail($property);
         }
@@ -183,40 +173,6 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
 
         }));
         return $replacements ? Php::str($string, ...$replacements) : $string;
-    }
-
-    /**
-     * @param callable       $check
-     * @param callable|mixed $true
-     * @param callable|mixed $false
-     *
-     * @return bool|mixed
-     */
-    public function every(callable $check, $true = true, $false = false)
-    {
-        foreach ($this as $key => $value) {
-            if (!$check($value, $key, $this)) {
-                return Php::isCallable($false) ? $false($this) : $false;
-            }
-        }
-        return Php::isCallable($true) ? $true($this) : $true;
-    }
-
-    /**
-     * @param callable       $check
-     * @param callable|mixed $true
-     * @param callable|mixed $false
-     *
-     * @return bool|mixed
-     */
-    public function some(callable $check, $true = true, $false = false)
-    {
-        foreach ($this as $key => $value) {
-            if ($check($value, $key, $this)) {
-                return Php::isCallable($true) ? $true($this) : $true;
-            }
-        }
-        return Php::isCallable($false) ? $false($this) : $false;
     }
 
     /**

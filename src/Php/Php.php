@@ -389,24 +389,24 @@ abstract class Php
         return self::chainIterables(['array_replace' => true], ...$iterable);
     }
 
-    /**
-     * @param iterable|callable ...$iterable
-     *
-     * @return bool
-     */
-    public static function every(...$iterable): bool
+    public static function every(iterable $iterable = [], Closure $closure = null): bool
     {
-        return self::map(...$iterable)->every;
+        foreach ($iterable as $key => $value) {
+            if (!($closure ? $closure($value, $key) : $value)) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    /**
-     * @param iterable|callable ...$iterable
-     *
-     * @return bool
-     */
-    public static function some(...$iterable): bool
+    public static function some(iterable $iterable = [], Closure $closure = null): bool
     {
-        return self::map(...$iterable)->some;
+        foreach ($iterable as $key => $value) {
+            if ($closure ? $closure($value, $key) : $value) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
