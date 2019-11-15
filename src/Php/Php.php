@@ -16,6 +16,35 @@ use Traversable;
 
 abstract class Php
 {
+    public static function pop(&$args, string ...$types)
+    {
+        if (!$args || !is_array($args)) {
+            return null;
+        }
+        $last = array_pop($args);
+        if (!$types) {
+            return $last;
+        }
+        foreach ($args ? $types : [] as $type) {
+            if ($last instanceof $type) {
+                return $last;
+            }
+        }
+        $args[] = $last;
+        return null;
+    }
+
+    public static function break(): stdClass
+    {
+        static $obj;
+        return $obj ?? $obj = new stdClass();
+    }
+
+    public static function gen(...$args): Gen
+    {
+        return new Gen(...$args);
+    }
+
     /**
      * Get a type of variable (int|bool|string|array|callable|iterable|::class)
      *
