@@ -9,42 +9,21 @@ use ArrayIterator;
 use IteratorAggregate;
 use Php;
 
-/**
- */
 class Sort implements IteratorAggregate
 {
-    const REGULAR = SORT_REGULAR;             // 0b000000
-    const NUMERIC = SORT_NUMERIC;             // 0b000001
-    const STRING = SORT_STRING;               // 0b000010
-    const LOCALE_STRING = SORT_LOCALE_STRING; // 0b000101
-    const NATURAL = SORT_NATURAL;             // 0b000110
-    const FLAG_CASE = SORT_FLAG_CASE;         // 0b001000
-    const KEYS                                 = 0b010000;
-    const REVERSE                              = 0b100000;
+    public const REGULAR = SORT_REGULAR;             // 0b000000
+    public const NUMERIC = SORT_NUMERIC;             // 0b000001
+    public const STRING = SORT_STRING;               // 0b000010
+    public const LOCALE_STRING = SORT_LOCALE_STRING; // 0b000101
+    public const NATURAL = SORT_NATURAL;             // 0b000110
+    public const FLAG_CASE = SORT_FLAG_CASE;         // 0b001000
+    public const KEYS                                 = 0b010000;
+    public const REVERSE                              = 0b100000;
 
-    /**
-     * @var iterable
-     */
     private $iterable;
-
-    /**
-     * @var callable|int|null
-     */
     private $strategy;
-
-    /**
-     * @var int
-     */
     private $flags;
-
-    /**
-     * @var bool
-     */
     private $byKeys;
-
-    /**
-     * @var bool
-     */
     private $reverse;
 
     /**
@@ -65,9 +44,6 @@ class Sort implements IteratorAggregate
         $this->reverse = (bool)(self::REVERSE & $flags);
     }
 
-    /**
-     * @return array
-     */
     private function sortCallable(): array
     {
         $compare = $this->reverse ? function($left, $right) {
@@ -78,9 +54,6 @@ class Sort implements IteratorAggregate
         return $array;
     }
 
-    /**
-     * @return array
-     */
     private function sortFlags(): array
     {
         $array = Php::traverse($this->iterable);
@@ -92,9 +65,6 @@ class Sort implements IteratorAggregate
         return $array;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->strategy ? $this->sortCallable() : $this->sortFlags());

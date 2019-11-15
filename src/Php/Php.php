@@ -45,6 +45,11 @@ abstract class Php
         return new Gen(...$args);
     }
 
+    public static function sort(iterable $data, ...$sorts): array
+    {
+        return Sort::sort(...func_get_args());
+    }
+
     /**
      * Get a type of variable (int|bool|string|array|callable|iterable|::class)
      *
