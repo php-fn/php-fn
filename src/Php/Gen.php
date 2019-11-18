@@ -45,7 +45,7 @@ class Gen implements IteratorAggregate
                     }
                     if (is_array($k)) {
                         if (count($k) === 1) {
-                            yield $k[0] => $value;
+                            yield $k[0] => $v;
                             continue;
                         }
                         $data === null && $data = [];

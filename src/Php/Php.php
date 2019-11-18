@@ -45,6 +45,11 @@ abstract class Php
         return new Gen(...$args);
     }
 
+    public static function arr(...$args): array
+    {
+        return iterator_to_array(self::gen(...$args));
+    }
+
     public static function sort(iterable $data, ...$sorts): array
     {
         return Sort::sort(...func_get_args());

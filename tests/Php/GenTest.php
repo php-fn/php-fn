@@ -45,9 +45,9 @@ class GenTest extends TestCase
             })
         );
         assert\same(
-            ['A' => 'a', 'B' => 'b', 'C' => 'c'],
+            ['A' => 'aa', 'B' => 'bb', 'C' => 'cc'],
             $this::gen(['a', 'b', 'c'], static function ($value) {
-                yield [strtoupper($value)] => $value;
+                yield [strtoupper($value)] => $value . $value;
             })
         );
         assert\same(
@@ -67,6 +67,7 @@ class GenTest extends TestCase
 
     private static function gen(...$args): array
     {
-        return iterator_to_array(new Gen(...$args));
+        assert\same(iterator_to_array(new Gen(...$args)), $arr = Php::arr(...$args));
+        return $arr;
     }
 }
