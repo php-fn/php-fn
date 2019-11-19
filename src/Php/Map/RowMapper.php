@@ -11,9 +11,6 @@ use Php;
 
 class RowMapper
 {
-    /**
-     * @var Value
-     */
     private $config;
 
     /**
@@ -24,6 +21,14 @@ class RowMapper
     public function __construct($key, $value = null, ...$group)
     {
         $this->config = new Value($value, $key, $group);
+    }
+
+    private static function at($key, $row)
+    {
+        if (!isset($row[$key])) {
+            Php::fail('Undefined index: %s', $key);
+        }
+        return $row[$key];
     }
 
     /**
@@ -52,13 +57,13 @@ class RowMapper
                         $toColumn = $fromColumn;
                     }
                     if (is_int($fromColumn)) {
-                        $mappedValue[] = $rowValues[$fromColumn];
+                        $mappedValue[] = self::at($fromColumn, $rowValues);
                     } else {
-                        $mappedValue[$toColumn] = $row[$fromColumn];
+                        $mappedValue[$toColumn] = self::at($fromColumn, $row);
                     }
                 }
             } else {
-                $mappedValue = is_int($valueColumns) ? $rowValues[$valueColumns] : $row[$valueColumns];
+                $mappedValue = self::at($valueColumns, is_int($valueColumns) ? $rowValues:  $row);
             }
             $mapped->andValue($mappedValue);
         }
@@ -67,7 +72,7 @@ class RowMapper
             if ($keyColumn instanceof Closure) {
                 $mappedKey = $keyColumn($row, $key, $mapped);
             } else {
-                $mappedKey = is_int($keyColumn) ? $rowValues[$keyColumn] : $row[$keyColumn];
+                $mappedKey = self::at($keyColumn, is_int($keyColumn) ? $rowValues : $row);
             }
             $mapped->andKey($mappedKey);
         }
@@ -75,7 +80,7 @@ class RowMapper
         if ($groupColumns = $this->config->group) {
             $mappedGroups = [];
             foreach ($groupColumns as $groupColumn) {
-                $mappedGroups[] = is_int($groupColumn) ? $rowValues[$groupColumn] : $row[$groupColumn];
+                $mappedGroups[] = self::at($groupColumn, is_int($groupColumn) ? $rowValues : $row);
             }
             $mapped->andGroup($mappedGroups);
         }
