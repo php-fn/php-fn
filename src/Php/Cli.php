@@ -104,38 +104,18 @@ class Cli extends Application
         return $cli;
     }
 
-    /**
-     * @inheritdoc
-     */
     protected function getDefaultCommands(): array
     {
-        $commands = parent::getDefaultCommands();
-        $default  = $this->value('cli.commands.default', false);
-        if (Php::isCallable($default)) {
-            return Php::traverse($commands, $default);
-        }
-        if ($default === false) {
-            return Php::traverse($commands, function (Command $command) {
-                return $command->setHidden(true);
-            });
-        }
-        return $commands;
+        return Php::arr(parent::getDefaultCommands(), function (Command $command) {
+            yield $command->setHidden(true);
+        });
     }
 
-    /**
-     * @param string $id
-     * @param mixed  $default
-     *
-     * @return mixed
-     */
     private function value(string $id, $default = null)
     {
         return $this->container->has($id) ? $this->container->get($id) : $default;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function run(InputInterface $input = null, OutputInterface $output = null): int
     {
         $this->container->set(InputInterface::class, $input = $input ?: new ArgvInput);
@@ -174,18 +154,20 @@ class Cli extends Application
         if (class_exists(DocBlockFactory::class) && $comment = $refFn->getDocComment()) {
             $doc = DocBlockFactory::createInstance()->create($comment);
             $command->setDescription($doc->getSummary());
-            $desc = Php::merge(Php::traverse($doc->getTagsByName('param'), function (Param $tag) {
+            $desc = Php::arr(Php::gen($doc->getTagsByName('param'), function (Param $tag) {
                 if ($paramDesc = (string)$tag->getDescription()) {
-                    return Php::mapKey($tag->getVariableName())->andValue($paramDesc);
+                    yield [$tag->getVariableName()] => $paramDesc;
                 }
-                return null;
             }), $desc);
         }
 
-        $command->setDefinition(Php::traverse(
+        $command->setDefinition(Php::arr(
             static::params($refFn),
             function (Parameter $param) use ($args, $desc) {
-                return $param->input(Php::hasValue($param->getName(), $args), $desc[$param->getName()] ?? null);
+                yield $param->input(
+                    $param->isVariadic() || Php::hasValue($param->getName(), $args),
+                    $desc[$param->getName()] ?? null
+                );
             })
         );
 
@@ -194,8 +176,7 @@ class Cli extends Application
             if ($isOutput || !is_iterable($result)) {
                 return $result;
             }
-            Php::traverse($this->container->get(IO::class)->render($result), function () {
-            });
+            Php::arr($this->container->get(IO::class)->render($result));
             return 0;
         });
 
@@ -212,17 +193,16 @@ class Cli extends Application
     {
         $params = static::params($this->invoker->reflect($callable));
         $io = $this->container->get(IO::class);
-        return Php::merge(
+        $arr =  Php::arr(
             $io->getOptions(true),
             $io->getArguments(true),
-            function ($value, &$key) use ($params) {
+            static function ($value, $key) use ($params) {
                 if (isset($params[$key])) {
-                    $key = $params[$key]->getName();
-                    return $value;
+                    ($params[$key]->isVariadic() && !$value) || yield [$params[$key]->getName()] => $value;
                 }
-                return null;
             }
         );
+        return $arr;
     }
 
     /**
@@ -230,15 +210,14 @@ class Cli extends Application
      *
      * @return Map|Parameter[]
      */
-    protected static function params(ReflectionFunctionAbstract $refFn): Map
+    protected static function params(ReflectionFunctionAbstract $refFn): array
     {
-        return Php::map($refFn->getParameters(), function (ReflectionParameter $ref, &$key) {
+        return Php::arr($refFn->getParameters(), static function (ReflectionParameter $ref) {
             if ($ref->getClass() || $ref->isCallable()) {
-                return null;
+                return;
             }
             $param = new Parameter($ref);
-            $key = $param->getName('-');
-            return $param;
+            yield [$param->getName('-')] => $param;
         });
     }
 }

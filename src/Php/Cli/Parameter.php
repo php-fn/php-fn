@@ -10,28 +10,20 @@ use ReflectionParameter;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-/**
- */
 class Parameter
 {
-    /**
-     * @var ReflectionParameter
-     */
     private $ref;
 
-    /**
-     * @param ReflectionParameter $ref
-     */
     public function __construct(ReflectionParameter $ref)
     {
         $this->ref = $ref;
     }
 
-    /**
-     * @param string $delimiter
-     *
-     * @return string
-     */
+    public function isVariadic(): bool
+    {
+        return $this->ref->isVariadic();
+    }
+
     public function getName(string $delimiter = null): string
     {
         $isLow = function (string $char = null): bool {
