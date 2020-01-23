@@ -40,6 +40,14 @@ abstract class Php
         return $obj ?? $obj = new stdClass();
     }
 
+    /**
+     * value mapping: function($value, $key) {yield $value;}
+     * key mapping: function($value, $key) {yield [$key] => $value;}
+     * grouping: function($value, $key) {yield [level1, level2, $key] => $value;}
+     *
+     * @param mixed ...$args
+     * @return Gen
+     */
     public static function gen(...$args): Gen
     {
         return new Gen(...$args);
