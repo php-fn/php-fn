@@ -7,6 +7,7 @@ namespace Php;
 
 use ArrayAccess;
 use Closure;
+use Illuminate\Support\Str;
 use Iterator;
 use IteratorIterator;
 use ReflectionFunction;
@@ -56,6 +57,11 @@ abstract class Php
     public static function arr(...$args): array
     {
         return iterator_to_array(self::gen(...$args));
+    }
+
+    public static function ascii($value, $lang = 'en'): string
+    {
+        return Str::ascii($value, $lang);
     }
 
     public static function sort(iterable $data, ...$sorts): array

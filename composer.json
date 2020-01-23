@@ -8,6 +8,7 @@
         "php-fn/invoker": "^2.0",
         "php-di/php-di": "^6.0",
         "symfony/console": "^3.4",
+        "illuminate/support": "^5.8",
         "phpdocumentor/reflection-docblock": "^4.3",
         "composer-plugin-api": "^1",
         "ext-mbstring": "*",
