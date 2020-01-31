@@ -7,8 +7,6 @@ namespace Php\PropertiesTrait;
 
 use Php;
 
-/**
- */
 trait ReadOnly
 {
     use Php\PropertiesTrait;
