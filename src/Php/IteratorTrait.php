@@ -5,6 +5,7 @@
 
 namespace Php;
 
+use EmptyIterator;
 use Generator;
 use Iterator;
 
@@ -17,7 +18,12 @@ trait IteratorTrait
 
     protected function getInnerIterator(): Iterator
     {
-        return $this->iterState['inner'];
+        return $this->iterState['inner'] ?? $this->iterState['inner'] = $this->createInnerIterator();
+    }
+
+    protected function createInnerIterator(): Iterator
+    {
+        return new EmptyIterator;
     }
 
     protected function callIteratorMethod(string $method)
@@ -63,6 +69,11 @@ trait IteratorTrait
         }
     }
 
+    /**
+     * Check if the current element is the last one.
+     *
+     * @return bool|null NULL if the iterator was not rewound yet
+     */
     public function isLast(): ?bool
     {
         if (!($this->iterState['isReset'] ?? false)) {

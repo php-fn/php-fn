@@ -6,12 +6,17 @@
 namespace Php;
 
 use ArrayAccess;
+use ArrayIterator;
 use ArrayObject;
 use Closure;
 use Countable;
+use Exception;
+use IteratorAggregate;
 use OuterIterator;
 use Php\test\assert;
 use RecursiveIteratorIterator;
+use RuntimeException;
+use SimpleXMLElement;
 use stdClass;
 use Traversable;
 
@@ -562,5 +567,102 @@ class PhpTest extends MapTest
      */
     public static function staticPublic(): void
     {
+    }
+
+    public function providerIter(): array
+    {
+        $proxy = function ($traversable): IteratorAggregate
+        {
+            return new class($traversable) implements IteratorAggregate
+            {
+                private $traversable;
+
+                public function __construct($traversable)
+                {
+                    $this->traversable = $traversable instanceof Closure ? $traversable($this) : $traversable;
+                }
+
+                public function getIterator()
+                {
+                    return $this->traversable;
+                }
+            };
+        };
+        return [
+            'intern traversable classes are wrapped around IteratorIterator' => [
+                'expected' => [],
+                'proxy' => $proxy(new SimpleXMLElement('<root/>')),
+            ],
+            '$inner::getIterator returns same instance' => [
+                'expected' => new RuntimeException('Implementation $candidate::getIterator returns the same instance'),
+                'proxy' => $proxy(static function($that) {return $that;}),
+            ],
+            '$proxy::getIterator is too deep' => [
+                'expected' => new RuntimeException('$candidate::getIterator is too deep'),
+                'proxy' => $proxy(static function() use($proxy) {
+                    return $proxy(static function() use($proxy) {
+                        return $proxy(static function() use($proxy) {
+                            return $proxy(static function() use($proxy) {
+                                return $proxy(static function() use($proxy) {
+                                    return $proxy(static function() use($proxy) {
+                                        return $proxy(static function() use($proxy) {
+                                            return $proxy(static function() use($proxy) {
+                                                return $proxy(static function() use($proxy) {
+                                                    return $proxy(static function() use($proxy) {
+                                                        return $proxy(static function() use($proxy) {
+                                                            return $proxy(static function() {});
+                                                        });
+                                                    });
+                                                });
+                                            });
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                })
+            ],
+            '$inner depth = 3' => [
+                'expected' => ['depth' => 3],
+                'proxy' => $proxy(static function() use($proxy) {
+                    return $proxy(static function() use($proxy) {
+                        return $proxy(new ArrayIterator(['depth' => 3]));
+                    });
+                }),
+            ],
+            'simple iterator' => [
+                'expected' => ['a' => 'a', 'b' => ['c' => 'd']],
+                'proxy' => new ArrayIterator(['a' => 'a', 'b' => ['c' => 'd']]),
+            ],
+            'simple array' => [
+                'expected' => ['a', 'b', 'c'],
+                'proxy' => ['a', 'b', 'c'],
+            ],
+            'empty array' => [
+                'expected' => [],
+                'proxy' => [],
+            ],
+            'null => exception' => [
+                'expected' => new RuntimeException('Argument $candidate must be iterable'),
+                null
+            ],
+            '=> EmptyIterator' => [
+                'expected' => [],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider providerIter
+     *
+     * @param array|Exception $expected
+     * @param callable|iterable ...$proxy
+     */
+    public function testIter($expected, ...$proxy): void
+    {
+        assert\equals\trial($expected, static function () use ($proxy) {
+            return Php::arr(Php::iter(...$proxy));
+        });
     }
 }

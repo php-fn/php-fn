@@ -6,9 +6,12 @@
 namespace Php;
 
 use ArrayAccess;
+use ArrayIterator;
 use Closure;
+use EmptyIterator;
 use Illuminate\Support\Str;
 use Iterator;
+use IteratorAggregate;
 use IteratorIterator;
 use ReflectionFunction;
 use RuntimeException;
@@ -17,6 +20,13 @@ use Traversable;
 
 abstract class Php
 {
+    /**
+     * Pop the element (of any specified type) off the end of array
+     *
+     * @param          $args
+     * @param string   ...$types
+     * @return mixed|null
+     */
     public static function pop(&$args, string ...$types)
     {
         if (!$args || !is_array($args)) {
@@ -611,5 +621,49 @@ abstract class Php
             return array_values($candidate);
         }
         return iterator_to_array($candidate, false);
+    }
+
+    /**
+     * Convert the given candidate to an iterator
+     *
+     * @param mixed $candidate
+     * @return Iterator
+     */
+    public static function iter($candidate = null): Iterator
+    {
+        if (!func_num_args()) {
+            return new EmptyIterator;
+        }
+
+        if ($candidate instanceof Closure) {
+            $candidate = $candidate();
+        }
+
+        if (is_array($candidate)) {
+            return new ArrayIterator($candidate);
+        }
+
+        $counter = 0;
+        while ($candidate instanceof IteratorAggregate) {
+            if ($counter++ > 10) {
+                throw new RuntimeException('$candidate::getIterator is too deep');
+            }
+
+            /** @var mixed $temp */
+            if (($temp = $candidate->getIterator()) === $candidate) {
+                throw new RuntimeException('Implementation $candidate::getIterator returns the same instance');
+            }
+            $candidate = $temp;
+        }
+
+        if ($candidate instanceof Traversable && !$candidate instanceof Iterator) {
+            return new IteratorIterator($candidate);
+        }
+
+        if (!$candidate instanceof Iterator) {
+            throw new RuntimeException('Argument $candidate must be iterable');
+        }
+
+        return $candidate;
     }
 }
