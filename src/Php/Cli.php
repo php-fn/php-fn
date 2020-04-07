@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
@@ -8,6 +8,8 @@
 
 namespace Php;
 
+use Closure;
+use DI\CompiledContainer;
 use Invoker\ParameterResolver;
 use Php\Cli\IO;
 use Php\Cli\Parameter;
@@ -16,12 +18,14 @@ use phpDocumentor\Reflection\DocBlockFactory;
 use Psr\Container\ContainerInterface;
 use ReflectionFunctionAbstract;
 use ReflectionParameter;
-use Symfony\Component\Console\{Application,
+use Symfony\Component\Console\{
+    Application,
     Command\Command,
     Input\ArgvInput,
     Input\InputInterface,
     Output\ConsoleOutput,
-    Output\OutputInterface};
+    Output\OutputInterface
+};
 
 class Cli extends Application
 {
@@ -40,12 +44,32 @@ class Cli extends Application
      */
     public function __construct(ContainerInterface $container)
     {
-        if (!$container instanceof DI\Container) {
-            $container = new DI\Container(null , null, $container);
-        }
-        $this->container = $container;
+        $this->container = $container instanceof DI\Container ? $container : Php::di($container);
+        $this->container->set(self::class, $this);
         $this->container->set(static::class, $this);
-        $this->invoker   = new DI\Invoker(
+        $this->invoker = $this->createInvoker($this->container);
+        parent::__construct($this->value('cli.name'), $this->value('cli.version'));
+
+        foreach ($this->getCommands() as $name => $command) {
+            if (is_numeric($name) && is_string($command)) {
+                $name = explode('\\', $command);
+                $name = end($name);
+            }
+            $this->command(strtolower($name), ...array_values(is_array($command) ? $command : [$command]));
+        }
+    }
+
+    /**
+     * @return iterable|Closure[]|array[]
+     */
+    protected function getCommands()
+    {
+        return $this->value('cli.commands', []);
+    }
+
+    protected function createInvoker(DI\Container $container): DI\Invoker
+    {
+        return new DI\Invoker(
             new ParameterResolver\AssociativeVariadicResolver,
             new ParameterResolver\AssociativeArrayResolver,
             new ParameterResolver\TypeHintResolver,
@@ -53,22 +77,13 @@ class Cli extends Application
             new ParameterResolver\Container\ParameterNameContainerResolver($container),
             new ParameterResolver\DefaultValueResolver
         );
-
-        parent::__construct($this->value('cli.name'), $this->value('cli.version'));
-        foreach ($this->value('cli.commands', []) as $name => $command) {
-            if (is_numeric($name) && is_string($command)) {
-                $name = end($name = explode('\\', $command));
-            }
-            $this->command(strtolower($name), $command);
-        }
     }
 
     /**
      * @param Package|string|array|callable ...$args
-     *
-     * @return Cli
+     * @return DI\Container|CompiledContainer
      */
-    public static function fromPackage(...$args): self
+    public static function di(...$args): ContainerInterface
     {
         $package = $args[0] ?? null;
         is_string($package) && $package = Package::get($package);
@@ -87,21 +102,30 @@ class Cli extends Application
             }
         }
 
-        $di = DI::create([
+        return Php::di([
             Package::class => $package,
             'cli.name' => $package->name,
             'cli.version' => $package->version(),
-        ], ...$config);
-
-        $cli = new static($di);
-        foreach ($fns as $fn) {
-            $result = $di->call($fn);
-            foreach (is_iterable($result) ? $result : [] as $name => $command) {
-                $cli->command($name, ...array_values(is_array($command) ? $command : [$command]));
+            'cli.commands' => function (self $cli) use ($fns) {
+                return Php::gen($fns, function ($fn) use ($cli) {
+                    $result = $cli->container->call($fn);
+                    foreach (is_iterable($result) ? $result : [] as $name => $command) {
+                        yield [$name] => $command;
+                    }
+                });
             }
-        }
+        ], ...$config);
+    }
 
-        return $cli;
+    /**
+     * @deprecated
+     * @param Package|string|array|callable ...$args
+     *
+     * @return Cli
+     */
+    public static function fromPackage(...$args): self
+    {
+        return new static(static::di(...$args));
     }
 
     protected function getDefaultCommands(): array
@@ -193,7 +217,7 @@ class Cli extends Application
     {
         $params = static::params($this->invoker->reflect($callable));
         $io = $this->container->get(IO::class);
-        $arr =  Php::arr(
+        return Php::arr(
             $io->getOptions(true),
             $io->getArguments(true),
             static function ($value, $key) use ($params) {
@@ -202,7 +226,6 @@ class Cli extends Application
                 }
             }
         );
-        return $arr;
     }
 
     /**

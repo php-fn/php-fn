@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
@@ -42,7 +42,7 @@ class DIRenderer
 
     public function getNameSpace(): string
     {
-        return substr($this->class, 0, -(strlen($this->getClassName()) + 1));
+        return (string) substr($this->class, 0, -(strlen($this->getClassName()) + 1));
     }
 
     public function getClassName(): string
@@ -56,17 +56,12 @@ class DIRenderer
     {
         return <<<EOF
 namespace {$this->getNameSpace()} {
-    /**
-     */
     class {$this->getClassName()} extends \\Php\\DI\\Container
     {
-        /**
-         * @inheritdoc
-         */
         public function __construct()
         {
-            \$cc = \\Php\\DI::config(
-                {$this->config}, 
+            \$cc = \\Php\\DI\\ContainerConfiguration::config(
+                {$this->config},
                 \$sources = [{$this->containers}
                 ],
                 ...\\array_values(\$sources),
@@ -75,7 +70,7 @@ namespace {$this->getNameSpace()} {
                 ...[{$this->values}]
             );
 
-            parent::__construct(\$cc->getDefinitionSource(), \$cc->getProxyFactory(), \$cc->getWrapperContainer());        
+            parent::__construct(\$cc->getDefinitionSource(), \$cc->getProxyFactory(), \$cc->getWrapperContainer());
         }
     }
 }

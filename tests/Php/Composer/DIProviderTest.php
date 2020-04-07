@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
@@ -6,7 +6,6 @@
 namespace Php\Composer;
 
 use Php;
-use Php\test\assert;
 use PHPUnit\Framework\TestCase;
 
 class DIProviderTest extends TestCase
@@ -23,24 +22,24 @@ class DIProviderTest extends TestCase
                 'expected' => [
                     new DIRenderer(
                         DI::class,
-                        [Php\DI::WIRING => Php\DI\WIRING::REFLECTION,],
+                        [Php\DI\ContainerConfiguration::WIRING => Php\DI\Wiring::REFLECTION,],
                         ['ns\c1', 'ns\c5'],
                         [],
                         ['foo' => 'bar', 'bar' => 'foo', 'baz' => ['foo', 'bar']]
                     ),
-                    new DIRenderer('ns\c1', ['cache' => true, Php\DI::WIRING => Php\DI\WIRING::REFLECTION,], ['ns\c2', 'ns\c3']),
-                    new DIRenderer('ns\c2', [Php\DI::WIRING => false], [], ['config/c2.php']),
+                    new DIRenderer('ns\c1', ['cache' => true, Php\DI\ContainerConfiguration::WIRING => Php\DI\Wiring::REFLECTION,], ['ns\c2', 'ns\c3']),
+                    new DIRenderer('ns\c2', [Php\DI\ContainerConfiguration::WIRING => false], [], ['config/c2.php']),
                     new DIRenderer(
                         'ns\c3',
-                        [Php\DI::WIRING => Php\DI\WIRING::REFLECTION,],
+                        [Php\DI\ContainerConfiguration::WIRING => Php\DI\Wiring::REFLECTION,],
                         ['ns\c4'],
                         ['config/c31.php', 'config/c32.php'],
                         ['foo' => 'bar', 'bar' => ['foo' => ['a', 'b']]]
                     ),
-                    new DIRenderer('ns\c4', [Php\DI::WIRING => Php\DI\WIRING::REFLECTION,], [], ['config/c4.php']),
+                    new DIRenderer('ns\c4', [Php\DI\ContainerConfiguration::WIRING => Php\DI\Wiring::REFLECTION,], [], ['config/c4.php']),
                     new DIRenderer(
                         'ns\c5',
-                        ['cast-to-array', Php\DI::WIRING => Php\DI\WIRING::REFLECTION,],
+                        ['cast-to-array', Php\DI\ContainerConfiguration::WIRING => Php\DI\Wiring::REFLECTION,],
                         ['ns\c4'],
                         ['config/c5.php']
                     )
@@ -67,10 +66,10 @@ class DIProviderTest extends TestCase
                     'baz' => ['foo', 'bar'],
                 ],
                 'config' => [
-                    Php\DI::WIRING => Php\DI\WIRING::REFLECTION,
+                    Php\DI\ContainerConfiguration::WIRING => Php\DI\Wiring::REFLECTION,
                     '@ns\c5' => 'cast-to-array',
                     '@ns\c1' => ['cache' => true],
-                    '@ns\c2' => [Php\DI::WIRING => false],
+                    '@ns\c2' => [Php\DI\ContainerConfiguration::WIRING => false],
                 ]
             ],
         ];
@@ -89,6 +88,6 @@ class DIProviderTest extends TestCase
         foreach (new DIProvider($di, $config) as $renderer) {
             $actual[] = $renderer;
         }
-        assert\equals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
@@ -6,7 +6,6 @@
 namespace Php\Composer;
 
 use Php\DI;
-use Php\test\assert;
 use PHPUnit\Framework\TestCase;
 
 class DIRendererTest extends TestCase
@@ -31,8 +30,8 @@ class DIRendererTest extends TestCase
     public function testClass(string $expectedClassName, string $expectedNameSpace, string $class): void
     {
         $renderer = new DIRenderer($class);
-        assert\same($expectedClassName, $renderer->getClassName());
-        assert\same($expectedNameSpace, $renderer->getNameSpace());
+        self::assertSame($expectedClassName, $renderer->getClassName());
+        self::assertSame($expectedNameSpace, $renderer->getNameSpace());
     }
 
     public function providerToString(): array
@@ -41,17 +40,12 @@ class DIRendererTest extends TestCase
             'nested' => [
                 <<<EOF
 namespace ns1\\ns2 {
-    /**
-     */
     class c1 extends \\Php\\DI\\Container
     {
-        /**
-         * @inheritdoc
-         */
         public function __construct()
         {
-            \$cc = \\Php\\DI::config(
-                ['wiring' => 'reflection', 'cache' => false, 'proxy' => 'proxy.php', 'compile' => '/tmp/'], 
+            \$cc = \\Php\\DI\\ContainerConfiguration::config(
+                ['wiring' => 'reflection', 'cache' => false, 'proxy' => 'proxy.php', 'compile' => '/tmp/'],
                 \$sources = [
                     \\ns1\\ns2\\ns3\\c2::class => new \\ns1\\ns2\\ns3\\c2,
                     \\ns1\\ns2\\c3::class => new \\ns1\\ns2\\c3,
@@ -66,13 +60,13 @@ namespace ns1\\ns2 {
                 ...[['k1' => 'v1', 'k2' => ['v2', 'v3'], 'k3' => ['k4' => ['v5']]]]
             );
 
-            parent::__construct(\$cc->getDefinitionSource(), \$cc->getProxyFactory(), \$cc->getWrapperContainer());        
+            parent::__construct(\$cc->getDefinitionSource(), \$cc->getProxyFactory(), \$cc->getWrapperContainer());
         }
     }
 }
 EOF
 , new DIRenderer('ns1\\ns2\\c1', [
-        DI::WIRING => DI\WIRING::REFLECTION,
+        DI\ContainerConfiguration::WIRING => DI\Wiring::REFLECTION,
         'cache'   => false,
         'proxy'   => 'proxy.php',
         'compile' => '/tmp/',
@@ -94,17 +88,12 @@ EOF
             'empty' => [
                 <<<EOF
 namespace  {
-    /**
-     */
     class c1 extends \\Php\\DI\\Container
     {
-        /**
-         * @inheritdoc
-         */
         public function __construct()
         {
-            \$cc = \\Php\\DI::config(
-                [], 
+            \$cc = \\Php\\DI\\ContainerConfiguration::config(
+                [],
                 \$sources = [
                 ],
                 ...\\array_values(\$sources),
@@ -113,7 +102,7 @@ namespace  {
                 ...[[]]
             );
 
-            parent::__construct(\$cc->getDefinitionSource(), \$cc->getProxyFactory(), \$cc->getWrapperContainer());        
+            parent::__construct(\$cc->getDefinitionSource(), \$cc->getProxyFactory(), \$cc->getWrapperContainer());
         }
     }
 }
@@ -130,6 +119,6 @@ EOF
      */
     public function testToString(string $expected, DIRenderer $renderer): void
     {
-        assert\same($expected, (string)$renderer);
+        self::assertSame($expected, (string)$renderer);
     }
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
@@ -24,7 +24,7 @@ class InvokerTest extends TestCase
         assert\same($func = static function () {}, (new Invoker)->resolve($func));
         assert\same([$this, __FUNCTION__], (new Invoker)->resolve([$this, __FUNCTION__]));
 
-        $resolver = new Invoker(Php\DI::create(['callback' => new ValueDefinition($func)]));
+        $resolver = new Invoker(Php\Php::di(['callback' => new ValueDefinition($func)]));
         assert\same($func, $resolver->resolve('callback'));
     }
 
@@ -89,7 +89,7 @@ class InvokerTest extends TestCase
     private function resolver(array $definition = []): Invoker
     {
         return new Invoker(
-            Php\DI::create($definition),
+            Php\Php::di($definition),
             static function (\ReflectionParameter $parameter, array $provided) {
                 $map = Php::map(array_change_key_case($provided));
                 if (($value = $map[strtolower($parameter->getName())] ?? null) !== null) {

@@ -5,7 +5,7 @@
 
 namespace Php\DI;
 
-interface WIRING
+interface Wiring
 {
     public const NONE = null;
     public const AUTO = true;

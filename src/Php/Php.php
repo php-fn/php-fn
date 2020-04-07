@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
@@ -8,11 +8,17 @@ namespace Php;
 use ArrayAccess;
 use ArrayIterator;
 use Closure;
+use DI\CompiledContainer;
+use DI\Definition\Source\DefinitionSource;
+use DI\Definition\Source\MutableDefinitionSource;
 use EmptyIterator;
 use Illuminate\Support\Str;
 use Iterator;
 use IteratorAggregate;
 use IteratorIterator;
+use Php\DI\Container;
+use Php\DI\ContainerConfiguration;
+use Psr\Container\ContainerInterface;
 use ReflectionFunction;
 use RuntimeException;
 use stdClass;
@@ -665,5 +671,18 @@ abstract class Php
         }
 
         return $candidate;
+    }
+
+    /**
+     * Create a container from the given definitions.
+     * If the last parameter is a callable it will be invoked to get the container configuration.
+     * If the last parameter is TRUE the container will be auto(by reflections) wired.
+     *
+     * @param string|array|DefinitionSource|callable|true ...$args
+     * @return Container|CompiledContainer
+     */
+    public static function di(...$args): ContainerInterface
+    {
+        return ContainerConfiguration::create(...$args)->container();
     }
 }

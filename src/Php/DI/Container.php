@@ -1,39 +1,24 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
 namespace Php\DI;
 
-use DI\Definition\Definition;
-use DI\Definition\Source\DefinitionArray;
+use DI\Container as DIContainer;
 use DI\Definition\Source\MutableDefinitionSource;
-use DI\Definition\Source\ReflectionBasedAutowiring;
-use DI\Definition\Source\SourceChain;
 use DI\Proxy\ProxyFactory;
 use Psr\Container\ContainerInterface;
 
-class Container extends \DI\Container implements MutableDefinitionSource
+class Container extends DIContainer
 {
-    use DefinitionSourceProxyTrait;
-
     public function __construct(
-        MutableDefinitionSource $definitionSource = null,
+        MutableDefinitionSource $definitions = null,
         ProxyFactory $proxyFactory = null,
-        ContainerInterface $wrapperContainer = null
+        ContainerInterface $wrapper = null
     ) {
-        if (!$definitionSource) {
-            ($definitionSource = new SourceChain([new ReflectionBasedAutowiring]))->setMutableDefinitionSource(
-                new DefinitionArray([], new ReflectionBasedAutowiring)
-            );
-        }
-        parent::__construct($this->definitionSource = $definitionSource, $proxyFactory, $wrapperContainer);
+        parent::__construct($definitions, $proxyFactory, $wrapper ? new ContainerChain($this, $wrapper) : null);
         $this->resolvedEntries[self::class]   = $this;
         $this->resolvedEntries[static::class] = $this;
-    }
-
-    public function addDefinition(Definition $definition)
-    {
-        $this->setDefinition($definition->getName(), $definition);
     }
 }

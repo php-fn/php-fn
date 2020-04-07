@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
@@ -14,7 +14,7 @@ class PluginTest extends TestCase
 {
     private static $TARGET;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $fs = new Composer\Util\Filesystem;
         $fs->ensureDirectoryExists(self::$TARGET = sys_get_temp_dir() . '/php-fn-di-' . md5(microtime()) . '/');
@@ -36,7 +36,7 @@ class PluginTest extends TestCase
                     'name'  => 'php-fn/extra-string-reflection',
                     'extra' => [
                         'di'        => 'config/di.php',
-                        'di-config' => [Php\DI::WIRING => Php\DI\WIRING::REFLECTION]
+                        'di-config' => [Php\DI\ContainerConfiguration::WIRING => Php\DI\Wiring::REFLECTION]
                     ]
                 ]
             ],
@@ -77,10 +77,10 @@ class PluginTest extends TestCase
                             'baz' => ['foo', 'bar'],
                         ],
                         'di-config' => [
-                            Php\DI::WIRING => Php\DI\WIRING::REFLECTION,
+                            Php\DI\ContainerConfiguration::WIRING => Php\DI\Wiring::REFLECTION,
                             '@ns\c5' => 'cast-to-array',
                             '@ns\c1' => ['cache' => true],
-                            '@ns\c2' => [Php\DI::WIRING => false],
+                            '@ns\c2' => [Php\DI\ContainerConfiguration::WIRING => false],
                         ],
                     ]
                 ]
