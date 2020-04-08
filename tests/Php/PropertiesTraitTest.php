@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
@@ -7,7 +7,7 @@ namespace Php;
 
 use ArrayAccess;
 use Countable;
-use Php\test\assert;
+use Php\Test\AssertTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -157,34 +157,32 @@ class PropertiesReadWrite
 
 class PropertiesTraitTest extends TestCase
 {
-    /**
-     */
+    use AssertTrait;
+
     public function testPropResolved(): void
     {
         $obj = new PropertiesReadWrite;
 
-        assert\same('void', $obj->void);
-        assert\same('', $obj->string);
+        self::assertSame('void', $obj->void);
+        self::assertSame('', $obj->string);
         $obj->string = Php::map(['a', 'b']);
-        assert\same("a\nb", $obj->string);
+        self::assertSame("a\nb", $obj->string);
 
-        assert\same(0, $obj->int);
+        self::assertSame(0, $obj->int);
         $obj->int = Php::map(['a', 'b']);
-        assert\same(2, $obj->int);
+        self::assertSame(2, $obj->int);
 
-        assert\same(.0, $obj->float);
-        assert\same([], $obj->array);
-        assert\same([], $obj->iterable);
-        assert\equals(static function () {}, $obj->callable);
-        assert\same($obj, $obj->self);
-        assert\equals(Php::map(), $obj->access);
+        self::assertSame(.0, $obj->float);
+        self::assertSame([], $obj->array);
+        self::assertSame([], $obj->iterable);
+        self::assertEquals(static function () {}, $obj->callable);
+        self::assertSame($obj, $obj->self);
+        self::assertEquals(Php::map(), $obj->access);
     }
 
-    /**
-     */
     public function testTrait(): void
     {
-        assert\exception(
+        self::assertException(
             Php::str('magic properties (b,c) are not defined in %s::DEFAULT', PropertiesReadWrite::class),
             static function () {
                 new PropertiesReadWrite(['b' => 'B', 'a' => 'A', 'c' => 'C', 'z' => 'Z']);
@@ -232,13 +230,12 @@ class PropertiesTraitTest extends TestCase
                 return 'D';
             }
         });
-        assert\same('D', $obj->d);
-        assert\exception(
+        self::assertSame('D', $obj->d);
+        self::assertException(
             Php::str('class %s has read-only access for the magic-property: d', get_class($obj)),
-            static function ($obj) {
+            static function () use ($obj) {
                 $obj->d = 'd';
-            },
-            $obj
+            }
         );
 
         $obj = new class {
@@ -260,41 +257,44 @@ class PropertiesTraitTest extends TestCase
             }
         };
 
-        assert\same(['A'], $obj->prop);
+        self::assertSame(['A'], $obj->prop);
         unset($obj->unknown, $obj->prop);
-        assert\same(['A'], $obj->prop);
+        self::assertSame(['A'], $obj->prop);
         $obj->prop = 'B';
-        assert\same(['B'], $obj->prop);
+        self::assertSame(['B'], $obj->prop);
 
         $obj = new PropertiesReadWrite(['x' => 'foo', 'z' => 'bar']);
-        assert\same(['foo'], $obj->x);
-        assert\same(['foo'], $obj->x);
-        assert\same([null], $obj->y);
-        assert\same([1 => null], $obj->y);
-        assert\same('Z', $obj->z);
-        assert\same(0, $obj->rw);
-        assert\same(1, $obj->rw);
+        self::assertSame(['foo'], $obj->x);
+        self::assertSame(['foo'], $obj->x);
+        self::assertSame([null], $obj->y);
+        self::assertSame([1 => null], $obj->y);
+        self::assertSame('Z', $obj->z);
+        self::assertSame(0, $obj->rw);
+        self::assertSame(1, $obj->rw);
         $obj->rw = 3;
-        assert\same(3, $obj->rw);
-        assert\same(3, $obj->rw);
+        self::assertSame(3, $obj->rw);
+        self::assertSame(3, $obj->rw);
     }
 
     private static function assertAB($a, $b, $obj): void
     {
-        assert\true(isset($obj->a));
-        assert\true(isset($obj->b));
-        assert\false(isset($obj->c));
-        assert\same($a, $obj->a);
-        assert\same($b, $obj->b);
-        assert\exception(Php::str('missing magic-property c in %s', get_class($obj)), static function ($obj) {
-            $obj->c;
-        }, $obj);
+        self::assertTrue(isset($obj->a));
+        self::assertTrue(isset($obj->b));
+        self::assertFalse(isset($obj->c));
+        self::assertSame($a, $obj->a);
+        self::assertSame($b, $obj->b);
+        self::assertException(
+            Php::str('missing magic-property c in %s', get_class($obj)),
+            static function () use ($obj) {
+               $obj->c;
+            }
+         );
         unset($obj->a, $obj->b, $obj->c);
-        assert\true(isset($obj->a));
-        assert\true(isset($obj->b));
-        assert\false(isset($obj->c));
-        assert\same(null, $obj->a);
-        assert\same(null, $obj->b);
+        self::assertTrue(isset($obj->a));
+        self::assertTrue(isset($obj->b));
+        self::assertFalse(isset($obj->c));
+        self::assertNull($obj->a);
+        self::assertNull($obj->b);
     }
 
     public function testReadOnly(): void
@@ -309,21 +309,21 @@ class PropertiesTraitTest extends TestCase
             }
         };
         $message = Php::str('class %s has read-only access for magic-properties: a', get_class($obj));
-        assert\exception($message, static function($obj) {$obj->a = '';}, $obj);
-        assert\exception($message, static function($obj) {unset($obj->a);}, $obj);
+        self::assertException($message, static function () use ($obj) {$obj->a = '';});
+        self::assertException($message, static function () use ($obj) {unset($obj->a);});
 
-        assert\true(isset($obj->a));
-        assert\false(isset($obj->b));
-        assert\same('A', $obj->a);
+        self::assertTrue(isset($obj->a));
+        self::assertFalse(isset($obj->b));
+        self::assertSame('A', $obj->a);
     }
 
     public function testNoMemoryLeak(): void
     {
-        $correlation = test\MemoryUsage::timeCorrelation(static function (callable $fill) {
-            $obj = new PropertiesReadWrite;
+        $correlation = Test\MemoryUsage::timeCorrelation(static function (callable $fill) {
+            $obj = new PropertiesReadWrite();
             $obj->a = $fill(1024 * 100);
             return $obj;
         });
-        assert\lt(0.85, $correlation);
+        self::assertLessThan(0.85, $correlation);
     }
 }
