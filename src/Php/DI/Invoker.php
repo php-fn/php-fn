@@ -12,8 +12,6 @@ use Php;
 use Psr\Container\ContainerInterface;
 use ReflectionFunctionAbstract;
 
-/**
- */
 class Invoker extends ParameterResolver\ResolverChain implements InvokerInterface
 {
     /**
@@ -28,7 +26,7 @@ class Invoker extends ParameterResolver\ResolverChain implements InvokerInterfac
     {
         $this->invoker = new \Invoker\Invoker($this);
 
-        parent::__construct(Php::traverse($resolvers, function ($candidate): ParameterResolver\ParameterResolver {
+        parent::__construct(Php::arr($resolvers, function ($candidate): ParameterResolver\ParameterResolver {
             if ($candidate instanceof ParameterResolver\ParameterResolver) {
                 return $candidate;
             }

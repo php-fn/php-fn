@@ -74,10 +74,10 @@ class ContainerConfiguration
         return $this->wrapperContainer;
     }
 
-    public function container(): ContainerInterface
+    public function container(string $class = Container::class): ContainerInterface
     {
         if (($source = $this->getDefinitionSource()) instanceof MutableDefinitionSource) {
-            return new Container($source, $this->getProxyFactory(), $this->getWrapperContainer());
+            return new $class($source, $this->getProxyFactory(), $this->getWrapperContainer());
         }
         return $source;
     }

@@ -5,16 +5,14 @@
 
 namespace Php\DI;
 
-use DI\Container as DIContainer;
-use DI\Definition\Source\MutableDefinitionSource;
-use DI\Proxy\ProxyFactory;
+use DI;
 use Psr\Container\ContainerInterface;
 
-class Container extends DIContainer
+class Container extends DI\Container
 {
     public function __construct(
-        MutableDefinitionSource $definitions = null,
-        ProxyFactory $proxyFactory = null,
+        DI\Definition\Source\MutableDefinitionSource $definitions = null,
+        DI\Proxy\ProxyFactory $proxyFactory = null,
         ContainerInterface $wrapper = null
     ) {
         parent::__construct($definitions, $proxyFactory, $wrapper ? new ContainerChain($this, $wrapper) : null);
