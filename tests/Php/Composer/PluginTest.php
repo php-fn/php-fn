@@ -16,7 +16,7 @@ class PluginTest extends TestCase
 
     public static function setUpBeforeClass(): void
     {
-        $fs = new Composer\Util\Filesystem;
+        $fs = new Composer\Util\Filesystem();
         $fs->ensureDirectoryExists(self::$TARGET = sys_get_temp_dir() . '/php-fn-di-' . md5(microtime()) . '/');
     }
 

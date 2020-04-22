@@ -31,9 +31,6 @@ class DIPackages
         ) . '/';
     }
 
-    /**
-     * @inheritdoc
-     */
     public function getVendors(): iterable
     {
         $packages   = $this->composer->getRepositoryManager()->getLocalRepository()->getPackages();
@@ -50,6 +47,7 @@ class DIPackages
             [$vendor, $library] = explode('/', $name);
             $vendors[$vendor][$library] = [
                 'name'        => $name,
+                'type'        => $package->getType(),
                 'version'     => $package->getVersion(),
                 'description' => $package instanceof CompletePackageInterface ? $package->getDescription() : null,
                 'homepage'    => $package instanceof CompletePackageInterface ? $package->getHomepage() : null,
@@ -67,9 +65,6 @@ class DIPackages
         return str_replace('-', '_', strtoupper(Php\Lang::sanitize($string)));
     }
 
-    /**
-     * @inheritdoc
-     */
     public function __toString()
     {
         $ns    = [];
@@ -88,6 +83,7 @@ class DIPackages
 
                 $const[] = "        VENDOR\\{$this->up($vendor)}\\{$this->up($name)} => [";
                 $const[] = "            'name'        => '{$package['name']}',";
+                $const[] = "            'type'        => '{$package['type']}',";
                 $const[] = "            'version'     => '{$package['version']}',";
                 $const[] = "            'description' => " . var_export($package['description'], true) . ',';
                 $const[] = "            'homepage'    => " . var_export($package['homepage'], true) . ',';

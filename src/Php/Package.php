@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
@@ -6,17 +6,22 @@
 namespace Php;
 
 /**
- * @property-read string $name
- * @property-read string $version
- * @property-read string $dir
- * @property-read string $homepage
- * @property-read string $description
+ * @property-read string|null $name
+ * @property-read string|null $type
+ * @property-read string|null $version
+ * @property-read string|null $dir
+ * @property-read string|null $homepage
+ * @property-read string|null $description
  * @property-read bool $root
  * @property-read array $authors
  * @property-read array $extra
  */
 class Package
 {
+    /**
+     * @see resolveName, resolveType, resolveVersion, resolveHomepage, resolveDescription
+     * @see resolveDir, resolveAuthors, resolveExtra, resolveRoot
+     */
     use PropertiesTrait\ReadOnly;
     use PropertiesTrait\Init;
 
@@ -41,73 +46,46 @@ class Package
         return $assert ? null : self::$null;
     }
 
-    /**
-     * @see $name
-     * @return string
-     */
     protected function resolveName(): ?string
     {
         return $this->properties['name'] ?? null;
     }
 
-    /**
-     * @see $version
-     * @return string
-     */
+    protected function resolveType(): ?string
+    {
+        return $this->properties['type'] ?? null;
+    }
+
     protected function resolveVersion(): ?string
     {
         return $this->properties['version'] ?? null;
     }
 
-    /**
-     * @see $homepage
-     * @return string
-     */
     protected function resolveHomepage(): ?string
     {
         return $this->properties['homepage'] ?? null;
     }
 
-    /**
-     * @see $description
-     * @return string
-     */
     protected function resolveDescription(): ?string
     {
         return $this->properties['description'] ?? null;
     }
 
-    /**
-     * @see $dir
-     * @return string
-     */
     protected function resolveDir(): ?string
     {
         return $this->properties['dir'] ?? null;
     }
 
-    /**
-     * @see $authors
-     * @return array
-     */
     protected function resolveAuthors(): array
     {
         return (array)($this->properties['authors'] ?? []);
     }
 
-    /**
-     * @see $extra
-     * @return array
-     */
     protected function resolveExtra(): array
     {
         return (array)($this->properties['extra'] ?? []);
     }
 
-    /**
-     * @see $root
-     * @return bool
-     */
     protected function resolveRoot(): bool
     {
         return (bool)($this->properties['root'] ?? false);
@@ -119,7 +97,9 @@ class Package
      */
     public function files(string ...$files): array
     {
-        return Php::traverse($files, [$this, 'file']);
+        return Php::arr($files, function ($file) {
+            yield $this->file($file);
+        });
     }
 
     /**
@@ -141,7 +121,7 @@ class Package
         if ($format === true) {
             return $version;
         }
-        $version = explode('.', $version);
+        $version = explode('.', (string)$version);
         if (!is_int($format) && ($version[3] ?? null) === '0') {
             $format = 3;
         }

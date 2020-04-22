@@ -1,11 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
 namespace Php;
 
-use Php\test\assert;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -13,6 +12,7 @@ class PackageTest extends TestCase
 {
     private const FOO = [
         'name' => 'foo',
+        'type' => 'library',
         'version' => '1.2.3.0',
         'description' => 'foo-d',
         'homepage' => 'foo-h',
@@ -22,7 +22,7 @@ class PackageTest extends TestCase
         'extra' => ['foo-e'],
     ];
 
-    public function setUp()
+    public function setUp(): void
     {
         $prop = (new ReflectionClass(Package::class))->getProperty('data');
         $prop->setAccessible(true);
@@ -31,51 +31,53 @@ class PackageTest extends TestCase
 
     public function testNullObject(): void
     {
-        assert\type(Package::class, Package::get('foo'));
-        assert\same(Package::get('foo'), $package = Package::get('bar'));
-        assert\same(null, Package::get('bar', true));
-        assert\same(null, $package->name);
-        assert\same(null, $package->version);
-        assert\same(null, $package->homepage);
-        assert\same(null, $package->description);
-        assert\same(null, $package->dir);
-        assert\false($package->root);
-        assert\same([], $package->extra);
-        assert\same([], $package->authors);
-        assert\same('foo/bar', $package->file('foo/bar'));
-        assert\same('/foo/bar', $package->file('/foo/bar'));
-        assert\same(['foo/bar', '/foo/bar'], $package->files('foo/bar', '/foo/bar'));
-        assert\same('', $package->version());
-        assert\same('', $package->version(1));
-        assert\same('', $package->version(2));
-        assert\same('', $package->version(3));
-        assert\same(null, $package->version(true));
+        self::assertInstanceOf(Package::class, Package::get('foo'));
+        self::assertSame(Package::get('foo'), $package = Package::get('bar'));
+        self::assertNull(Package::get('bar', true));
+        self::assertNull($package->name);
+        self::assertNull($package->type);
+        self::assertNull($package->version);
+        self::assertNull($package->homepage);
+        self::assertNull($package->description);
+        self::assertNull($package->dir);
+        self::assertFalse($package->root);
+        self::assertSame([], $package->extra);
+        self::assertSame([], $package->authors);
+        self::assertSame('foo/bar', $package->file('foo/bar'));
+        self::assertSame('/foo/bar', $package->file('/foo/bar'));
+        self::assertSame(['foo/bar', '/foo/bar'], $package->files('foo/bar', '/foo/bar'));
+        self::assertSame('', $package->version());
+        self::assertSame('', $package->version(1));
+        self::assertSame('', $package->version(2));
+        self::assertSame('', $package->version(3));
+        self::assertNull($package->version(true));
     }
 
     public function testDefined(): void
     {
         $package = new Package(self::FOO);
-        assert\same('foo', $package->name);
-        assert\same('1.2.3.0', $package->version);
-        assert\same('foo-h', $package->homepage);
-        assert\same('foo-d', $package->description);
-        assert\same('/foo-dir/', $package->dir);
-        assert\true($package->root);
-        assert\same(['foo-e'], $package->extra);
-        assert\same(['foo-a'], $package->authors);
-        assert\same('/foo-dir/foo/bar', $package->file('foo/bar'));
-        assert\same('/foo/bar', $package->file('/foo/bar'));
-        assert\same(['/foo-dir/foo/bar', '/foo/bar'], $package->files('foo/bar', '/foo/bar'));
-        assert\same('1.2.3', $package->version());
-        assert\same('1', $package->version(1));
-        assert\same('1.2', $package->version(2));
-        assert\same('1.2.3', $package->version(3));
-        assert\same('1.2.3.0', $package->version(true));
+        self::assertSame('foo', $package->name);
+        self::assertSame('library', $package->type);
+        self::assertSame('1.2.3.0', $package->version);
+        self::assertSame('foo-h', $package->homepage);
+        self::assertSame('foo-d', $package->description);
+        self::assertSame('/foo-dir/', $package->dir);
+        self::assertTrue($package->root);
+        self::assertSame(['foo-e'], $package->extra);
+        self::assertSame(['foo-a'], $package->authors);
+        self::assertSame('/foo-dir/foo/bar', $package->file('foo/bar'));
+        self::assertSame('/foo/bar', $package->file('/foo/bar'));
+        self::assertSame(['/foo-dir/foo/bar', '/foo/bar'], $package->files('foo/bar', '/foo/bar'));
+        self::assertSame('1.2.3', $package->version());
+        self::assertSame('1', $package->version(1));
+        self::assertSame('1.2', $package->version(2));
+        self::assertSame('1.2.3', $package->version(3));
+        self::assertSame('1.2.3.0', $package->version(true));
     }
 
     public function testVersion(): void
     {
-        assert\same('1.2.3.4', (new Package(['version' => '1.2.3.4']))->version());
-        assert\same('1.2.3', (new Package(['version' => '1.2.3.0']))->version());
+        self::assertSame('1.2.3.4', (new Package(['version' => '1.2.3.4']))->version());
+        self::assertSame('1.2.3', (new Package(['version' => '1.2.3.0']))->version());
     }
 }

@@ -10,8 +10,6 @@ use IteratorAggregate;
 use RecursiveArrayIterator;
 use RecursiveIteratorIterator;
 
-/**
- */
 class DIProvider implements IteratorAggregate
 {
     /**
@@ -42,7 +40,7 @@ class DIProvider implements IteratorAggregate
                 $this->defaultConfig[$key] = $value;
             }
         }
-        $this->di = new ArrayIterator;
+        $this->di = new ArrayIterator();
         foreach ($this->init($di) as $class => $config) {
             $this->di[$class = self::getClass($class)] = new DIRenderer(
                 $class,
