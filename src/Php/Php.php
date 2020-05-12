@@ -10,7 +10,6 @@ use ArrayIterator;
 use Closure;
 use DI\CompiledContainer;
 use DI\Definition\Source\DefinitionSource;
-use DI\Definition\Source\MutableDefinitionSource;
 use EmptyIterator;
 use Illuminate\Support\Str;
 use Iterator;
@@ -164,6 +163,9 @@ abstract class Php
                 }
             }
             $toMerge[] = static function ($replace, &$search) {
+                if (!is_scalar($replace) && !method_exists($replace, '__toString')) {
+                    return null;
+                }
                 $search = '{' . $search . '}';
                 return (string)$replace;
             };
