@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
@@ -170,7 +170,6 @@ class Map implements IteratorAggregate, Countable, ArrayAccess
         Php::traverse($this->leaves(static function ($value, Map\Path $iterator) use ($delimiter, &$string) {
             static $counter = 0;
             $string .= $delimiter(...[$counter++, $iterator->getDepth(), $iterator]) . $value;
-
         }));
         return $replacements ? Php::str($string, ...$replacements) : $string;
     }

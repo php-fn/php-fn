@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
@@ -21,10 +21,5 @@ class Lazy implements Iterator
     public function __construct(...$args)
     {
         $this->iterState['args'] = $args;
-    }
-
-    protected function createInnerIterator(): Iterator
-    {
-        return Php::iter(...$this->iterState['args']);
     }
 }

@@ -1,11 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
 namespace Php;
 
-use EmptyIterator;
 use Generator;
 use Iterator;
 
@@ -18,12 +17,7 @@ trait IteratorTrait
 
     protected function getInnerIterator(): Iterator
     {
-        return $this->iterState['inner'] ?? $this->iterState['inner'] = $this->createInnerIterator();
-    }
-
-    protected function createInnerIterator(): Iterator
-    {
-        return new EmptyIterator;
+        return $this->iterState['inner'] ?? $this->iterState['inner'] = Php::iter(...$this->iterState['args'] ?? []);
     }
 
     protected function callIteratorMethod(string $method)
