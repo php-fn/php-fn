@@ -5,6 +5,7 @@
 
 namespace Php\DI;
 
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Php;
 use ReflectionClass;
@@ -33,9 +34,12 @@ trait CallerTrait
                 } else {
                     $obj = new $class();
                 }
-            }
-            if ($container instanceof Container) {
-                $container->set($class, $obj);
+                if ($container instanceof MutableContainerInterface) {
+                    try {
+                        $container->set($class, $obj);
+                    } catch (ContainerExceptionInterface $ignore) {
+                    }
+                }
             }
             if ($method) {
                 return $invoker->call([$obj, $method], $params);

@@ -8,7 +8,7 @@ namespace Php\DI;
 use DI;
 use Psr\Container\ContainerInterface;
 
-class Container extends DI\Container
+class Container extends DI\Container implements MutableContainerInterface
 {
     public function __construct(
         DI\Definition\Source\MutableDefinitionSource $definitions = null,
