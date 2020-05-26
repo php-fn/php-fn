@@ -7,6 +7,7 @@ namespace Php\Cli;
 
 use Generator;
 use Php;
+use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -59,8 +60,8 @@ class IO extends SymfonyStyle
     public function getArguments(bool $provided = false): array
     {
         $arguments = $this->getInput()->getArguments();
-        return $provided ? Php::traverse($arguments, function ($value, $key) {
-            return $this->hasArgument($key) ? $value : null;
+        return $provided ? Php::arr($arguments, function ($value, $key) {
+            $this->hasArgument($key) && yield $value;
         }) : $arguments;
     }
 
@@ -74,8 +75,8 @@ class IO extends SymfonyStyle
     public function getOptions(bool $provided = false): array
     {
         $options = $this->getInput()->getOptions();
-        return $provided ? Php::traverse($options, function ($value, $key) {
-            return $this->hasOption($key) ? $value : null;
+        return $provided ? Php::arr($options, function ($value, $key) {
+            $this->hasOption($key) && yield $value;
         }) : $options;
     }
 
@@ -125,6 +126,20 @@ class IO extends SymfonyStyle
     public function hasOption(string $name): bool
     {
         return $this->getInput()->hasOption($name);
+    }
+
+    public function get(string $name, $default = null)
+    {
+        if ($this->hasOption($name)) {
+            return $this->getOption($name);
+        }
+        if ($this->hasArgument($name)) {
+            return $this->getArgument($name);
+        }
+        if (func_num_args() > 1) {
+            return $default;
+        }
+        throw new LogicException($name);
     }
 
     /**
