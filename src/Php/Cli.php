@@ -59,14 +59,6 @@ class Cli extends Application
         }
     }
 
-    /**
-     * @return iterable|Closure[]|array[]
-     */
-    protected function getCommands()
-    {
-        return $this->value('cli.commands', []);
-    }
-
     protected function createInvoker(DI\Container $container): DI\Invoker
     {
         return new DI\Invoker(
@@ -76,6 +68,107 @@ class Cli extends Application
             $container,
             new ParameterResolver\Container\ParameterNameContainerResolver($container),
             new ParameterResolver\DefaultValueResolver
+        );
+    }
+
+    private function value(string $id, $default = null)
+    {
+        return $this->container->has($id) ? $this->container->get($id) : $default;
+    }
+
+    /**
+     * @return iterable|Closure[]|array[]
+     */
+    protected function getCommands()
+    {
+        return $this->value('cli.commands', []);
+    }
+
+    /**
+     * The result of the callable will be printed to cli automatically, if the function has no Cli\IO parameter
+     *
+     * @param string   $name
+     * @param callable $callable
+     * @param string[] $args
+     * @param string[] $desc
+     *
+     * @return Command
+     */
+    public function command(string $name, $callable, array $args = [], array $desc = []): Command
+    {
+        $command = new Command($name);
+        $refFn = $this->invoker->reflect($callable);
+
+        $isOutput = Php::some($refFn->getParameters(), function (ReflectionParameter $parameter): bool {
+            return ($class = $parameter->getClass()) && (
+                $class->isSubclassOf(OutputInterface::class) || $class->name === OutputInterface::class
+            );
+        });
+
+        if (class_exists(DocBlockFactory::class) && $comment = $refFn->getDocComment()) {
+            $doc = DocBlockFactory::createInstance()->create($comment);
+            $command->setDescription($doc->getSummary());
+            $desc = Php::arr(Php::gen($doc->getTagsByName('param'), function (Param $tag) {
+                if ($paramDesc = (string)$tag->getDescription()) {
+                    yield [$tag->getVariableName()] => $paramDesc;
+                }
+            }), $desc);
+        }
+
+        $command->setDefinition(Php::arr(
+            static::params($refFn),
+            function (Parameter $param) use ($args, $desc) {
+                $asArg = $param->isVariadic() || Php::hasValue($param->getName(), $args);
+                yield $param->input($asArg, $desc[$param->getName()] ?? null);
+            })
+        );
+
+        $command->setCode(function () use ($callable, $isOutput) {
+            $result = $this->invoker->call($callable, $this->provided($callable));
+            if ($isOutput || !is_iterable($result)) {
+                return $result;
+            }
+            Php::arr($this->container->get(IO::class)->render($result));
+            return 0;
+        });
+
+        $this->add($command);
+        return $command;
+    }
+
+    /**
+     * @param ReflectionFunctionAbstract $refFn
+     *
+     * @return Parameter[]
+     */
+    protected static function params(ReflectionFunctionAbstract $refFn): array
+    {
+        return Php::arr($refFn->getParameters(), static function (ReflectionParameter $ref) {
+            if ($ref->getClass() || $ref->isCallable()) {
+                return;
+            }
+            $param = new Parameter($ref);
+            yield [$param->getName('-')] => $param;
+        });
+    }
+
+    /**
+     * @param callable $callable
+     *
+     * @return array
+     */
+    private function provided($callable): array
+    {
+        $params = static::params($this->invoker->reflect($callable));
+        $io = $this->container->get(IO::class);
+        return Php::arr(
+            $io->getOptions(true),
+            $io->getArguments(true),
+            static function ($value, $key) use ($params) {
+                if (isset($params[$key])) {
+                    ($params[$key]->isVariadic() && !$value) || yield [$params[$key]->getName()] => $value;
+                }
+            }
         );
     }
 
@@ -92,7 +185,7 @@ class Cli extends Application
         } else {
             $package = Package::get('');
         }
-        $fns    = [];
+        $fns = [];
         $config = [];
         foreach ($args as $arg) {
             if (Php::isCallable($arg)) {
@@ -117,29 +210,6 @@ class Cli extends Application
         ], ...$config);
     }
 
-    /**
-     * @deprecated
-     * @param Package|string|array|callable ...$args
-     *
-     * @return Cli
-     */
-    public static function fromPackage(...$args): self
-    {
-        return new static(static::di(...$args));
-    }
-
-    protected function getDefaultCommands(): array
-    {
-        return Php::arr(parent::getDefaultCommands(), function (Command $command) {
-            yield $command->setHidden(true);
-        });
-    }
-
-    private function value(string $id, $default = null)
-    {
-        return $this->container->has($id) ? $this->container->get($id) : $default;
-    }
-
     public function run(InputInterface $input = null, OutputInterface $output = null): int
     {
         $this->container->set(InputInterface::class, $input = $input ?: new ArgvInput);
@@ -149,98 +219,10 @@ class Cli extends Application
         return parent::run($input, $output);
     }
 
-    public function __invoke(): int
+    protected function getDefaultCommands(): array
     {
-        return $this->run();
-    }
-
-    /**
-     * The result of the callable will be printed to cli automatically, if the function has no Cli\IO parameter
-     *
-     * @param string   $name
-     * @param callable $callable
-     * @param string[] $args
-     * @param string[] $desc
-     *
-     * @return Command
-     */
-    public function command(string $name, $callable, array $args = [], array $desc = []): Command
-    {
-        $command = new Command($name);
-        $refFn   = $this->invoker->reflect($callable);
-
-        $isOutput = Php::some($refFn->getParameters(), function (ReflectionParameter $parameter): bool {
-            return ($class = $parameter->getClass()) && (
-                    $class->isSubclassOf(OutputInterface::class) || $class->name === OutputInterface::class
-                );
-        });
-
-        if (class_exists(DocBlockFactory::class) && $comment = $refFn->getDocComment()) {
-            $doc = DocBlockFactory::createInstance()->create($comment);
-            $command->setDescription($doc->getSummary());
-            $desc = Php::arr(Php::gen($doc->getTagsByName('param'), function (Param $tag) {
-                if ($paramDesc = (string)$tag->getDescription()) {
-                    yield [$tag->getVariableName()] => $paramDesc;
-                }
-            }), $desc);
-        }
-
-        $command->setDefinition(Php::arr(
-            static::params($refFn),
-            function (Parameter $param) use ($args, $desc) {
-                yield $param->input(
-                    $param->isVariadic() || Php::hasValue($param->getName(), $args),
-                    $desc[$param->getName()] ?? null
-                );
-            })
-        );
-
-        $command->setCode(function() use($callable, $isOutput) {
-            $result = $this->invoker->call($callable, $this->provided($callable));
-            if ($isOutput || !is_iterable($result)) {
-                return $result;
-            }
-            Php::arr($this->container->get(IO::class)->render($result));
-            return 0;
-        });
-
-        $this->add($command);
-        return $command;
-    }
-
-    /**
-     * @param callable $callable
-     *
-     * @return array
-     */
-    private function provided($callable): array
-    {
-        $params = static::params($this->invoker->reflect($callable));
-        $io = $this->container->get(IO::class);
-        return Php::arr(
-            $io->getOptions(true),
-            $io->getArguments(true),
-            static function ($value, $key) use ($params) {
-                if (isset($params[$key])) {
-                    ($params[$key]->isVariadic() && !$value) || yield [$params[$key]->getName()] => $value;
-                }
-            }
-        );
-    }
-
-    /**
-     * @param ReflectionFunctionAbstract $refFn
-     *
-     * @return Map|Parameter[]
-     */
-    protected static function params(ReflectionFunctionAbstract $refFn): array
-    {
-        return Php::arr($refFn->getParameters(), static function (ReflectionParameter $ref) {
-            if ($ref->getClass() || $ref->isCallable()) {
-                return;
-            }
-            $param = new Parameter($ref);
-            yield [$param->getName('-')] => $param;
+        return Php::arr(parent::getDefaultCommands(), function (Command $command) {
+            yield $command->setHidden(true);
         });
     }
 }
