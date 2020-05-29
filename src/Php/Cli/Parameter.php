@@ -80,7 +80,12 @@ class Parameter
             }
         }
 
-        return new InputArgument($this->getName('-'), $mode, $desc);
+        return new InputArgument(
+            $this->getName('-'),
+            $mode,
+            $desc,
+            $this->ref->isOptional() ? $this->ref->getDefaultValue() : null
+        );
     }
 
     /**
@@ -90,10 +95,13 @@ class Parameter
      */
     private function opt(string $desc = null): InputOption
     {
+        $default = $this->ref->isOptional() ? $this->ref->getDefaultValue() : null;
+        isset($desc) || $desc = $this->ref->isOptional() ? $this->ref->getDefaultValueConstantName() : null;
         if ($this->ref->isVariadic()) {
             $mode = InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY;
         } else if (($type = $this->ref->getType()) && $type->getName() === 'bool') {
             $mode = InputOption::VALUE_NONE;
+            $default = null;
         } else {
             $mode = $this->ref->isOptional() ? InputOption::VALUE_OPTIONAL : InputOption::VALUE_REQUIRED;
             if ($this->ref->isArray()) {
@@ -101,6 +109,6 @@ class Parameter
             }
         }
 
-        return new InputOption($this->getName('-'), null, $mode, $desc);
+        return new InputOption($this->getName('-'), null, $mode, $desc, $default);
     }
 }
