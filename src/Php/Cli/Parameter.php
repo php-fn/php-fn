@@ -84,7 +84,7 @@ class Parameter
             $this->getName('-'),
             $mode,
             $desc,
-            $this->ref->isOptional() ? $this->ref->getDefaultValue() : null
+            $this->ref->isDefaultValueAvailable() ? $this->ref->getDefaultValue() : null
         );
     }
 
@@ -95,8 +95,8 @@ class Parameter
      */
     private function opt(string $desc = null): InputOption
     {
-        $default = $this->ref->isOptional() ? $this->ref->getDefaultValue() : null;
-        isset($desc) || $desc = $this->ref->isOptional() ? $this->ref->getDefaultValueConstantName() : null;
+        $default = $this->ref->isDefaultValueAvailable() ? $this->ref->getDefaultValue() : null;
+        isset($desc) || $desc = $this->ref->isDefaultValueAvailable() ? $this->ref->getDefaultValueConstantName() : null;
         if ($this->ref->isVariadic()) {
             $mode = InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY;
         } else if (($type = $this->ref->getType()) && $type->getName() === 'bool') {
