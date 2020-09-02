@@ -27,11 +27,11 @@
         "psr-4": {
             "Php\\": [
                 "src/Php"
-            ],
-            "": [
-                "src"
             ]
-        }
+        },
+        "files": [
+            "src/Php.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
