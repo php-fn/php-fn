@@ -38,7 +38,7 @@ class CliTest extends TestCase
         self::assertSame($package->version(), $cli->getVersion());
 
         $cli = new Cli(Cli::di($package));
-        $cli->command('c1', static function () {})->getDefinition()->get;
+        $cli->command('c1', static function () {});
         $cli->command('c2', require $package->file('tests/fixtures/command.php'));
         self::assertTrue($cli->has('c1'));
         self::assertTrue($cli->has('c2'));
