@@ -10,14 +10,14 @@
         "symfony/console": "^3.4",
         "illuminate/support": "^5.8",
         "phpdocumentor/reflection-docblock": "^4.3",
-        "composer-plugin-api": "^1",
+        "composer-plugin-api": "^1.0||^2.0",
         "ext-mbstring": "*",
         "php": ">=7.1"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master",
         "doctrine/annotations": "^1",
-        "composer/composer": "^1",
+        "composer/composer": "^1.0||^2.0",
         "php-coveralls/php-coveralls": "^2.1",
         "php-fn/test": "^3.0",
         "ext-apcu": "*",
