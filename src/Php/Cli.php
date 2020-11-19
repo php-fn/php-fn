@@ -18,14 +18,12 @@ use phpDocumentor\Reflection\DocBlockFactory;
 use Psr\Container\ContainerInterface;
 use ReflectionFunctionAbstract;
 use ReflectionParameter;
-use Symfony\Component\Console\{
-    Application,
-    Command\Command,
-    Input\ArgvInput,
-    Input\InputInterface,
-    Output\ConsoleOutput,
-    Output\OutputInterface
-};
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class Cli extends Application
 {
@@ -77,11 +75,11 @@ class Cli extends Application
     }
 
     /**
-     * @return iterable|Closure[]|array[]
+     * @return iterable|Closure[]|
      */
-    protected function getCommands()
+    protected function getCommands(): iterable
     {
-        return $this->value('cli.commands', []);
+        yield from [];
     }
 
     /**
@@ -185,28 +183,15 @@ class Cli extends Application
         } else {
             $package = Package::get('');
         }
-        $fns = [];
         $config = [];
         foreach ($args as $arg) {
-            if (Php::isCallable($arg)) {
-                $fns[] = $arg;
-            } else {
-                $config[] = is_string($arg) ? $package->file($arg) : $arg;
-            }
+            $config[] = is_string($arg) ? $package->file($arg) : $arg;
         }
 
         return Php::di([
             Package::class => $package,
             'cli.name' => $package->name,
             'cli.version' => $package->version(),
-            'cli.commands' => function (self $cli) use ($fns) {
-                return Php::gen($fns, function ($fn) use ($cli) {
-                    $result = $cli->container->call($fn);
-                    foreach (is_iterable($result) ? $result : [] as $name => $command) {
-                        yield [$name] => $command;
-                    }
-                });
-            }
         ], ...$config);
     }
 

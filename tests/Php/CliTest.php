@@ -20,14 +20,10 @@ class CliTest extends TestCase
             }
         ]);
 
-        $cli = new Cli(Cli::di(
-            function () {
-                yield 'foo' => function (stdClass $obj) {
-                    yield ((array)$obj)['foo'] ?? 'ERROR';
-                };
-            },
-            $inner
-        ));
+        $cli = new Cli(Cli::di($inner));
+        $cli->command('foo', function (stdClass $obj) {
+            yield ((array)$obj)['foo'] ?? 'ERROR';
+        });
         $cli->setDefaultCommand('foo', true);
         $cli->setAutoExit(false);
         $cli->run(new ArrayInput([]), $out = new BufferedOutput());
@@ -41,20 +37,14 @@ class CliTest extends TestCase
         self::assertSame($package->name, $cli->getName());
         self::assertSame($package->version(), $cli->getVersion());
 
-        $cli = new Cli(Cli::di($package, ['foo' => 'bar'], static function (DI\Container $di, Package $package) {
-            $cli = $di->get(Cli::class);
-            $cli->command('c1', static function () {});
-            yield 'c2' => static function () {};
-            yield 'c3' => require $package->file('tests/fixtures/command.php');
-            yield 'c4' => [require $package->file(__DIR__ . '/../fixtures/command.php'), ['arg']];
-        }));
+        $cli = new Cli(Cli::di($package));
+        $cli->command('c1', static function () {})->getDefinition()->get;
+        $cli->command('c2', require $package->file('tests/fixtures/command.php'));
         self::assertTrue($cli->has('c1'));
         self::assertTrue($cli->has('c2'));
-        self::assertTrue($cli->has('c3'));
-        self::assertTrue($cli->has('c4'));
-        self::assertSame('command', $cli->get('c3')->getDescription());
-        self::assertSame(0, $cli->get('c3')->getDefinition()->getArgumentCount());
-        self::assertSame(1, $cli->get('c4')->getDefinition()->getArgumentCount());
+        self::assertSame('command', $cli->get('c2')->getDescription());
+        self::assertSame(0, count($cli->get('c1')->getDefinition()->getOptions()));
+        self::assertSame(1, count($cli->get('c2')->getDefinition()->getOptions()));
         self::assertSame('foo', (new Cli(Cli::di(['cli.name' => 'foo'])))->getName());
     }
 }
