@@ -20,7 +20,7 @@ class MapTest extends TestCase
 
     public function testGetIterator(): void
     {
-        assert\type(Traversable::class, $this->map()->getIterator());
+        self::assertInstanceOf(Traversable::class, $this->map()->getIterator());
     }
 
     public function testCount(): void
@@ -62,7 +62,7 @@ class MapTest extends TestCase
         assert\same(['a-a-a-a-a-a-a-a-'], $m3->traverse);
 
         $map = $this->map(['a-'])->then($duplicate, $duplicate, $duplicate);
-        assert\type(Map::class, $map);
+        self::assertInstanceOf(Map::class, $map);
         assert\equals(['a-a-a-a-a-a-a-a-'], Php::traverse($map));
         assert\equals(['a-a-a-a-a-a-a-a-'], Php::traverse($map->then()));
     }
@@ -112,14 +112,14 @@ class MapTest extends TestCase
     public function testSort(array $expected, array $map, $strategy = null, $flags = null): void
     {
         $result = $this->map($map)->sort($strategy, $flags);
-        assert\type(Map::class, $result);
+        self::assertInstanceOf(Map::class, $result);
         assert\same($expected, Php::traverse($result));
     }
 
     public function testKeys(): void
     {
         $map = $this->map(['a' => null, 'b' => null, 'c' => null, 10 => null]);
-        assert\type(Map::class, $map->keys());
+        self::assertInstanceOf(Map::class, $map->keys());
         assert\same(['a', 'b', 'c', 10], Php::traverse($map->keys()));
         assert\same(['A', 'B', 'C', '10'], Php::traverse($map->keys(static function ($value) {
             return strtoupper($value);
@@ -129,7 +129,7 @@ class MapTest extends TestCase
     public function testValues(): void
     {
         $map = $this->map(['a' => 'A', 'b' => 'B', 'c' => 'C']);
-        assert\type(Map::class, $map->values());
+        self::assertInstanceOf(Map::class, $map->values());
         assert\same(['A', 'B', 'C'], Php::traverse($map->values()));
 
         $increment = static function ($value) {return ++$value;};
@@ -143,7 +143,7 @@ class MapTest extends TestCase
             $this->map(['c' => 'C']),
             ['z']
         );
-        assert\type(Map::class, $map);
+        self::assertInstanceOf(Map::class, $map);
         assert\equals(['z', 'a' => 'A', 'b' => 'b', 'c' => 'C', 'd' => 'd', 'z'], Php::traverse($map));
     }
 
@@ -187,7 +187,7 @@ class MapTest extends TestCase
     public function testTree(): void
     {
         $map = $this->map(['k0' => 'a', 'k1' => ['k2' => 'b', 'k3' => 'c']]);
-        assert\type(Map::class, $map->tree());
+        self::assertInstanceOf(Map::class, $map->tree());
         assert\not\same($map, $map->tree());
 
         assert\same(
@@ -291,7 +291,7 @@ EOF;
             return $value === 'b' ? null : strtoupper($value);
         });
 
-        assert\type(Map::class, $map->limit(0));
+        self::assertInstanceOf(Map::class, $map->limit(0));
         assert\same($all = ['A', 2 => 'C', 'D'], Php::traverse($map->limit(0)));
         assert\same($all, Php::traverse($map->limit(-1)));
         assert\same($all, Php::traverse($map->limit(0, -1)));

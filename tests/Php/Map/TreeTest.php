@@ -157,7 +157,7 @@ class TreeTest extends TestCase
                 'expected' => ['0-a', '1-b', '2-c'],
                 'inner' => ['a', 'b', 'c'],
                 'mapper' => static function ($value, $key, Tree $iterator) {
-                    assert\type(Tree::class, $iterator);
+                    self::assertInstanceOf(Tree::class, $iterator);
                     return "$key-$value";
                 },
             ]
@@ -187,7 +187,7 @@ class TreeTest extends TestCase
     public function testRecursive(): void
     {
         $tree = new Tree(['k0' => 'a', 'k1' => ['k2' => 'b', 'k3' => 'c']]);
-        assert\type(Tree::class, $tree->recursive());
+        self::assertInstanceOf(Tree::class, $tree->recursive());
         assert\not\same($tree, $tree->recursive());
 
         assert\same(

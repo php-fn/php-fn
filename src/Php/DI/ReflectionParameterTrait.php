@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
@@ -9,8 +9,6 @@ use ReflectionClass;
 use ReflectionFunctionAbstract;
 use ReflectionType;
 
-/**
- */
 trait ReflectionParameterTrait
 {
     /**

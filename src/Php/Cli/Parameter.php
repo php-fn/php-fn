@@ -109,6 +109,6 @@ class Parameter
             }
         }
 
-        return new InputOption($this->getName('-'), null, $mode, $desc, $default);
+        return new InputOption($this->getName('-'), null, $mode, (string)$desc, $default);
     }
 }

@@ -1,11 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (C) php-fn. See LICENSE file for license details.
  */
 
 namespace Php\Cli;
 
-use Generator;
 use Php;
 use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Input\InputInterface;
@@ -145,9 +144,9 @@ class IO extends SymfonyStyle
     /**
      * @param iterable $result
      *
-     * @return Generator
+     * @return iterable
      */
-    public function render(iterable $result): Generator
+    public function render(iterable $result): iterable
     {
         foreach ($result as $key => $line) {
             yield $key => $line;

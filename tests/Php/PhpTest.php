@@ -262,7 +262,6 @@ class PhpTest extends MapTest
 
     public function testMap(): void
     {
-        assert\type(Map::class, Php::map());
         assert\equals([], Php::map()->traverse, 'args = 0');
         assert\equals(
             ['a', 'b', 'c', 'd', 'e'],

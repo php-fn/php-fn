@@ -7,8 +7,8 @@ namespace Php\Composer;
 
 use Composer;
 use Php;
-use Php\test\assert;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 class PluginTest extends TestCase
 {
@@ -51,7 +51,7 @@ class PluginTest extends TestCase
                     'c5-file' => 'C5',
                     'base-dir' => '/extra-array/',
                     'vendor-dir' => '/extra-array/vendor/php-di/php-di/',
-                ], JSON_PRETTY_PRINT),
+                ], JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT),
                 [
                     'name'  => 'php-fn/extra-array',
                     'extra' => [
@@ -98,26 +98,29 @@ class PluginTest extends TestCase
      */
     public function testOnAutoloadDump($expected, array $config): void
     {
+        $vendorDir = dirname((new ReflectionClass(Composer\Autoload\ClassLoader::class))->getFileName(), 2);
         (new Composer\Util\Filesystem)->copy(
-            dirname(__DIR__, 2) . "/fixtures/{$this->dataDescription()}",
-            self::target($this->dataDescription())
+            dirname(__DIR__, 2) . "/fixtures/{$this->dataName()}",
+            self::target($this->dataName())
         );
         $cwd = dirname($this->jsonFile($config));
-
-        $executor = new Composer\Util\ProcessExecutor;
+        $executor = new Composer\Util\ProcessExecutor();
         $output = '';
-        $executor->execute(__DIR__ . '/../../../vendor/bin/composer install --prefer-dist --no-dev', $output, $cwd);
-        assert\equals("vendor/autoload.php' modified\n", substr($output, -30), $output);
+        self::assertEquals(
+            0,
+            $executor->execute($vendorDir . '/bin/composer install --prefer-dist --no-dev', $output, $cwd)
+        );
+        self::assertEquals("vendor/autoload.php' modified\n", substr($output, -30), $output);
         $executor->execute('php -d apc.enable_cli=1 test.php', $output, $cwd);
-        assert\equals('', $executor->getErrorOutput());
-        assert\equals($expected, $output);
+        self::assertEquals('', $executor->getErrorOutput());
+        self::assertEquals($expected, $output);
     }
 
     private function jsonFile(array $config): string
     {
         $selfPath = dirname(__DIR__, 3);
 
-        $jsonFile = self::target($this->dataDescription(), 'composer.json');
+        $jsonFile = self::target($this->dataName(), 'composer.json');
         /** @noinspection PhpUnhandledExceptionInspection */
         (new Composer\Json\JsonFile($jsonFile))->write($config + [
             'require'      => ['php-fn/php-fn' => '999'],

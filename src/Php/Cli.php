@@ -37,16 +37,13 @@ class Cli extends Application
      */
     private $invoker;
 
-    /**
-     * @inheritdoc
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container instanceof DI\Container ? $container : Php::di($container);
         $this->container->set(self::class, $this);
         $this->container->set(static::class, $this);
         $this->invoker = $this->createInvoker($this->container);
-        parent::__construct($this->value('cli.name'), $this->value('cli.version'));
+        parent::__construct((string)$this->value('cli.name'), (string)$this->value('cli.version'));
 
         foreach ($this->getCommands() as $name => $command) {
             if (is_numeric($name) && is_string($command)) {
