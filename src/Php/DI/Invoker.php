@@ -58,24 +58,29 @@ class Invoker extends ParameterResolver\ResolverChain implements InvokerInterfac
     }
 
     /**
-     * @param callable $candidate
+     * @param callable|ReflectionFunctionAbstract $candidate
      *
      * @return ReflectionFunctionAbstract
      */
     public function reflect($candidate): ReflectionFunctionAbstract
     {
+        if ($candidate instanceof ReflectionFunctionAbstract) {
+            return $candidate;
+        }
         return CallableReflection::create($this->resolve($candidate));
     }
 
     /**
-     * @param callable $candidate
+     * @param callable|ReflectionFunctionAbstract $candidate
      * @param array $provided
      *
      * @return array
      */
     public function parameters($candidate, array $provided = []): array
     {
-        return $this->getParameters($this->reflect($candidate), $provided, []);
+        $pars = $this->getParameters($this->reflect($candidate), $provided, []);
+        ksort($pars);
+        return $pars;
     }
 
     /**

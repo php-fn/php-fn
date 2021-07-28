@@ -17,7 +17,7 @@ trait CallerTrait
         if (($container = $this->container ?? $this) && !$container instanceof ContainerInterface) {
             Php::fail('$container property is not an instance of %s', ContainerInterface::class);
         }
-        $invoker = $container->has(Invoker::class) ? $invoker = $container->get(Invoker::class) : null;
+        $invoker = $container->has(Invoker::class) ? $container->get(Invoker::class) : null;
         if (!$invoker instanceof Invoker) {
             Php::fail('invoker is not an instance of %s', Invoker::class);
         }
@@ -26,11 +26,11 @@ trait CallerTrait
             [$class, $method] = explode('::', $callable);
         }
         if ($class) {
-            $obj = $container && $container->has($class) ? $container->get($class) : null;
+            $obj = $container->has($class) ? $container->get($class) : null;
             if (!$obj) {
-                if ($ref = (new ReflectionClass($class))->getConstructor()) {
-                    $args = $invoker->getParameters($ref, [], []);
-                    $obj = $ref->getDeclaringClass()->newInstanceArgs($args);
+                if ($ref = ($classRef = new ReflectionClass($class))->getConstructor()) {
+                    $args = $invoker->parameters($ref);
+                    $obj = $classRef->newInstanceArgs($args);
                 } else {
                     $obj = new $class();
                 }
